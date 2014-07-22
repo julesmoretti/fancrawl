@@ -1,0 +1,38 @@
+{
+  "name": "FanCrawl",
+  "version": "0.0.1",
+  "description": "Application that follows and un-follows people of Instagram",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodejs server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/julesmoretti/fancrawl"
+  },
+  "dependencies": {
+    "body-parser": "^1.2.0",
+    "ejs": "^1.0.0",
+    "express": "^4.2.0",
+    "firebase": "^1.0.15-3",
+    "instagram": "0.0.4",
+    "instagram-node": "^0.3.0",
+    "morgan": "^1.0.1",
+    "request": "^2.37.0",
+    "serve-favicon": "^2.0.1",
+    "underscore": "^1.6.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "node",
+    "express",
+    "instagram-node",
+    "instagram"
+  ],
+  "author": "Jules Moretti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julesmoretti/fancrawl/issues"
+  }
+}
