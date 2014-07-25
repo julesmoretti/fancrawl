@@ -24,6 +24,25 @@ USE fancrawl;
 -- SET FOREIGN_KEY_CHECKS=0;
 
 -- ---
+-- Table 'access_right'
+-- Original access_right list
+-- ---
+
+DROP TABLE IF EXISTS `access_right`;
+
+CREATE TABLE `access_right` (
+  `id` INT NULL AUTO_INCREMENT DEFAULT NULL,
+  `state` VARCHAR(15) NULL DEFAULT 'fresh',
+  `fname` VARCHAR(15) NULL DEFAULT NULL,
+  `iname` VARCHAR(15) NULL DEFAULT NULL,
+  `iid` INT NULL DEFAULT NULL,
+  `code` VARCHAR(32) NULL DEFAULT NULL,
+  `token` VARCHAR(60) NULL DEFAULT NULL,
+  `pp` VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) COMMENT 'Original access_right list';
+
+-- ---
 -- Table 's_followed_by'
 -- Original followed_by list
 -- ---
@@ -31,8 +50,11 @@ USE fancrawl;
 DROP TABLE IF EXISTS `s_followed_by`;
 
 CREATE TABLE `s_followed_by` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `inst_id` INTEGER(10) NULL DEFAULT NULL,
+  `id` INT NULL AUTO_INCREMENT DEFAULT NULL,
+  `iid` INT NULL DEFAULT NULL,
+  `fname` VARCHAR(15) NULL DEFAULT NULL,
+  `iname` VARCHAR(15) NULL DEFAULT NULL,
+  `fbid` INT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original followed_by list';
 
@@ -44,8 +66,11 @@ CREATE TABLE `s_followed_by` (
 DROP TABLE IF EXISTS `s_followers`;
 
 CREATE TABLE `s_followers` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `inst_id` INTEGER(10) NULL DEFAULT NULL,
+  `id` INT NULL AUTO_INCREMENT DEFAULT NULL,
+  `iid` INT NULL DEFAULT NULL,
+  `fname` VARCHAR(15) NULL DEFAULT NULL,
+  `iname` VARCHAR(15) NULL DEFAULT NULL,
+  `fid` INT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) COMMENT 'original followers';
 
@@ -57,12 +82,13 @@ CREATE TABLE `s_followers` (
 DROP TABLE IF EXISTS `beta_followers`;
 
 CREATE TABLE `beta_followers` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `inst_id` INT NULL DEFAULT NULL,
-  `count` INTEGER(9) NULL DEFAULT 0,
-  `hooked` INTEGER(1) NULL DEFAULT 0,
-  `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `refresh_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id` INT NULL AUTO_INCREMENT DEFAULT NULL,
+  `iid` INT NULL DEFAULT NULL,
+  `nid` INT NULL DEFAULT NULL,
+  `c` INT(9) NULL DEFAULT 0,
+  `f` INT(1) NULL DEFAULT 0,
+  `cd` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `rd` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
 
@@ -70,38 +96,52 @@ CREATE TABLE `beta_followers` (
 -- Foreign Keys
 -- ---
 
+-- iname = Instagram userName
+-- iid = Current Users Instagram ID
+-- fbid = followed_by ID
+-- fid = followers ID
+-- nid = New Targeted Instagram ID
+-- c = count of following test
+-- f = if nid is now following iid or not
+-- cd = creation date
+-- rd = refresh date
+-- state = fresh (never started), started (initiated the crawl), stopping (cleaning up directory back to original), stopped (finished removing test followers)
 
 -- ---
 -- Table Properties
 -- ---
 
+ALTER TABLE `access_right` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `s_followed_by` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `s_followers` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `beta_followers` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
 
 -- ---
 -- Test Data
 -- ---
 
-INSERT INTO `s_followed_by` (`inst_id`) VALUES
+
+
+INSERT INTO `s_followed_by` (`iid`) VALUES
 ('1234567');
-INSERT INTO `s_followed_by` (`inst_id`) VALUES
+INSERT INTO `s_followed_by` (`iid`) VALUES
 ('234567');
-INSERT INTO `s_followed_by` (`inst_id`) VALUES
+INSERT INTO `s_followed_by` (`iid`) VALUES
 ('34567');
 
-INSERT INTO `s_followers` (`inst_id`) VALUES
+INSERT INTO `s_followers` (`iid`) VALUES
 ('1234557');
-INSERT INTO `s_followers` (`inst_id`) VALUES
+INSERT INTO `s_followers` (`iid`) VALUES
 ('234557');
-INSERT INTO `s_followers` (`inst_id`) VALUES
+INSERT INTO `s_followers` (`iid`) VALUES
 ('34557');
 
-INSERT INTO `beta_followers` (`inst_id`) VALUES
+INSERT INTO `beta_followers` (`iid`) VALUES
 ('1234567');
-INSERT INTO `beta_followers` (`inst_id`) VALUES
+INSERT INTO `beta_followers` (`iid`) VALUES
 ('234567');
-INSERT INTO `beta_followers` (`inst_id`) VALUES
+INSERT INTO `beta_followers` (`iid`) VALUES
 ('34567');
 
 -- Cheat sheet
@@ -122,6 +162,8 @@ INSERT INTO `beta_followers` (`inst_id`) VALUES
 -- select * from s_followed_by;
 -- select * from s_followers;
 -- select * from beta_followers;
+
+-- select inst_name from access_right where iid = 571377691;
 
 -- update beta_followers set hooked = 1 where id = 2;
 -- update beta_followers set refresh_date = now() where id = 2;

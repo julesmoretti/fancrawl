@@ -1,12 +1,19 @@
+/***********************************************/
+/** STYLE **/
+
+
+
 html {
         height: 100%;
+        body {
+          margin: 0;
+          padding: 0;
+          /*background: #000000 url(/views/img/loading.gif) center center no-repeat;*/
+          background: #000000;
+          height: 100%;
+        }
       }
-      body {
-        margin: 0;
-        padding: 0;
-        background: #000000 url(/views/img/loading.gif) center center no-repeat;
-        height: 100%;
-      }
+
 
       #info {
         font-size: 11px;
@@ -39,19 +46,18 @@ html {
 
       #signIn {
         width:320px;
-        height:200px;
+        height:320px;
         position: fixed;
-        /*opacity: 0.5;*/
-        /*background-color: #00FF00;*/
+        background-color: rgba(250,0,0,0.4);
         top: 50%;
         left: 50%;
-        margin-top: -100px;
+        margin-top: -160px;
         margin-left: -160px;
       }
 
       .titleWrap {
         width:100%;
-        height:100px;
+        height:160px;
         text-align: center;
         vertical-align:middle;
       }
