@@ -8,26 +8,21 @@ var favicon         = require('serve-favicon'),
 
 
   module.exports    = function(app){
+
+//  sass css generator ==========================================================
     sass.renderFile({
-        file: './views/css/style.scss',
-        success: function(css) {
-          console.log('style.css overwritten');
-          // console.log(css);
-        },
-        error: function(error) {
-          console.log(error);
-        },
-        includePaths: ['views/css'],
-        // outputStyle: 'compressed',
-        outFile: './views/css/style.css'
-        });
-
-   // sass.middleware({
-   //     src: './views/css/'
-   //     , dest: './views/css/'
-   //     , debug: true
-   //  }),
-
+      file: './views/css/style.scss',
+      success: function(css) {
+        // console.log(css);
+        console.log('style.css overwritten');
+      },
+      error: function(error) {
+        console.log(error);
+      },
+      includePaths: ['views/css'],
+      // outputStyle: 'compressed',
+      outFile: './views/css/style.css'
+    });
 
 //  loading standard middleware =================================================
     app.use(bodyParser.json());

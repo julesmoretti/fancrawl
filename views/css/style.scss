@@ -1,18 +1,111 @@
 /***********************************************/
 /** STYLE **/
-
-
+/** run the following to see changes live **/
+/** nodemon --watch views/css/ -e scss server.js **/
 
 html {
+  height: 100%;
+
+  body {
+    margin: 0;
+    padding: 0;
+    /*background: #000000 url(/views/img/loading.gif) center center no-repeat;*/
+    background: #000000;
+    height: 100%;
+
+    a {
+      color: #aaa;
+      text-decoration: none;
+
+      a:hover {
+        text-decoration: underline;
+      }
+    }
+
+    #line_left {
+      background: url(/views/img/inst_left.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: -1000px;
+    }
+
+    #box {
+      width:320px;
+      height:320px;
+      position: fixed;
+      background: url(/views/img/instagram_logo.svg) center center no-repeat;
+      top: 50%;
+      left: 50%;
+      margin-top: -160px;
+      margin-left: -160px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 60px;
+
+      .lens {
+        top: 0px;
+        left: 0px;
+        width: 100%;
         height: 100%;
-        body {
-          margin: 0;
-          padding: 0;
-          /*background: #000000 url(/views/img/loading.gif) center center no-repeat;*/
-          background: #000000;
-          height: 100%;
+        position: absolute;
+        text-align: center;
+        vertical-align: middle;
+
+        span {
+          top: calc( 50% - 21px);
+          position: relative;
+          font-size: 37px;
+          color: white;
+          font-family: "refrigerator-deluxe", sans-serif;
+          font-style: normal;
+          font-weight: 900;
+          opacity: 0.5;
         }
       }
+
+      .fancrawl {
+        font-family: "reklame-script",sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        position: relative;
+        top: 246px;
+        color: black;
+        font-size: 60px;
+        font-weight: 100;
+        letter-spacing: 0px !important;
+        text-align: left;
+        text-indent: 30px;
+        opacity: 0.6;
+      }
+    }
+
+    #line_right {
+      background: url(/views/img/inst_right.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: 160px;
+    }
+
+    .description {
+      position: absolute;
+      left: 30px;
+      bottom: 10px;
+      color: white;
+      opacity: 0.6;
+      font-weight: 100;
+      font-style: italic;
+      padding-right: 20px;
+    }
+  }
+}
 
 
       #info {
@@ -23,99 +116,6 @@ html {
         border-radius: 3px;
         right: 10px;
         padding: 10px;
-      }
-
-      .description {
-        position: absolute;
-        left: 30px;
-        bottom: 10px;
-        color: white;
-        opacity: 0.6;
-        font-weight: 100;
-        font-style: italic;
-        padding-right: 20px;
-      }
-
-      .disclamer {
-        color: rgb(177, 176, 176);
-        font-size: 12px;
-        text-align: center;
-        font-weight: 100;
-        letter-spacing: 1px !important;
-      }
-
-      #signIn {
-        width:320px;
-        height:320px;
-        position: fixed;
-        background-color: rgba(250,0,0,0.4);
-        top: 50%;
-        left: 50%;
-        margin-top: -160px;
-        margin-left: -160px;
-      }
-
-      .titleWrap {
-        width:100%;
-        height:160px;
-        text-align: center;
-        vertical-align:middle;
-      }
-      .titleWrap2 {
-        width: 100%;
-        height: 100px;
-        vertical-align: middle;
-      }
-
-      #title {
-        width: 320px;
-        height: 100px;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        margin-top: -100px;
-        margin-left: -160px;
-        font-family: "estilo-regular",sans-serif;
-        font-size: 70px;
-        margin-top: -60px;
-        color: white;
-        opacity: 0.6;
-        text-align: center;
-      }
-
-      #title2 {
-        position: fixed;
-        font-family: "estilo-regular",sans-serif;
-        font-size: 70px;
-        color: white;
-        opacity: 0.6;
-        padding-left: 16px;
-      }
-
-      .instagramSign {
-        border-radius: 6px;
-        /*background: #f8f3e7;*/
-        background: rgba(248, 243, 231, 0.6);
-        /*opacity: 0.9;*/
-        width: 300;
-        height: 44px;
-        margin: 0 10px 0 10px;
-        margin-top: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-      }
-
-      .instaStripe {
-        width:10px;
-        height:100%;
-        float:left;
-        opacity: 0.7;
-      }
-
-      .tagLineWrap {
-        float: left;
-        height:100%;
-        width: 83%;
-        padding-top: 8px;
       }
 
       #logout {
@@ -146,15 +146,6 @@ html {
         margin-left: 7px;
         color: rgba(255, 255, 255, 0.5);
       }
-
-      #tagLine {
-        font-size: 20px;
-        color: #4d473b;
-        font-weight: 500;
-        margin-left: 26px;
-        text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
-      }
-
 
       .typekit-badge {
         display: none !important;
@@ -261,10 +252,6 @@ html {
         color: #A5A5A5;
       }
 
-      #button {
-
-      }
-
       button {
         border-radius: 0 5px 5px 0;
         border: 0px;
@@ -288,13 +275,7 @@ html {
         padding: 10px;
       }
 
-      a {
-        color: #aaa;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
+
 
       .bull {
         padding: 0 5px;

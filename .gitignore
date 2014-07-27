@@ -1,6 +1,7 @@
-temp.md
-node_modules
 app/
+media_work
+node_modules
 views/css/style.css
 views/partials/
 schema_data.sql
+temp.md
