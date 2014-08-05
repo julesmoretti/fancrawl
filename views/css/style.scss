@@ -22,6 +22,63 @@ html {
       }
     }
 
+    .profile {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      height: 150px - 14px;
+      width: 150px - 14px;
+      border: 7px solid rgb(40, 40, 40);
+      background: url('/views/img/profile_blank_gray.jpg') center center no-repeat;
+      background-size: 150px 150px;
+      border-radius: 300px;
+      color: rgb(170, 170, 170);
+      text-align: center;
+      line-height: 320px;
+      letter-spacing: 2px;
+      font-family: "orbitron",sans-serif;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 10px;
+    }
+
+    .action_button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      height: 150px - 14px;
+      width: 150px - 14px;
+      border: 7px solid rgb(40, 40, 40);
+      background-color: #181818;
+      background-size: 150px 150px;
+      border-radius: 300px;
+      color: rgb(170, 170, 170);
+      text-align: center;
+      line-height: 10px;
+      letter-spacing: 2px;
+      font-family: "orbitron",sans-serif;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 10px;
+      cursor: pointer;
+
+      &.fresh {
+        background-color: blue;
+      }
+
+      &.started {
+        background-color: red;
+      }
+
+      &.stopping {
+        background-color: orange;
+      }
+
+      &.stopped {
+        background-color: green;
+      }
+    }
+
     #line_left {
       background: url(/views/img/inst_left.svg) center center no-repeat;
       position: fixed;
@@ -64,6 +121,11 @@ html {
           font-style: normal;
           font-weight: 900;
           opacity: 0.5;
+
+          &.page_not_found {
+            top: calc( 50% - 42px);
+            line-height: 22px;
+          }
         }
       }
 
@@ -104,212 +166,43 @@ html {
       font-style: italic;
       padding-right: 20px;
     }
+    .status_bar {
+      position: absolute;
+      left: 0px;
+      bottom: 0px;
+      width: 100%;
+      height: 30px;
+      background-color: rgba(75,75,75,0.5);
+
+      span {
+        color: white;
+        font-weight: 100;
+        font-style: italic;
+        margin-left: 20px;
+        line-height: 30px;
+        opacity: 0.3;
+      }
+
+      .log_out {
+        float: right;
+        position: relative;
+        background-color: black;
+        height: 20px;
+        width: 100px;
+        vertical-align: middle;
+        text-align: center;
+        margin: 5px 5px 5px 5px;
+        border-radius: 2px;
+        color: white;
+        opacity: 0.5;
+        font-family: "orbitron",sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 12px;
+        letter-spacing: 3px;
+        line-height: 21px;
+        cursor: pointer;
+      }
+    }
   }
 }
-
-
-      #info {
-        font-size: 11px;
-        position: absolute;
-        bottom: 5px;
-        background-color: rgba(0,0,0,0.8);
-        border-radius: 3px;
-        right: 10px;
-        padding: 10px;
-      }
-
-      #logout {
-        border-radius: 4px;
-        /*background: rgba(248, 243, 231, 0.2);*/
-        width:110px;
-        height: 24px;
-        border: 1px solid rgba(145, 145, 145, 0.8);
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        margin-left: 23px;
-        margin-bottom:17px;
-        z-index: 500;
-      }
-
-      .LOinstaStripe {
-        width:6px;
-        height:100%;
-        float:left;
-        opacity: 0.5;
-      }
-
-      .LOtagLineWrap {
-        float: left;
-        height: 100%;
-        padding-top: 2px;
-        margin-left: 7px;
-        color: rgba(255, 255, 255, 0.5);
-      }
-
-      .typekit-badge {
-        display: none !important;
-      }
-
-      #userProfile {
-        position: absolute;
-        bottom: 0;
-        right:0;
-        margin-right: 10px;
-        margin-bottom: 10px;
-      }
-
-      #user {
-        text-align: center;
-        float: right;
-      }
-
-      #user img {
-        border: 1px solid rgba(250, 250, 250,0.5);
-        border-radius: 80px;
-        opacity: 0.8;
-        height: 111px;
-        width: 111px;
-        display: block;
-        margin-top: 4px;
-        margin-bottom: 5px;
-      }
-
-      #user span {
-        color: rgba(250, 250, 250,0.5);
-        text-transform: uppercase;
-        font-size: 9px;
-      }
-
-      div#follower {
-        float: right;
-        margin-bottom: -60px;
-        margin-right: 20px;
-        margin-left: 25px;
-        text-align: center;
-      }
-
-      #followerDial {
-        display: inline;
-        /*width: 150px;*/
-        /*height: 200px;*/
-      }
-
-      #followerCanvas {
-        /*width: 150px;*/
-        height: 180px;
-        margin-bottom: -50px;
-      }
-
-      #followerInput {
-        width: 79px;
-        height: 50px;
-        position: absolute;
-        vertical-align: middle;
-        margin-top: 50px;
-        margin-left: -114px;
-        border: 0px;
-        font-weight: bold;
-        font-style: normal;
-        font-variant: normal;
-        font-size: 30px;
-        line-height: normal;
-        font-family: Arial;
-        text-align: center;
-        color: rgb(255, 236, 3);
-        padding: 0px;
-        -webkit-appearance: none;
-        background: none;
-      }
-
-      div#followersInfo {
-        position: absolute;
-        top: 128px;
-        color: rgba(250, 250, 250,0.5);
-        text-transform: uppercase;
-        font-size: 9px;
-        left: 138px;
-        width: 120px
-      }
-
-      form#username-form {
-        margin-top: 16px;
-        margin-top: 5;
-      }
-
-      input#message {
-        height: 37px;
-        height: 4;
-        border: 0px;
-        width: 150px;
-        /* margin-bottom: 5px; */
-        margin-bottom: 1p;
-        margin-bottom: 1;
-        text-indent: 10px;
-        border-radius: 5px 0 0 5px;
-        border-radius: 5;
-        background-color: rgba(100,100,100,0.4);
-        color: #A5A5A5;
-      }
-
-      button {
-        border-radius: 0 5px 5px 0;
-        border: 0px;
-        border: 0;
-        height: 40px;
-        height: 4;
-        width: 80px;
-        opacity: 0.3;
-        font-size: 15px;
-      }
-
-      #currentInfo {
-        width: 270px;
-        position: absolute;
-        left: 20px;
-        top: 63px;
-
-        background-color: rgba(0,0,0,0.2);
-
-        border-top: 1px solid rgba(255,255,255,0.4);
-        padding: 10px;
-      }
-
-
-
-      .bull {
-        padding: 0 5px;
-        color: #555;
-      }
-
-      .year {
-        font: 16px Georgia;
-        line-height: 26px;
-        height: 30px;
-        text-align: center;
-        float: left;
-        width: 90px;
-        color: rgba(255, 255, 255, 0.4);
-
-        cursor: pointer;
-        -webkit-transition: all 0.1s ease-out;
-      }
-
-      .year:hover, .year.active {
-        font-size: 23px;
-        color: #fff;
-      }
-
-      #ce span {
-        display: none;
-      }
-
-      #ce {
-        width: 107px;
-        height: 55px;
-        display: block;
-        position: absolute;
-        bottom: 15px;
-        left: 20px;
-        background: url(/views/ce.png);
-      }
