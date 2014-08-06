@@ -126,7 +126,8 @@ var https                     = require('https'),
                 // instagram header secret system
                 var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                     hmac.setEncoding('hex');
-                    hmac.write(ip_address);
+                    // hmac.write(ip_address);
+                    hmac.write('127.0.0.1');
                     hmac.end()
                 var hash = hmac.read();
 
