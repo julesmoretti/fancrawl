@@ -34,6 +34,8 @@ var https                     = require('https'),
             client_secret: process.env.FANCRAWLCLIENTSECRET
            });
 
+// TODO - mod GO_start for server restart
+// TODO - fix node-sass on server side
 
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
@@ -143,14 +145,92 @@ var https                     = require('https'),
                     };
 
                 request(options, function (error, response, body) {
-                  if (!error && response.statusCode == 200) {
-                    console.log(body); // Print the google web page.
-                    connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
+                  if(body && body.meta && body.meta.error_type && body.meta.error_type === "OAuthRateLimitException") {
+                    // stop the search
+                    // connection.query('UPDATE access_right set state = "limit" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                    //   if (err) throw err;
+                    // });
+                    connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id+', count = 8', function(err, rows, fields) {
                       if (err) throw err;
+                      console.log("LIMIT REACHED BRO!")
                     });
-                  } else if (error) {
-                    console.log(error);
+                  } else {
+                    if (!error && response.statusCode == 200) {
+                      console.log(body); // Print the google web page.
+                      connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
+                        if (err) throw err;
+                        setTimeout(
+                          function(){
+                            console.log('waited 5 minutes for follower: '+new_instagram_following_id);
+                            if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
+                              console.log('after 5 min user '+new_instagram_following_id+' follows you back');
+                              connection.query('UPDATE beta_followers set followed_by_status = 1, count = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                if (err) throw err;
+                                GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
+                              });
+
+                            } else {
+                              connection.query('UPDATE beta_followers set count = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                if (err) throw err;
+                                setTimeout(
+                                  function(){
+                                    console.log('waited 1 hour for follower: '+new_instagram_following_id);
+                                    if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
+                                      console.log('after 1 hour user '+new_instagram_following_id+' follows you back');
+                                      connection.query('UPDATE beta_followers set followed_by_status = 1, count = 2 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                        if (err) throw err;
+                                        GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
+                                      });
+
+                                    } else {
+                                      connection.query('UPDATE beta_followers set count = 2 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                        if (err) throw err;
+                                        setTimeout(
+                                          function(){
+                                            console.log('waited 1 day for follower: '+new_instagram_following_id);
+                                            if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
+                                              console.log('after 1 day user '+new_instagram_following_id+' follows you back');
+                                              connection.query('UPDATE beta_followers set followed_by_status = 1, count = 3 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                                if (err) throw err;
+                                                GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
+                                              });
+
+                                            } else {
+                                              connection.query('UPDATE beta_followers set count = 3 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                                if (err) throw err;
+                                                setTimeout(
+                                                  function(){
+                                                    console.log('waited 2 days for follower: '+new_instagram_following_id);
+                                                    if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
+                                                      console.log('after 2 days user '+new_instagram_following_id+' follows you back');
+                                                      connection.query('UPDATE beta_followers set followed_by_status = 1, count = 4 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                                        if (err) throw err;
+                                                        GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
+                                                      });
+
+                                                    } else {
+                                                      connection.query('UPDATE beta_followers set count = 4 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                                                        console.log('sorry after 2 days user '+new_instagram_following_id+' did not follow you back');
+                                                        if (err) throw err;
+                                                        GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
+                                                      });
+                                                    }
+                                                }, 172800000); // third time to check if user added back (2 days)
+                                              });
+                                            }
+                                        }, 86400000); // third time to check if user added back (1 day)
+                                      });
+                                    }
+                                }, 3600000); // second time to check if user added back (1 hour)
+                              });
+                            }
+                        }, 300000); // first time to check if user added back (5 minutes)
+                      });
+                    } else {
+                      console.log("error: ", error);
+                    }
                   }
+
                 });
 
                 connection.query('SELECT last_following_id from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -159,74 +239,8 @@ var https                     = require('https'),
                 });
               });
 
-              setTimeout(
-                function(){
-                  console.log('waited 5 minutes for follower: '+new_instagram_following_id);
-                  if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
-                    console.log('after 5 min user '+new_instagram_following_id+' follows you back');
-                    connection.query('UPDATE beta_followers set followed_by_status = 1, count = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                    });
-
-                  } else {
-                    connection.query('UPDATE beta_followers set count = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      setTimeout(
-                        function(){
-                          console.log('waited 1 hour for follower: '+new_instagram_following_id);
-                          if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
-                            console.log('after 1 hour user '+new_instagram_following_id+' follows you back');
-                            connection.query('UPDATE beta_followers set followed_by_status = 1, count = 2 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                              if (err) throw err;
-                              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                            });
-
-                          } else {
-                            connection.query('UPDATE beta_followers set count = 2 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                              if (err) throw err;
-                              setTimeout(
-                                function(){
-                                  console.log('waited 1 day for follower: '+new_instagram_following_id);
-                                  if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
-                                    console.log('after 1 day user '+new_instagram_following_id+' follows you back');
-                                    connection.query('UPDATE beta_followers set followed_by_status = 1, count = 3 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                                      if (err) throw err;
-                                      GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                                    });
-
-                                  } else {
-                                    connection.query('UPDATE beta_followers set count = 3 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                                      if (err) throw err;
-                                      setTimeout(
-                                        function(){
-                                          console.log('waited 2 days for follower: '+new_instagram_following_id);
-                                          if (GO_check(fancrawl_instagram_id, new_instagram_following_id)){
-                                            console.log('after 2 days user '+new_instagram_following_id+' follows you back');
-                                            connection.query('UPDATE beta_followers set followed_by_status = 1, count = 4 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                                              if (err) throw err;
-                                              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                                            });
-
-                                          } else {
-                                            connection.query('UPDATE beta_followers set count = 4 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                                              console.log('sorry after 2 days user '+new_instagram_following_id+' did not follow you back');
-                                              if (err) throw err;
-                                              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                                            });
-                                          }
-                                      }, 172800000); // third time to check if user added back (2 days)
-                                    });
-                                  }
-                              }, 86400000); // third time to check if user added back (1 day)
-                            });
-                          }
-                      }, 3600000); // second time to check if user added back (1 hour)
-                    });
-                  }
-              }, 300000); // first time to check if user added back (5 minutes)
-
             return;
+          // }, 1000 + random_second); // time between adding new followers (1 minute)
           }, 60000 + random_second); // time between adding new followers (1 minute)
           return;
         });
@@ -240,18 +254,48 @@ var https                     = require('https'),
 
 //  ZERO = server restart check =================================================
   var GO_start                 = function(){
-    connection.query('SELECT fancrawl_instagram_id, last_following_id, last_ip  FROM access_right where state = "started"', function(err, rows, fields) {
-      if (err) throw err;
-      if(rows) {
-        for (var i = 0; i < rows.length; i++){
-          // console.log(rows[i]);
-          if ( rows[i].fancrawl_instagram_id && rows[i].last_following_id && rows[i].last_ip ){
-          console.log("SERVER RESTART STARTING FETCH AGAIN");
-            GO_follow(rows[i].fancrawl_instagram_id, rows[i].last_following_id, rows[i].last_ip);
+
+    // TODO when start check back on previous data to make sure that the it is on count 4... if not.. then they should check again...
+    // means refactoring the setTimeout.
+    // var start_started = function(limited_user){
+    var start_started = function(limited_user){
+      connection.query('SELECT fancrawl_instagram_id, last_following_id, last_ip FROM access_right where state = "started"', function(err, rows, fields) {
+        if (err) throw err;
+        if(rows) {
+          for (var i = 0; i < rows.length; i++){
+            // console.log(rows[i]);
+            if ( rows[i].fancrawl_instagram_id && rows[i].last_following_id && rows[i].last_ip ){
+            console.log("SERVER RESTART STARTING FETCH AGAIN");
+              GO_follow(rows[i].fancrawl_instagram_id, rows[i].last_following_id, rows[i].last_ip);
+            }
           }
         }
-      }
-    })
+      });
+    };
+    start_started();
+
+    var limit_check = function(){
+      connection.query('SELECT fancrawl_instagram_id FROM access_right where state = "limit" ', function(err, rows, fields) {
+        if (err) throw err;
+        if(rows) {
+          for (var i = 0; i < rows.length; i++){
+            // console.log(rows[i]);
+            if ( rows[i].fancrawl_instagram_id ){
+              setTimeout(
+                function(){
+                  start_started(rows[i].fancrawl_instagram_id);
+                  limit_check();
+              }, 300000); // first time to check if user added back (5 minutes)
+
+            } else {
+              // done with check
+            }
+          }
+        }
+      })
+    };
+    // limit_check();
+
     }();
 
 //  =============================================================================
@@ -327,7 +371,6 @@ var https                     = require('https'),
 
         } else {
           console.log("User granted");
-
             // check state for particular fancrawl_instagram_id
             connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
               if (err) throw err;
@@ -586,4 +629,62 @@ var https                     = require('https'),
     }
 
     return;
+    };
+
+
+//  TEST = check for enforce signed header ======================================
+  exports.secure              = function(req, res) {
+    if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
+      console.log("has valid structure");
+
+      // check access rights from database.
+      connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
+        if (err) throw err;
+
+        if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
+          console.log("User not granted");
+          res.redirect('/404/');
+          return;
+
+        } else {
+          console.log("User granted");
+
+          connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
+            if (err) throw err;
+            // instagram header secret system
+            var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+                hmac.setEncoding('hex');
+                hmac.write(req._remoteAddress);
+                hmac.end();
+            var hash = hmac.read();
+
+            // Set the headers
+            var headers = {
+                'X-Insta-Forwarded-For': req._remoteAddress+'|'+hash
+            }
+
+            // Configure the request
+            var options = {
+                uri: 'https://api.instagram.com/v1/media/657988443280050001_25025320/likes',
+                qs: {'access_token': rows[0].token},
+                method: 'POST',
+                headers: headers,
+                form:{action:'unfollow'}
+            }
+
+            request(options, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                console.log("req remote address: ", req._remoteAddress);
+                console.log("body: ", body);
+              } else if (error) {
+                console.log(error);
+              }
+            });
+          });
+        }
+      });
+    } else {
+      console.log("Missing information");
+      res.redirect('/404/');
+    }
     };

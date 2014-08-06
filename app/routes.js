@@ -27,6 +27,9 @@ var instagramUtils = require('./instagramUtils.js');
     // trigger different function like GO_Follow etc...
     app.get('/button', instagramUtils.button);
 
+    // check for enforce signed header
+    app.get('/secure', instagramUtils.secure);
+
     // 404 not found error page
     app.get('/404/', function(req, res){
       res.render('./partials/404.ejs');
