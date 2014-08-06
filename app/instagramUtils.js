@@ -127,7 +127,7 @@ var https                     = require('https'),
                 var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                     hmac.setEncoding('hex');
                     // hmac.write(ip_address);
-                    hmac.write('127.0.0.1');
+                    hmac.write('104.131.139.11');
                     hmac.end()
                 var hash = hmac.read();
 
