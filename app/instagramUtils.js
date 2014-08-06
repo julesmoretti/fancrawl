@@ -228,6 +228,7 @@ var https                     = require('https'),
                       });
                     } else {
                       console.log("error: ", error);
+                      console.log("response: ", response);
                     }
                   }
 
