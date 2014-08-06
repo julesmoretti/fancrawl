@@ -153,7 +153,7 @@ var https                     = require('https'),
                     // });
                     connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id+', count = 8', function(err, rows, fields) {
                       if (err) throw err;
-                      console.log("LIMIT REACHED BRO!")
+                      console.log(pbody.meta.error_message);
                     });
                   } else {
                     if (!error && response.statusCode == 200) {
