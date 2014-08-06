@@ -19,7 +19,14 @@ var https                     = require('https'),
                                   database: 'fancrawl'
                                 });
 
-    connection.connect();
+    connection.connect(function(err) {
+                                      if (err) {
+                                        console.error('error connecting: ' + err.stack);
+                                        return;
+                                      }
+
+                                      console.log('connected as id ' + connection.threadId);
+                                     });
 
     ig.use({
             client_id: process.env.FANCRAWLCLIENTID,
