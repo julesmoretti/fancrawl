@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+  <head>
+    <title>FanCrawl</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/views/css/style.css" media="all">
+    <script type="text/javascript" src="//use.typekit.net/jzq3ntm.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script> </head>
+  </head>
+
+  <body>
+
+    <div class="profile">
+    Jules Moretti
+    </div>
+
+    <a href="/button">
+      <% if (state === "fresh"){ %>
+        <div class="action_button fresh"><%= state %><br/>
+        followed by <%= followed_by %> instagram users<br/>
+        following <%= following %> instagram users</div>
+      <% } else if (state === "started") { %>
+        <div class="action_button started"><%= state %><br/>
+        followed by <%= followed_by %> instagram users<br/>
+        following <%= following %> instagram users</div>
+      <% } else if (state === "stopping") { %>
+        <div class="action_button stopping"><%= state %><br/>
+        followed by <%= followed_by %> instagram users<br/>
+        following <%= following %> instagram users</div>
+      <% } else if (state === "stopped") { %>
+        <div class="action_button stopped"><%= state %><br/>
+        followed by <%= followed_by %> instagram users<br/>
+        following <%= following %> instagram users</div>
+      <% } %>
+    </a>
+
+    <div class="status_bar">
+      <span>Welcome to the dashboad!</span>
+      <div class="log_out" onclick="location.href='https://instagram.com/accounts/logout';">LOG OUT</div>
+    </div>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-53564857-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+
+</html>

@@ -1,0 +1,167 @@
+/***********************************************/
+/** STYLE **/
+/** run the following to see changes live **/
+/** nodemon --watch views/css/ -e scss server.js **/
+html {
+  height: 100%; }
+  html body {
+    margin: 0;
+    padding: 0;
+    /*background: #000000 url(/views/img/loading.gif) center center no-repeat;*/
+    background: #000000;
+    height: 100%; }
+    html body a {
+      color: #aaa;
+      text-decoration: none; }
+      html body a a:hover {
+        text-decoration: underline; }
+    html body .profile {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      height: 136px;
+      width: 136px;
+      border: 7px solid #282828;
+      background: url('/views/img/profile_blank_gray.jpg') center center no-repeat;
+      background-size: 150px 150px;
+      border-radius: 300px;
+      color: #aaaaaa;
+      text-align: center;
+      line-height: 320px;
+      letter-spacing: 2px;
+      font-family: "orbitron", sans-serif;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 10px; }
+    html body .action_button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      height: 136px;
+      width: 136px;
+      border: 7px solid #282828;
+      background-color: #181818;
+      background-size: 150px 150px;
+      border-radius: 300px;
+      color: #aaaaaa;
+      text-align: center;
+      line-height: 10px;
+      letter-spacing: 2px;
+      font-family: "orbitron", sans-serif;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 10px;
+      cursor: pointer; }
+      html body .action_button.fresh {
+        background-color: blue; }
+      html body .action_button.started {
+        background-color: red; }
+      html body .action_button.stopping {
+        background-color: orange; }
+      html body .action_button.stopped {
+        background-color: green; }
+    html body #line_left {
+      background: url(/views/img/inst_left.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: -1000px; }
+    html body #box {
+      width: 320px;
+      height: 320px;
+      position: fixed;
+      background: url(/views/img/instagram_logo.svg) center center no-repeat;
+      top: 50%;
+      left: 50%;
+      margin-top: -160px;
+      margin-left: -160px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 60px; }
+      html body #box .lens {
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        text-align: center;
+        vertical-align: middle; }
+        html body #box .lens span {
+          top: calc( 50% - 21px);
+          position: relative;
+          font-size: 37px;
+          color: white;
+          font-family: "refrigerator-deluxe", sans-serif;
+          font-style: normal;
+          font-weight: 900;
+          opacity: 0.5; }
+          html body #box .lens span.page_not_found {
+            top: calc( 50% - 42px);
+            line-height: 22px; }
+      html body #box .fancrawl {
+        font-family: "reklame-script", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        position: relative;
+        top: 246px;
+        color: black;
+        font-size: 60px;
+        font-weight: 100;
+        letter-spacing: 0px !important;
+        text-align: left;
+        text-indent: 30px;
+        opacity: 0.6; }
+    html body #line_right {
+      background: url(/views/img/inst_right.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: 160px; }
+    html body .description {
+      position: absolute;
+      left: 30px;
+      bottom: 10px;
+      color: white;
+      opacity: 0.6;
+      font-weight: 100;
+      font-style: italic;
+      padding-right: 20px; }
+    html body .status_bar {
+      position: absolute;
+      left: 0px;
+      bottom: 0px;
+      width: 100%;
+      height: 30px;
+      background-color: rgba(75, 75, 75, 0.5); }
+      html body .status_bar span {
+        color: white;
+        font-weight: 100;
+        font-style: italic;
+        margin-left: 20px;
+        line-height: 30px;
+        opacity: 0.3; }
+      html body .status_bar .log_out {
+        float: right;
+        position: relative;
+        background-color: black;
+        height: 20px;
+        width: 100px;
+        vertical-align: middle;
+        text-align: center;
+        margin: 5px 5px 5px 5px;
+        border-radius: 2px;
+        color: white;
+        opacity: 0.5;
+        font-family: "orbitron", sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 12px;
+        letter-spacing: 3px;
+        line-height: 21px;
+        cursor: pointer; }

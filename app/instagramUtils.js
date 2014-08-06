@@ -288,7 +288,7 @@ var https                     = require('https'),
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ result.user.id, function(err, rows, fields) {
           if (err) throw err;
 
-          if (rows[0].fancrawl_username === result.user.username){
+          if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === result.user.username){
             console.log("User granted");
 
               connection.query('UPDATE access_right set fancrawl_full_name = "'+result.user.full_name+'", code = "'+req.query.code+'", token = "'+result.access_token+'", fancrawl_profile_picture = "'+result.user.profile_picture+'" where fancrawl_instagram_id = '+ result.user.id, function(err, rows, fields) {
