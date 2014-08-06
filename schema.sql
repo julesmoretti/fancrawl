@@ -91,8 +91,8 @@ CREATE TABLE `beta_followers` (
   `count` INT(9) DEFAULT 0,
   `following_status` INT(1) DEFAULT 1,
   `followed_by_status` INT(1) DEFAULT 0,
+  `creation_date` DATETIME NOT NULL DEFAULT now(),
   `refresh_date` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE CURRENT_TIMESTAMP,
-  `creation_date` TIMESTAMP NOT NULL DEFAULT now(),
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
 
