@@ -639,6 +639,7 @@ var https                     = require('https'),
 //  XXXX = check for enforce signed header ======================================
   exports.secure              = function(req, res) {
     console.log(req.ip);
+    console.log(req.ips);
     if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
       console.log("has valid structure");
 
