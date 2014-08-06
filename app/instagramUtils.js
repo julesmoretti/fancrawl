@@ -14,8 +14,9 @@ var https                     = require('https'),
     mysql                     = require('mysql'),
     random_second             = (Math.floor(((Math.random() * 1) + 0)*1000)), // random millisecond generator less then 1 sec
     connection                = mysql.createConnection({
+                                  host: 'localhost',
                                   user: 'root',
-                                  password: '',
+                                  password: process.env.MYSQLPASSWORD,
                                   database: 'fancrawl'
                                 });
 
