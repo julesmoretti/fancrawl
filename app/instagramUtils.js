@@ -133,7 +133,7 @@ var https                     = require('https'),
 
                 // Set the headers
                 var headers = {
-                    'X-Insta-Forwarded-For': ip_address+'|'+hash
+                    'X-Insta-Forwarded-For': '104.131.139.11|'+hash
                     };
 
                 // Configure the request
@@ -663,13 +663,13 @@ var https                     = require('https'),
             // instagram header secret system
             var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                 hmac.setEncoding('hex');
-                hmac.write(req.ip);
+                hmac.write('104.131.139.11');
                 hmac.end();
             var hash = hmac.read();
 
             // Set the headers
             var headers = {
-                'X-Insta-Forwarded-For': req.ip+'|'+hash
+                'X-Insta-Forwarded-For': '104.131.139.11|'+hash
             }
 
             // Configure the request
