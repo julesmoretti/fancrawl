@@ -227,8 +227,9 @@ var https                     = require('https'),
                         }, 300000); // first time to check if user added back (5 minutes)
                       });
                     } else {
+                      console.log("body: ", body);
                       console.log("error: ", error);
-                      console.log("response: ", response);
+                      console.log("response status Code: ", response.statusCode);
                     }
                   }
 
