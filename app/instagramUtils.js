@@ -298,6 +298,7 @@ var https                     = require('https'),
 
     }();
 
+
 //  =============================================================================
 //  MAIN SECTIONS
 //  =============================================================================
@@ -568,7 +569,7 @@ var https                     = require('https'),
         } else {
           console.log("User granted");
 
-            connection.query('UPDATE access_right set last_ip = "'+req._remoteAddress+'" where fancrawl_instagram_id = "'+req_query.id+'"', function(err, rows, fields) {
+            connection.query('UPDATE access_right set last_ip = "'+req.ip+'" where fancrawl_instagram_id = "'+req_query.id+'"', function(err, rows, fields) {
               if (err) throw err;
 
               // check state for particular fancrawl_instagram_id
@@ -631,9 +632,13 @@ var https                     = require('https'),
     return;
     };
 
+//  =============================================================================
+//  TESTING SECTION SECTIONS
+//  =============================================================================
 
-//  TEST = check for enforce signed header ======================================
+//  XXXX = check for enforce signed header ======================================
   exports.secure              = function(req, res) {
+    console.log(req.ip);
     if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
       console.log("has valid structure");
 
@@ -654,13 +659,13 @@ var https                     = require('https'),
             // instagram header secret system
             var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                 hmac.setEncoding('hex');
-                hmac.write(req._remoteAddress);
+                hmac.write(req.ip);
                 hmac.end();
             var hash = hmac.read();
 
             // Set the headers
             var headers = {
-                'X-Insta-Forwarded-For': req._remoteAddress+'|'+hash
+                'X-Insta-Forwarded-For': req.ip+'|'+hash
             }
 
             // Configure the request
@@ -674,7 +679,7 @@ var https                     = require('https'),
 
             request(options, function (error, response, body) {
               if (!error && response.statusCode == 200) {
-                console.log("req remote address: ", req._remoteAddress);
+                console.log("req remote ip address: ", req.ip);
                 console.log("body: ", body);
               } else if (error) {
                 console.log(error);
