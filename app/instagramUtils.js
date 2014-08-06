@@ -127,13 +127,13 @@ var https                     = require('https'),
                 var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                     hmac.setEncoding('hex');
                     // hmac.write(ip_address);
-                    hmac.write('104.131.139.11');
+                    hmac.write(ip_address);
                     hmac.end()
                 var hash = hmac.read();
 
                 // Set the headers
                 var headers = {
-                    'X-Insta-Forwarded-For': '104.131.139.11|'+hash
+                    'X-Insta-Forwarded-For': ip_address+'|'+hash
                     };
 
                 // Configure the request
@@ -240,7 +240,8 @@ var https                     = require('https'),
 
                 connection.query('SELECT last_following_id from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
-                  GO_follow( fancrawl_instagram_id, rows[0].last_following_id, ip_address);
+                  // GO_follow( fancrawl_instagram_id, rows[0].last_following_id, ip_address);
+                  GO_follow( fancrawl_instagram_id, rows[0].last_following_id, '104.131.139.11');
                 });
               });
 
@@ -271,7 +272,8 @@ var https                     = require('https'),
             // console.log(rows[i]);
             if ( rows[i].fancrawl_instagram_id && rows[i].last_following_id && rows[i].last_ip ){
             console.log("SERVER RESTART STARTING FETCH AGAIN");
-              GO_follow(rows[i].fancrawl_instagram_id, rows[i].last_following_id, rows[i].last_ip);
+              // GO_follow(rows[i].fancrawl_instagram_id, rows[i].last_following_id, rows[i].last_ip);
+              GO_follow(rows[i].fancrawl_instagram_id, rows[i].last_following_id, '104.131.139.11');
             }
           }
         }
@@ -590,7 +592,8 @@ var https                     = require('https'),
                         if (err) throw err;
                         console.log('Last user added was: ', rows[0].last_following_id);
 
-                        GO_follow( req_query.id , rows[0].last_following_id, req._remoteAddress );
+                        // GO_follow( req_query.id , rows[0].last_following_id, req._remoteAddress );
+                        GO_follow( req_query.id , rows[0].last_following_id, '104.131.139.11' );
                         res.redirect('/fresh?'+url_split[1]);
                       });
 
@@ -618,7 +621,8 @@ var https                     = require('https'),
                         if (err) throw err;
                         console.log('Last user added was: ', rows[0].last_following_id);
 
-                        GO_follow( req_query.id , rows[0].last_following_id, req._remoteAddress);
+                        // GO_follow( req_query.id , rows[0].last_following_id, req._remoteAddress);
+                        GO_follow( req_query.id , rows[0].last_following_id, '104.131.139.11');
                         res.redirect('/fresh?'+url_split[1]);
                       });
                   });
@@ -683,7 +687,6 @@ var https                     = require('https'),
 
             request(options, function (error, response, body) {
               if (!error && response.statusCode == 200) {
-                console.log("req remote ip address: ", req.ip);
                 console.log("body: ", body);
               } else if (error) {
                 console.log(error);
