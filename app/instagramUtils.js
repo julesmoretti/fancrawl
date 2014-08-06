@@ -145,7 +145,8 @@ var https                     = require('https'),
                     };
 
                 request(options, function (error, response, body) {
-                  if(body && body.meta && body.meta.error_type && body.meta.error_type === "OAuthRateLimitException") {
+                  var pbody = JSON.parse(body);
+                  if(pbody && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException") {
                     // stop the search
                     // connection.query('UPDATE access_right set state = "limit" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                     //   if (err) throw err;
