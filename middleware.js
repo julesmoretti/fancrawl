@@ -3,9 +3,11 @@
 //  set up ======================================================================
 var favicon         = require('serve-favicon'),
     bodyParser      = require('body-parser'),
-    morgan          = require('morgan'),
-    sass            = require('node-sass');
+    morgan          = require('morgan');
 
+    if(process.env.LOCAL){
+    sass            = require('node-sass');
+    }
 
   module.exports    = function(app){
 
