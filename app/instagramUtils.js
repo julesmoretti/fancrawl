@@ -156,6 +156,7 @@ var https                     = require('https'),
                       console.log(pbody.meta.error_message);
                     });
                   } else {
+
                     if (!error && response.statusCode == 200) {
                       console.log(body); // Print the google web page.
                       connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
