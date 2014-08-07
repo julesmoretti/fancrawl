@@ -156,7 +156,7 @@ var https                     = require('https'),
 
                 connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
-
+                  var token = rows[0].token;
                   // instagram header secret system
                   var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
                       hmac.setEncoding('hex');
@@ -187,7 +187,7 @@ var https                     = require('https'),
                           function(){
                             console.log('waited 5 minutes for follower: '+new_instagram_following_id);
 
-                            request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+rows[0].token, function (error, response, body) {
+                            request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+token, function (error, response, body) {
                               var pbody = JSON.parse(body);
 
                               if (pbody && pbody.data && pbody.data.incoming_status && pbody.data.incoming_status === "followed_by") {
@@ -202,7 +202,7 @@ var https                     = require('https'),
                                   setTimeout(
                                     function(){
                                       console.log('waited 1 hour for follower: '+new_instagram_following_id);
-                                      request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+rows[0].token, function (error, response, body) {
+                                      request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+token, function (error, response, body) {
                                         var pbody = JSON.parse(body);
 
                                         if (pbody && pbody.data && pbody.data.incoming_status && pbody.data.incoming_status === "followed_by") {
@@ -217,7 +217,7 @@ var https                     = require('https'),
                                             setTimeout(
                                               function(){
                                                 console.log('waited 1 day for follower: '+new_instagram_following_id);
-                                                request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+rows[0].token, function (error, response, body) {
+                                                request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+token, function (error, response, body) {
                                                   var pbody = JSON.parse(body);
                                                   if (pbody && pbody.data && pbody.data.incoming_status && pbody.data.incoming_status === "followed_by") {
                                                     console.log('after 1 day user '+new_instagram_following_id+' follows you back');
@@ -231,7 +231,7 @@ var https                     = require('https'),
                                                       setTimeout(
                                                         function(){
                                                           console.log('waited 2 days for follower: '+new_instagram_following_id);
-                                                          request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+rows[0].token, function (error, response, body) {
+                                                          request('https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship?access_token='+token, function (error, response, body) {
                                                             var pbody = JSON.parse(body);
                                                             if (pbody && pbody.data && pbody.data.incoming_status && pbody.data.incoming_status === "followed_by") {
                                                               console.log('after 2 days user '+new_instagram_following_id+' follows you back');
