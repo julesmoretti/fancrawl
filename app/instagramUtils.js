@@ -65,8 +65,8 @@ var https                     = require('https'),
               timer_call = false;
               check_timer();
             }
-        // }, random_second); // (1~1.5 minute delay)
-        }, 90000); // (1~1.5 minute delay)
+        }, random_second); // (1~1.5 minute delay)
+        // }, 90000); // (1.5 minute delay)
       } else {
         console.log("Timer Extended by 30 minutes");
         setTimeout(
