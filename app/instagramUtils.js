@@ -125,7 +125,7 @@ var https                     = require('https'),
       setTimeout(
         function(){
           GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-      }, 5000 + random_second); // time between adding new followers (5 sec or so wait)
+      }, 5000 ); // time between adding new followers (5 sec or so wait)
     }
     }
 
@@ -174,7 +174,7 @@ var https                     = require('https'),
               setTimeout(
                 function(){
                   GO_follow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-              }, 600000 + random_second); // time between adding new followers (10 min or so wait)
+              }, 600000); // time between adding new followers (10 min or so wait)
 
             // INSTAGRAM USER FOLLOWS YOU BACK
             } else if (pbody && pbody.data && pbody.data.incoming_status && pbody.data.incoming_status === "followed_by") {
@@ -194,7 +194,7 @@ var https                     = require('https'),
                     setTimeout(
                       function(){
                         GO_follow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                    }, 5000 + random_second); // time between adding new followers (5 sec or so wait)
+                    }, 5000); // time between adding new followers (5 sec or so wait)
                   }
                 });
               });
@@ -369,7 +369,7 @@ var https                     = require('https'),
                                 if (err) throw err;
                                 GO_follow( fancrawl_instagram_id, rows[0].last_following_id, ip_address);
                               });
-                          }, 5000 + random_second); // time between adding new followers (5 sec or so wait)
+                          }, 5000); // time between adding new followers (5 sec or so wait)
                         }
                       });
 
@@ -392,7 +392,7 @@ var https                     = require('https'),
                 setTimeout(
                   function(){
                     GO_follow(fancrawl_instagram_id, new_instagram_following_id, ip_address);
-                }, 5000 + random_second); // time between adding new followers (5 sec or so wait)
+                }, 5000); // time between adding new followers (5 sec or so wait)
               }
             }
           });
