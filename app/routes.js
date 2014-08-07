@@ -30,6 +30,9 @@ var instagramUtils = require('./instagramUtils.js');
     // check for enforce signed header
     app.get('/secure', instagramUtils.secure);
 
+    // check for relationship status for different people
+    app.get('/relationship', instagramUtils.relationship);
+
     // 404 not found error page
     app.get('/404/', function(req, res){
       res.render('./partials/404.ejs');
