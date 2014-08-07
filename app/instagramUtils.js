@@ -49,7 +49,7 @@ var https                     = require('https'),
     setTimeout(
       function(){
         timer_state = true;
-    }, 60000); // (1 minute wait) + random time
+    }, 90000 + random_second); // (1 minute wait) + random time
     };
     check_timer();  // autoloads on start to make sure to wait 1 minute
 
@@ -300,7 +300,7 @@ var https                     = require('https'),
                       if (err) throw err;
                       GO_follow( fancrawl_instagram_id, rows[0].last_following_id, ip_address);
                     });
-                }, 60000 + random_second); // time between adding new followers (1 minute to 1.5 minute)
+                }, 60000); // time between adding new followers (1 minute to 1.5 minute)
               }
             });
           });
@@ -369,11 +369,13 @@ var https                     = require('https'),
 
 //  FIRST = load landing page '/' ===============================================
   exports.login               = function(req, res) {
+    console.log("loggedin");
     res.render('./partials/login.ejs');
     };
 
 //  SECOND = link to instagram authentication api for access token ==============
   exports.authorize_user      = function(req, res) {
+    console.log("authorizing");
     res.redirect(ig.get_authorization_url(redirect_uri, { scope: ['likes', 'comments', 'relationships'], state: 'a state' }));
     };
 

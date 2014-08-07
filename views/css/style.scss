@@ -3,6 +3,21 @@
 /** run the following to see changes live **/
 /** nodemon --watch views/css/ -e scss server.js **/
 
+/*@import 'fancrawl';*/
+/*@include fontFace('fancrawl','/views/fonts/ReklameScript-Regular.woff');*/
+
+
+@font-face {
+  font-family: fancrawl;
+  src: url(/views/fonts/ReklameScript-Regular.woff);
+}
+
+@font-face {
+  font-family: access;
+  src: url(/views/fonts/RefrigeratorDeluxe-Heavy.woff);
+}
+
+
 html {
   height: 100%;
 
@@ -117,7 +132,7 @@ html {
           position: relative;
           font-size: 37px;
           color: white;
-          font-family: "refrigerator-deluxe", sans-serif;
+          font-family: "access", sans-serif;
           font-style: normal;
           font-weight: 900;
           opacity: 0.5;
@@ -130,7 +145,7 @@ html {
       }
 
       .fancrawl {
-        font-family: "reklame-script",sans-serif;
+        font-family: "fancrawl",sans-serif;
         font-style: normal;
         font-weight: 700;
         position: relative;
