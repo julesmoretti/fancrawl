@@ -80,7 +80,7 @@ var https                     = require('https'),
     }
 
     };
-    // timer_post();  // autoloads on start to make sure to wait 1 minute
+    timer_post();  // autoloads on start to make sure to wait 1 minute
 
 //  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function() {
@@ -113,7 +113,7 @@ var https                     = require('https'),
     }
 
     };
-    // timer_quick();  // autoloads on start to make sure to wait 1 minute
+    timer_quick();  // autoloads on start to make sure to wait 1 minute
 
 //  ZERO = time difference calculator ===========================================
   var time_difference         = function(original_time, current_time, callback) {
