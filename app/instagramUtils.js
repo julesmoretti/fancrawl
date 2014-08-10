@@ -16,8 +16,6 @@ var https                     = require('https'),
     timer_post_call           = false, // prevents timer function to be run multiple times
     timer_quick_state         = true, // when true timer has gone by enough time for another regular request
     timer_quick_call          = false, // prevents timer function to be run multiple times
-    random_minute             = (Math.floor(((Math.random() * 30) + 0)*1000)) + 60000, // random millisecond generator between 30 ~ 0 sec
-    random_second             = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600, // random millisecond generator between 30 ~ 0 sec
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -40,6 +38,9 @@ var https                     = require('https'),
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function() {
+    // random minute generator between 1 ~ 1.5 min
+    var random_minute = (Math.floor(((Math.random() * 30) + 0)*1000)) + 60000;
+
     if (timer_post_call) {
       return;
     } else {
@@ -74,6 +75,9 @@ var https                     = require('https'),
 
 //  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function() {
+    // random second generator between 3.6 ~ 5.6 sec
+    var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600;
+
     if (timer_quick_call) {
     } else {
       timer_quick_state = false;
@@ -396,7 +400,6 @@ var https                     = require('https'),
 
         // CHECK RELATIONSHIP
         relationship(fancrawl_instagram_id, new_instagram_following_id, function(status){
-          console.log("the status is: ", status);
 
           // OAUTH LIMIT REACHED
           if( status === "oauth_limit" ){
