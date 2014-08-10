@@ -2,5 +2,6 @@ app/temp.js
 media_work
 node_modules
 npm-debug.log
+PROCESS.js
 schema_data.sql
 temp.md
