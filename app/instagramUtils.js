@@ -1,16 +1,15 @@
 //  app/instagramUtils.js
 
+//  TODO - fix node-sass on server side
 
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
 //  =============================================================================
 
 var https                     = require('https'),
-    ig                        = require('instagram-node').instagram(),
     _                         = require('underscore'),
     crypto                    = require('crypto'),
     request                   = require('request'),
-    redirect_uri              = process.env.INSURIREDIRECT,
     mysql                     = require('mysql'),
     lean_timer                = true, // when true time steps is normal, otherwise max request reached so prolongs timer
     timer_post_state          = true, // when true timer has gone by enough time for another post request
@@ -35,18 +34,9 @@ var https                     = require('https'),
                                       console.log('connected as id ' + connection.threadId);
                                      });
 
-    ig.use({
-            client_id: process.env.FANCRAWLCLIENTID,
-            client_secret: process.env.FANCRAWLCLIENTSECRET
-           });
-
-// TODO - cross check with secure database on unfollowing.
-// TODO - fix node-sass on server side
-
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
 //  =============================================================================
-
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function() {
@@ -170,13 +160,15 @@ var https                     = require('https'),
             if (pbody) {
 
               // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
-              if (pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
+              if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
                 // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
                 console.log(new_instagram_following_id+" does not exist");
                 callback("not_exit");
 
-              // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-
+              // OAUTH TOKEN EXPIRED
+              } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
+                // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
+                console.log("MUST LOG IN AGAIN - NEED NEW TOKEN");
 
               // OAUTH TIME LIMIT REACHED LET TIMER KNOW AND TRIES AGAIN
               } else if( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
@@ -339,7 +331,7 @@ var https                     = require('https'),
     }
 
 //  ZERO = follow function ======================================================
-  var GO_follow             = function (fancrawl_instagram_id, new_instagram_following_id){
+  var GO_follow               = function (fancrawl_instagram_id, new_instagram_following_id){
     if (timer_post_state) {
       timer_post();
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -392,7 +384,7 @@ var https                     = require('https'),
     }
 
 //  ZERO = follow crawler function ==============================================
-  var verify               = function(fancrawl_instagram_id, new_instagram_following_id, is_new){
+  var verify                  = function(fancrawl_instagram_id, new_instagram_following_id, is_new){
 
     // CHECK STATE
     connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -533,9 +525,6 @@ var https                     = require('https'),
 
 //  ZERO = server restart check =================================================
   var GO_start                = function(){
-
-    // TODO when start check back on previous data to make sure that the it is on count 4... if not.. then they should check again...
-    // means refactoring the setTimeout.
     connection.query('SELECT fancrawl_instagram_id FROM access_right where state = "started"', function(err, rows, fields) {
       if (err) throw err;
       if( rows && rows[0] ) {
@@ -554,7 +543,6 @@ var https                     = require('https'),
         }
       }
     });
-
     }();
 
 
@@ -571,47 +559,59 @@ var https                     = require('https'),
 //  SECOND = link to instagram authentication api for access token ==============
   exports.authorize_user      = function(req, res) {
     console.log("authorizing");
-    res.redirect(ig.get_authorization_url(redirect_uri, { scope: ['likes', 'comments', 'relationships'], state: 'a state' }));
+    // https://instagram.com/accounts/login/?next=/oauth/authorize%3Fclient_id%3D8527a4d35d6c4d63b9006f6233dd4860%26redirect_uri%3Dhttp%253A%252F%252Flocalhost%253A3000%252Fauth%252Finstagram%252Fcallback%26response_type%3Dcode%26state%3Da%2520state%26scope%3Dlikes%2Bcomments%2Brelationships
+    var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
+    res.redirect(url);
+    // res.redirect(ig.get_authorization_url(redirect_uri, { scope: ['likes', 'comments', 'relationships'], state: 'a state' }));
     };
 
 //  THIRD = handle instagram response and check access rights ===================
   exports.handleauth          = function(req, res) {
     // queryCode           = req.query.code;
 
-    ig.authorize_user(req.query.code, redirect_uri, function(err, result) {
+    // form data
+    var data = {'client_id' : process.env.FANCRAWLCLIENTID,
+                 'client_secret' : process.env.FANCRAWLCLIENTSECRET,
+                 'grant_type' : 'authorization_code',
+                 'redirect_uri' : process.env.INSURIREDIRECT,
+                 'code' : req.query.code
+                };
 
-      // profile_picture     = result.user.profile_picture;
-      // token               = result.access_token;
-      // full_name           = result.user.full_name;
-      // userName            = result.user.username;
-      // id                  = result.user.id;
+    // configure the request
+    var options = {
+        uri: 'https://api.instagram.com/oauth/access_token',
+        method: 'POST',
+        form: data
+    }
 
-      if (err) {
+    // request for the token and data back
+    request(options, function (error, response, body) {
+      var pbody = JSON.parse(body);
+
+      if (error) {
         console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + err.body);
         res.redirect('/404/');
         return;
       } else {
-        connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ result.user.id, function(err, rows, fields) {
+        connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
 
-          if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === result.user.username){
+          if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
             console.log("User granted");
 
-              connection.query('UPDATE access_right set fancrawl_full_name = "'+result.user.full_name+'", code = "'+req.query.code+'", token = "'+result.access_token+'", fancrawl_profile_picture = "'+result.user.profile_picture+'" where fancrawl_instagram_id = '+ result.user.id, function(err, rows, fields) {
+              connection.query('UPDATE access_right set fancrawl_full_name = "'+pbody.user.full_name+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
                 if (err) throw err;
-                res.redirect('/fresh?user='+result.user.username+'&id='+result.user.id);
+                res.redirect('/fresh?user='+pbody.user.username+'&id='+pbody.user.id);
                 return;
               });
 
             return;
           } else {
             console.log("User not granted");
-            // connection.end();
             res.redirect('/404/');
             return;
           }
         });
-
       }
     });
     };
@@ -891,97 +891,3 @@ var https                     = require('https'),
     return;
     };
 
-
-//  =============================================================================
-//  TESTING SECTION SECTIONS
-//  =============================================================================
-
-//  XXXX = check for enforce signed header ======================================
-  exports.secure              = function(req, res) {
-    if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
-      console.log("has valid structure");
-
-      // check access rights from database.
-      connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
-        if (err) throw err;
-
-        if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
-          console.log("User not granted");
-          res.redirect('/404/');
-          return;
-
-        } else {
-          console.log("User granted");
-
-          connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
-            if (err) throw err;
-            // instagram header secret system
-            var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
-                hmac.setEncoding('hex');
-                hmac.write(process.env.LOCALIP);
-                hmac.end();
-            var hash = hmac.read();
-
-            // Set the headers
-            var headers = {
-                'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
-            }
-
-            // Configure the request
-            var options = {
-                uri: 'https://api.instagram.com/v1/media/657988443280050001_25025320/likes',
-                qs: {'access_token': rows[0].token},
-                method: 'POST',
-                headers: headers,
-                form:{action:'unfollow'}
-            }
-
-            request(options, function (error, response, body) {
-              if (!error && response.statusCode == 200) {
-                console.log("secure body: ", body);
-              } else if (error) {
-                console.log("secure error: ", error);
-              }
-            });
-          });
-        }
-      });
-    } else {
-      console.log("Missing information");
-      res.redirect('/404/');
-    }
-    };
-
-//  XXXX = check for response status ============================================
-  exports.relationship        = function(req, res) {
-
-    if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
-      console.log("has valid structure");
-
-      // check access rights from database.
-      connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
-        if (err) throw err;
-
-        if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
-          console.log("User not granted");
-          res.redirect('/404/');
-          return;
-
-        } else {
-          console.log("User granted");
-
-          connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
-            if (err) throw err;
-            request('https://api.instagram.com/v1/users/1/relationship?access_token='+rows[0].token, function (error, response, body) {
-                console.log('Relationship body: ', body);
-                console.log('Relationship error: ', error);
-            });
-          });
-
-        }
-      });
-    } else {
-      console.log("Missing information");
-      res.redirect('/404/');
-    }
-    };
