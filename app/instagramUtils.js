@@ -452,7 +452,7 @@ var https                     = require('https'),
 
 //  ZERO = check status of current database users ===============================
   var check_database          = function(fancrawl_instagram_id) {
-    connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND following_status = 1', function(err, rows, fields) {
+    connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
       if (err) throw err;
       for( var i = 0; i < rows.length; i++ ){
 
@@ -539,7 +539,7 @@ var https                     = require('https'),
             connection.query('select MAX(beta_followers.added_follower_instagram_id) from beta_followers where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
               if (err) throw err;
               var last = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
-              // verify(user, last, "new");
+              verify(user, last, "new");
             });
 
           }
