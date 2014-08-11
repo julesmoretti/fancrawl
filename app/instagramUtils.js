@@ -11,11 +11,7 @@ var https                     = require('https'),
     crypto                    = require('crypto'),
     request                   = require('request'),
     mysql                     = require('mysql'),
-    lean_timer                = true, // when true time steps is normal, otherwise max request reached so prolongs timer
-    timer_post_state          = true, // when true timer has gone by enough time for another post request
-    timer_post_call           = false, // prevents timer function to be run multiple times
-    timer_quick_state         = true, // when true timer has gone by enough time for another regular request
-    timer_quick_call          = false, // prevents timer function to be run multiple times
+    timer                     = {},
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -37,25 +33,37 @@ var https                     = require('https'),
 //  =============================================================================
 
 //  ZERO = neutral timer function for post requests =============================
-  var timer_post              = function() {
+  var timer_post              = function(user) {
     // random minute generator between 1 ~ 1.5 min
     var random_minute = (Math.floor(((Math.random() * 30) + 0)*1000)) + 60000;
 
-    if (timer_post_call) {
+    if ( !timer[user] ) {
+      timer[user] = {};
+      timer[user].lean = true; // when true time steps is normal, otherwise max request reached so prolongs timer
+      timer[user].post_call = false; // prevents timer function to be run multiple times
+      timer[user].post_state = true; // when true timer has gone by enough time for another post request
+    } else if ( !timer[user].post_call ) {
+      timer[user].post_call = false;
+      timer[user].post_state = true;
+    }
+
+    if (timer[user].post_call) {
+      // does nothing
       return;
+
     } else {
-      timer_post_state = false;
-      timer_post_call = true;
-      if (lean_timer){
+      timer[user].post_call = true;
+      timer[user].post_state = false;
+      if (timer[user].lean){
         console.log("TIMER POST");
         setTimeout(
           function(){
-            if(lean_timer){
-              timer_post_state = true;
-              timer_post_call = false;
+            if(timer[user].lean){
+              timer[user].post_state = true;
+              timer[user].post_call = false;
             } else {
-              timer_post_call = false;
-              timer_post();
+              timer[user].post_call = false;
+              timer_post(user);
             }
         }, random_minute); // (1~1.5 minute delay)
         // }, 90000); // (1.5 minute delay)
@@ -63,35 +71,48 @@ var https                     = require('https'),
         console.log("TIMER POST - Extended by 30 minutes");
         setTimeout(
           function(){
-            lean_timer = true;
-            timer_post_state = true;
-            timer_post_call = false;
+            timer[user].lean = true;
+            timer[user].post_state = true;
+            timer[user].post_call = false;
         }, 1800000); // (30 minute delay)
       }
     }
 
     };
-    timer_post();  // autoloads on start to make sure to wait 1 minute
+    // timer_post();  // autoloads on start to make sure to wait 1 minute
 
 //  ZERO = neutral timer function for regular request ===========================
-  var timer_quick             = function() {
+  var timer_quick             = function(user) {
     // random second generator between 3.6 ~ 5.6 sec
     var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600;
 
-    if (timer_quick_call) {
+    if ( !timer[user] ) {
+      timer[user] = {};
+      timer[user].lean = true; // when true time steps is normal, otherwise max request reached so prolongs timer
+      timer[user].quick_call = false; // prevents timer function to be run multiple times
+      timer[user].quick_state = true; // when true timer has gone by enough time for another regular request
+    } else if ( !timer[user].quick_call ) {
+      timer[user].quick_call = false;
+      timer[user].quick_state = true;
+    }
+
+    if (timer[user].quick_call) {
+      // does nothing
+      return;
+
     } else {
-      timer_quick_state = false;
-      timer_quick_call = true;
-      if (lean_timer){
+      timer[user].quick_state = false;
+      timer[user].quick_call = true;
+      if (timer[user].lean){
         console.log("TIMER QUICK");
         setTimeout(
           function(){
-            if(lean_timer){
-              timer_quick_state = true;
-              timer_quick_call = false;
+            if(timer[user].lean){
+              timer[user].quick_state = true;
+              timer[user].quick_call = false;
             } else {
-              timer_quick_call = false;
-              timer_quick();
+              timer[user].quick_call = false;
+              timer[user].quick();
             }
         }, random_second); // (1~1.5 second delay)
         // }, 90000); // (1.5 minute delay)
@@ -99,15 +120,15 @@ var https                     = require('https'),
         console.log("TIMER QUICK - Extended by 30 minutes");
         setTimeout(
           function(){
-            lean_timer = true;
-            timer_quick_state = true;
-            timer_post_call = false;
+            timer[user].lean = true;
+            timer[user].quick_state = true;
+            timer[user].post_call = false;
         }, 1800000); // (30 minute delay)
       }
     }
 
     };
-    timer_quick();  // autoloads on start to make sure to wait 1 minute
+    // timer_quick();  // autoloads on start to make sure to wait 1 minute
 
 //  ZERO = time difference calculator ===========================================
   var time_difference         = function(original_time, current_time, callback) {
@@ -133,8 +154,12 @@ var https                     = require('https'),
 
 //  ZERO = check user relationship ==============================================
   var relationship            = function(fancrawl_instagram_id, new_instagram_following_id, callback) {
-    if (timer_quick_state) {
-      timer_quick();
+    if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].quick_state ) {
+      timer_quick(fancrawl_instagram_id);
+    }
+
+    if (timer[fancrawl_instagram_id].quick_state) {
+      timer_quick(fancrawl_instagram_id);
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
@@ -260,8 +285,12 @@ var https                     = require('https'),
       var followed_by_status = 0;
     }
 
-    if (timer_post_state) {
-      timer_post();
+    if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
+      timer_post(fancrawl_instagram_id);
+    }
+
+    if (timer[fancrawl_instagram_id].post_state) {
+      timer_post(fancrawl_instagram_id);
 
       connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
         if (err) throw err;
@@ -336,8 +365,13 @@ var https                     = require('https'),
 
 //  ZERO = follow function ======================================================
   var GO_follow               = function (fancrawl_instagram_id, new_instagram_following_id){
-    if (timer_post_state) {
-      timer_post();
+    if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
+      timer_post(fancrawl_instagram_id);
+    }
+
+    if (timer[fancrawl_instagram_id].post_state) {
+      timer_post(fancrawl_instagram_id);
+
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
         // instagram header secret system
@@ -404,12 +438,16 @@ var https                     = require('https'),
           // OAUTH LIMIT REACHED
           if( status === "oauth_limit" ){
 
+            if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
+              timer_post(fancrawl_instagram_id);
+            }
+
             // DELAY TIMER
-            lean_timer = false;
-            timer_post();
+            timer[fancrawl_instagram_id].lean = false;
+            timer_post(fancrawl_instagram_id);
 
             // CHECK TIMER IF ACTIF OR NOT
-            if ( timer_post_state ) {
+            if ( timer[fancrawl_instagram_id].post_state ) {
               // verify again
               verify( fancrawl_instagram_id, new_instagram_following_id);
             } else {
@@ -535,6 +573,7 @@ var https                     = require('https'),
           if ( rows[i].fancrawl_instagram_id ){
           var user = rows[i].fancrawl_instagram_id
           console.log("SERVER RESTART STARTING FETCH AGAIN");
+
             check_database(rows[i].fancrawl_instagram_id);
             connection.query('select MAX(beta_followers.added_follower_instagram_id) from beta_followers where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
               if (err) throw err;
@@ -604,6 +643,9 @@ var https                     = require('https'),
 
               connection.query('UPDATE access_right set fancrawl_full_name = "'+pbody.user.full_name+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
                 if (err) throw err;
+                timer_post( pbody.user.id ); // setup timer structure on start
+                timer_quick( pbody.user.id ); // setup timer structure on start
+
                 res.redirect('/fresh?user='+pbody.user.username+'&id='+pbody.user.id);
                 return;
               });
@@ -817,6 +859,8 @@ var https                     = require('https'),
     var original_url  = req.headers.referer,
         url_split     = original_url.split("?"),
         req_query     = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
+
+
 
     if (JSON.stringify(req_query).length !== 2 && req_query.user !== undefined && req_query.id !== undefined) {
       console.log("has valid structure");
