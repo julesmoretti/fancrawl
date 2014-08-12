@@ -1,6 +1,7 @@
 //  app/instagramUtils.js
 
 //  TODO - fix node-sass on server side
+//  TODO - organize and cap the count of people to add
 
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
@@ -131,7 +132,7 @@ var https                     = require('https'),
     // timer_quick();  // autoloads on start to make sure to wait 1 minute
 
 //  ZERO = time difference calculator ===========================================
-  var time_difference         = function(original_time, current_time, callback) {
+  var time_difference         = function(fancrawl_instagram_id, new_instagram_following_id, original_time, current_time, callback) {
     // 1407473384 UNIX TIME in seconds
     var five_min              = 300, // 5 minutes in seconds
         one_hour              = 3600, // 1 hour in seconds
@@ -140,20 +141,20 @@ var https                     = require('https'),
         time_diff             = current_time - original_time;
 
     if( time_diff < five_min ){
-      callback(0);
+      callback(fancrawl_instagram_id, new_instagram_following_id, 0);
     } else if( time_diff < one_hour ){
-      callback(1);
+      callback(fancrawl_instagram_id, new_instagram_following_id, 1);
     } else if( time_diff < one_day ){
-      callback(2);
+      callback(fancrawl_instagram_id, new_instagram_following_id, 2);
     } else if( time_diff < tow_days ){
-      callback(3);
+      callback(fancrawl_instagram_id, new_instagram_following_id, 3);
     } else {
-      callback(4);
+      callback(fancrawl_instagram_id, new_instagram_following_id, 4);
     }
     };
 
 //  ZERO = check user relationship ==============================================
-  var relationship            = function(fancrawl_instagram_id, new_instagram_following_id, callback) {
+  var relationship            = function(fancrawl_instagram_id, new_instagram_following_id, code, callback) {
     if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].quick_state ) {
       timer_quick(fancrawl_instagram_id);
     }
@@ -192,7 +193,7 @@ var https                     = require('https'),
               if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
                 // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
                 console.log(new_instagram_following_id+" does not exist");
-                callback("not_exit");
+                callback(fancrawl_instagram_id, new_instagram_following_id, code, "not_exit");
 
               // OAUTH TOKEN EXPIRED
               } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
@@ -203,7 +204,7 @@ var https                     = require('https'),
               } else if( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
                 console.log("GO_follow limit reach ("+new_instagram_following_id+"): ", body);
-                callback("oauth_limit");
+                callback(fancrawl_instagram_id, new_instagram_following_id, code, "oauth_limit");
 
               } else if ( pbody.data ) {
 
@@ -217,20 +218,20 @@ var https                     = require('https'),
                     if( pbody.data.outgoing_status === "none" ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"none"}}
                       console.log( "you and user: "+new_instagram_following_id+" are not following one another" );
-                      callback("neither");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "neither");
 
                     // ONLY FOLLOWS NEW USER
                     } else if( pbody.data.outgoing_status === "requested"  ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"none"}}
                       console.log( "you have requested to follow this user: "+new_instagram_following_id );
-                      callback("requested");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "requested");
 
 
                     // ONLY FOLLOWS NEW USER
                     } else if( pbody.data.outgoing_status === "follows"  ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"none"}}
                       console.log( "you are only following user: "+new_instagram_following_id );
-                      callback("follows");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "follows");
                     }
 
                   } else if( pbody.data.incoming_status === "followed_by" ) {
@@ -239,39 +240,39 @@ var https                     = require('https'),
                     if( pbody.data.outgoing_status === "none" ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"followed_by"}}
                       console.log( new_instagram_following_id+" is following you back" );
-                      callback("followed_by");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "followed_by");
 
                     // BOTH FOLLOW AND FOLLOWED_BY BACK
                     } else if( pbody.data.outgoing_status === "requested" ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
                       console.log( "You are following user: "+new_instagram_following_id+" and he is following you back" );
-                      callback("followed_by_and_requested");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "followed_by_and_requested");
 
                     // BOTH FOLLOW AND FOLLOWED_BY BACK
                     } else if( pbody.data.outgoing_status === "follows" ) {
                       // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
                       console.log( "You are following user: "+new_instagram_following_id+" and he is following you back" );
-                      callback("both");
+                      callback(fancrawl_instagram_id, new_instagram_following_id, code, "both");
 
                     }
                   }
 
                 } else {
                   console.log("Relationship did not pick up on this body ("+new_instagram_following_id+"): ", body);
-                  callback("error");
+                  callback(fancrawl_instagram_id, new_instagram_following_id, code, "error");
                 }
 
               }
             } else if (error) {
               console.log("Relationship error ("+new_instagram_following_id+"): ", error);
-              callback("error");
+              callback(fancrawl_instagram_id, new_instagram_following_id, code, "error");
             }
         });
       });
     } else {
       setTimeout(
         function(){
-          relationship(fancrawl_instagram_id, new_instagram_following_id, callback);
+          relationship(fancrawl_instagram_id, new_instagram_following_id, code, callback);
       }, 1000 ); // time between adding new followers (0.5 sec or so wait)
     }
     };
@@ -296,7 +297,7 @@ var https                     = require('https'),
         if (err) throw err;
 
         // CHECK TIME DIFFERENCE
-        time_difference(rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function(code){
+        time_difference(fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function(fancrawl_instagram_id, new_instagram_following_id, code){
           var count = code;
 
 
@@ -397,13 +398,34 @@ var https                     = require('https'),
 
         request(options, function (error, response, body) {
           if (!error && response.statusCode == 200) {
-            console.log("follow body ("+new_instagram_following_id+"): ", body); // Print the google web page.
-            if( body && body.data ) {
-              if( body.data.outgoing_status ){
-                if ( body.data.outgoing_status === "follows" || body.data.outgoing_status === "requested" ) {
+            console.log("follow body ("+new_instagram_following_id+"): ", body);
+            var pbody = JSON.parse(body);
+            if( pbody && pbody.data ) {
+              if( pbody.data.outgoing_status ){
+                if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
                   connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
                     if (err) throw err;
-                    console.log("GO_follow body ("+new_instagram_following_id+"): ", body);
+                    console.log("GO_follow body ("+new_instagram_following_id+"): ", pbody);
+                    // goes to verify after 5 min
+                    setTimeout(
+                      function(){
+                        verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                        // goes to verify after 1 hour
+                        setTimeout(
+                          function(){
+                            verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                            // goes to verify after 1 day
+                            setTimeout(
+                              function(){
+                                verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                              // goes to verify after 1 day
+                              setTimeout(
+                                function(){
+                                  verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                              }, 172800000); // time between adding new followers (2 day wait)
+                            }, 86400000); // time between adding new followers (1 day wait)
+                        }, 3600000); // time between adding new followers (1 hour wait)
+                    }, 300000); // time between adding new followers (5 min wait)
                   });
                 }
               }
@@ -423,70 +445,156 @@ var https                     = require('https'),
 
 //  ZERO = follow crawler function ==============================================
   var verify                  = function(fancrawl_instagram_id, new_instagram_following_id, is_new){
-
     // CHECK STATE
     connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
 
       // GOES ON WITH PROCESS IF STARTED STATE
-      if (rows[0].state === 'started') {
-        var next_follower = ( parseInt(new_instagram_following_id) + 1);
-
-        // CHECK RELATIONSHIP
-        relationship(fancrawl_instagram_id, new_instagram_following_id, function(status){
-
-          // OAUTH LIMIT REACHED
-          if( status === "oauth_limit" ){
-
-            if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
-              timer_post(fancrawl_instagram_id);
-            }
-
-            // DELAY TIMER
-            timer[fancrawl_instagram_id].lean = false;
-            timer_post(fancrawl_instagram_id);
-
-            // CHECK TIMER IF ACTIF OR NOT
-            if ( timer[fancrawl_instagram_id].post_state ) {
-              // verify again
-              verify( fancrawl_instagram_id, new_instagram_following_id);
-            } else {
-              setTimeout(
-                function(){
-                  // GO_follow again
-                  verify(fancrawl_instagram_id, new_instagram_following_id);
-              }, 60000); // time between adding new followers (1 min wait)
-            }
-
-
-          // DOES NOT EXIST + ALREADY FOLLOWING + ALREADY REQUESTED + NEW USER + FOLLOWS YOU BACK
-          } else if( status === "not_exit" || status === "neither" || status === "follows"  || status === "requested" || status === "both" || status === "followed_by_and_requested" || status === "followed_by" ) {
-
-            // IS A NEW USER
-            if( status === "neither" ) {
-              if ( is_new === "new" ) {
-                GO_follow( fancrawl_instagram_id, new_instagram_following_id);
-              }
-
-            // FOLLOWED BY BACK
-            } else if( status === "both" || status === "followed_by" || status === "followed_by_and_requested" ) {
-              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, "followed_by");
-
-            }
-
-            if ( is_new === "new" ) {
-              verify( fancrawl_instagram_id, next_follower, "new");
-            }
-
-          // ERROR
-          } else if( status === "error" ) {
-            return;
-          }
-
-        });
-      } else {
+      if (rows[0].state !== 'started') {
         console.log("State has been stopped")
       }
+
+
+      connection.query('SELECT UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+
+        var next_follower = ( parseInt(new_instagram_following_id) + 1);
+
+        // ALREADY STORED IN DB
+        if (rows[0]){
+
+          // CHECK TIME DIFFERENCE
+          time_difference(fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function(fancrawl_instagram_id, new_instagram_following_id, code){
+
+            // CHECK RELATIONSHIP
+            relationship(fancrawl_instagram_id, new_instagram_following_id, code, function(fancrawl_instagram_id, new_instagram_following_id, code, status){
+
+              // OAUTH LIMIT REACHED
+              if( status === "oauth_limit" ){
+
+                if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
+                  timer_post(fancrawl_instagram_id);
+                }
+
+                // DELAY TIMER
+                timer[fancrawl_instagram_id].lean = false;
+                timer_post(fancrawl_instagram_id);
+
+                // CHECK TIMER IF ACTIF OR NOT
+                if ( timer[fancrawl_instagram_id].post_state ) {
+                  // verify again
+                  verify( fancrawl_instagram_id, new_instagram_following_id);
+                } else {
+                  setTimeout(
+                    function(){
+                      // GO_follow again
+                      verify(fancrawl_instagram_id, new_instagram_following_id);
+                  }, 60000); // time between adding new followers (1 min wait)
+                }
+
+              // DOES NOT EXIST + ALREADY FOLLOWING + ALREADY REQUESTED + NEW USER + FOLLOWS YOU BACK
+              } else if( status === "not_exit" || status === "neither" || status === "follows"  || status === "requested" || status === "both" || status === "followed_by_and_requested" || status === "followed_by" ) {
+
+                // IS A NEW USER
+                if( status === "neither" ) {
+                  if ( is_new === "new" ) {
+                    connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      if( rows[0].state === 'started' ) {
+                        GO_follow( fancrawl_instagram_id, new_instagram_following_id);
+                      }
+                    });
+                  }
+
+                // FOLLOWED BY BACK
+                } else if( status === "both" || status === "followed_by" || status === "followed_by_and_requested" ) {
+                  GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, "followed_by");
+
+                // ONLY FOLLOWING
+                } else if ( status === "follows" && code === 4 ) {
+                  GO_unfollow(fancrawl_instagram_id, new_instagram_following_id);
+
+                } else if ( status === "requested" && code === 4 ) {
+                  GO_unfollow(fancrawl_instagram_id, new_instagram_following_id);
+
+                }
+
+
+                if ( is_new === "new" ) {
+                  verify( fancrawl_instagram_id, next_follower, "new");
+                }
+
+              // ERROR
+              } else if( status === "error" ) {
+                return;
+              }
+
+            });
+
+          });
+
+        // NOT STORED IN DB
+        } else {
+          // CHECK RELATIONSHIP
+          relationship(fancrawl_instagram_id, new_instagram_following_id, "" , function(fancrawl_instagram_id, new_instagram_following_id, code, status){
+
+            // OAUTH LIMIT REACHED
+            if( status === "oauth_limit" ){
+
+              if (!timer[fancrawl_instagram_id] || !timer[fancrawl_instagram_id].post_state ) {
+                timer_post(fancrawl_instagram_id);
+              }
+
+              // DELAY TIMER
+              timer[fancrawl_instagram_id].lean = false;
+              timer_post(fancrawl_instagram_id);
+
+              // CHECK TIMER IF ACTIF OR NOT
+              if ( timer[fancrawl_instagram_id].post_state ) {
+                // verify again
+                verify( fancrawl_instagram_id, new_instagram_following_id);
+              } else {
+                setTimeout(
+                  function(){
+                    // GO_follow again
+                    verify(fancrawl_instagram_id, new_instagram_following_id);
+                }, 60000); // time between adding new followers (1 min wait)
+              }
+
+
+            // DOES NOT EXIST + ALREADY FOLLOWING + ALREADY REQUESTED + NEW USER + FOLLOWS YOU BACK
+            } else if( status === "not_exit" || status === "neither" || status === "follows"  || status === "requested" || status === "both" || status === "followed_by_and_requested" || status === "followed_by" ) {
+
+              // IS A NEW USER
+              if( status === "neither" ) {
+                if ( is_new === "new" ) {
+                  // check started
+                  connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    if( rows[0].state === 'started' ) {
+                      GO_follow( fancrawl_instagram_id, new_instagram_following_id);
+                    }
+                  });
+                }
+
+              // FOLLOWED BY BACK
+              } else if( status === "both" || status === "followed_by" || status === "followed_by_and_requested" ) {
+                GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, "followed_by");
+
+              }
+
+              if ( is_new === "new" ) {
+                verify( fancrawl_instagram_id, next_follower, "new");
+              }
+
+            // ERROR
+            } else if( status === "error" ) {
+              return;
+            }
+
+          });
+        }
+      });
     });
     };
 
@@ -499,65 +607,69 @@ var https                     = require('https'),
         var new_user = rows[i].added_follower_instagram_id;
 
         // CHECK TIME DIFFERENCE
-        time_difference(rows[i]['UNIX_TIMESTAMP(creation_date)'], rows[i]['UNIX_TIMESTAMP(now())'], function(code){
-          var count = code;
-          var X_new_user = new_user;
+        time_difference(fancrawl_instagram_id, new_user, rows[i]['UNIX_TIMESTAMP(creation_date)'], rows[i]['UNIX_TIMESTAMP(now())'], function(fancrawl_instagram_id, new_instagram_following_id, code){
 
           // CHECK RELATIONSHIP
-          relationship(fancrawl_instagram_id, new_user, function(status){
+          relationship(fancrawl_instagram_id, new_user, code , function( fancrawl_instagram_id, new_instagram_following_id, code, status ){
             if( status === "followed_by" || status === "both" || status === "followed_by_and_requested" ){
-              GO_unfollow(fancrawl_instagram_id, X_new_user, "followed_by");
+              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id, "followed_by");
 
-            } else if ( count === 4 ){
-              GO_unfollow(fancrawl_instagram_id, X_new_user);
+            } else if ( code === 4 ){
+              GO_unfollow(fancrawl_instagram_id, new_instagram_following_id);
             } else {
               // update code status
-              connection.query('UPDATE beta_followers SET count = '+count+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+X_new_user+'"', function(err, rows, fields) {
+              connection.query('UPDATE beta_followers SET count = '+code+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                 if (err) throw err;
-                var time_start  = JSON.parse(rows[i]['UNIX_TIMESTAMP(creation_date)']),
-                    time_now    = JSON.parse(rows[i]['UNIX_TIMESTAMP(now())']),
-                    time_diff     = (time_now - time_start) * 1000;
 
-                // less then 2 days
-                if ( count === 3 ) {
-                  var two_days  = 1000 * 60 * 60 * 48,
-                      delay     = two_days - time_diff;
+                connection.query('SELECT UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                  if (err) throw err;
 
-                  setTimeout(
-                    function(){
-                    verify(fancrawl_instagram_id, X_new_user, "old");
-                  }, delay); // time between adding new followers (1 min wait)
+                  var time_start  = JSON.parse(rows[0]['UNIX_TIMESTAMP(creation_date)']),
+                      time_now    = JSON.parse(rows[0]['UNIX_TIMESTAMP(now())']),
+                      time_diff     = (time_now - time_start) * 1000;
 
-                // less then 1 day
-                } else if ( count === 2 ) {
-                  var one_day   = 1000 * 60 * 60 * 24,
-                      delay     = one_day - time_diff;
+                  // less then 2 days
+                  if ( code === 3 ) {
+                    var two_days  = 1000 * 60 * 60 * 48,
+                        delay     = two_days - time_diff;
 
-                  setTimeout(
-                    function(){
-                    verify(fancrawl_instagram_id, X_new_user, "old");
-                  }, delay); // time between adding new followers (1 min wait)
+                    setTimeout(
+                      function(){
+                      verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                    }, delay); // time between adding new followers (1 min wait)
 
-                // less then 1 hour
-                } else if ( count === 1 ) {
-                  var one_hour  = 1000 * 60 * 60,
-                      delay     = one_hour - time_diff;
+                  // less then 1 day
+                  } else if ( code === 2 ) {
+                    var one_day   = 1000 * 60 * 60 * 24,
+                        delay     = one_day - time_diff;
 
-                  setTimeout(
-                    function(){
-                    verify(fancrawl_instagram_id, X_new_user, "old");
-                  }, delay); // time between adding new followers (1 min wait)
+                    setTimeout(
+                      function(){
+                      verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                    }, delay); // time between adding new followers (1 min wait)
 
-                // less then 5 min
-                } else if ( count === 0 ) {
-                  var five_min  = 1000 * 60 * 5,
-                      delay     = five_min - time_diff;
+                  // less then 1 hour
+                  } else if ( code === 1 ) {
+                    var one_hour  = 1000 * 60 * 60,
+                        delay     = one_hour - time_diff;
 
-                  setTimeout(
-                    function(){
-                    verify(fancrawl_instagram_id, X_new_user, "old");
-                  }, delay); // time between adding new followers (1 min wait)
-                }
+                    setTimeout(
+                      function(){
+                      verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                    }, delay); // time between adding new followers (1 min wait)
+
+                  // less then 5 min
+                  } else if ( code === 0 ) {
+                    var five_min  = 1000 * 60 * 5,
+                        delay     = five_min - time_diff;
+
+                    setTimeout(
+                      function(){
+                      verify(fancrawl_instagram_id, new_instagram_following_id, "old");
+                    }, delay); // time between adding new followers (1 min wait)
+                  }
+                });
+
               });
             }
           });
@@ -575,14 +687,12 @@ var https                     = require('https'),
           if ( rows[i].fancrawl_instagram_id ){
           var user = rows[i].fancrawl_instagram_id
           console.log("SERVER RESTART STARTING FETCH AGAIN");
-
             check_database(rows[i].fancrawl_instagram_id);
             connection.query('select MAX(beta_followers.added_follower_instagram_id) from beta_followers where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
               if (err) throw err;
               var last = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
               verify(user, last, "new");
             });
-
           }
         }
       }
