@@ -587,6 +587,118 @@ var https                     = require('https'),
     });
     }();
 
+//  ZERO = Get list of followed_by user =========================================
+  var GET_follows         = function(fancrawl_instagram_id, pagination, callback) {
+    connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      if (err) throw err;
+      // instagram header secret system
+      var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+          hmac.setEncoding('hex');
+          hmac.write(process.env.LOCALIP);
+          hmac.end();
+      var hash = hmac.read();
+
+      // Set the headers
+      var headers = {
+          'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+      }
+
+      // Configure the request
+      var options = {
+          uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
+          qs: {'access_token': rows[0].token},
+          method: 'GET',
+          headers: headers,
+      }
+
+      if ( pagination ) {
+        options.qs.cursor = pagination;
+      }
+
+      request(options, function (error, response, body) {
+        var pbody = JSON.parse(body);
+        if ( !error && response.statusCode == 200 ) {
+          if ( pbody.data) {
+            for ( var i = 0; i < pbody.data.length; i++ ) {
+              connection.query('INSERT INTO s_following set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", following_full_name = '+JSON.stringify(pbody.data[i].full_name)+', following_username = "'+pbody.data[i].username+'", following_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                if (err) throw err;
+              });
+            }
+          }
+        } else if (error) {
+          console.log('GET_follows error ('+new_instagram_following_id+'): ', error);
+        }
+
+        if (pbody.pagination && pbody.pagination.next_cursor) {
+          GET_follows( fancrawl_instagram_id, pbody.pagination.next_cursor, callback);
+        } else {
+          console.log("done with pagination of GET_follows for user: "+fancrawl_instagram_id);
+          if ( callback ) {
+            console.log("AT THE CALLBACK");
+            callback(fancrawl_instagram_id);
+          }
+        }
+
+      });
+    });
+    };
+
+//  ZERO = Get list of followed_by user =========================================
+  var GET_followed_by         = function(fancrawl_instagram_id, pagination, callback) {
+    connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      if (err) throw err;
+      // instagram header secret system
+      var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+          hmac.setEncoding('hex');
+          hmac.write(process.env.LOCALIP);
+          hmac.end();
+      var hash = hmac.read();
+
+      // Set the headers
+      var headers = {
+          'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+      }
+
+      // Configure the request
+      var options = {
+          uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/followed-by',
+          qs: {'access_token': rows[0].token},
+          method: 'GET',
+          headers: headers,
+      }
+
+      if ( pagination ) {
+        options.qs.cursor = pagination;
+      }
+
+
+      request(options, function (error, response, body) {
+        var pbody = JSON.parse(body);
+        if ( !error && response.statusCode == 200 ) {
+          if ( pbody.data && pbody.data[0] ) {
+            for ( var i = 0; i < pbody.data.length; i++ ) {
+              connection.query('INSERT INTO s_followed_by set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", followed_by_full_name = '+JSON.stringify(pbody.data[i].full_name)+', followed_by_username = "'+pbody.data[i].username+'", followed_by_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                if (err) throw err;
+              });
+            }
+          }
+        } else if (error) {
+          console.log('GET_followed_by error ('+new_instagram_following_id+'): ', error);
+        }
+
+        if (pbody.pagination && pbody.pagination.next_cursor) {
+          GET_followed_by( fancrawl_instagram_id, pbody.pagination.next_cursor, callback );
+        } else {
+          console.log("done with pagination of GET_followed_by for user: "+fancrawl_instagram_id);
+          if ( callback ) {
+            callback(fancrawl_instagram_id);
+          }
+        }
+
+      });
+    });
+    };
+
 
 //  =============================================================================
 //  MAIN SECTIONS
@@ -688,90 +800,35 @@ var https                     = require('https'),
                 // update state to busy to prevent multiple edition.
                 connection.query('UPDATE access_right set state = "busy" where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
                   if (err) throw err;
+                  console.log("updated access right!");
 
-                  // instagram API calls
-                  // go get current instagram followed_by users
-                  var paginationFollowed_by = function (err, users, pagination, limit) {
-                    if(err){
-                      console.log("fresh error - Pagination: ", err);
-                    } else {
+                  GET_followed_by( req.query.id, "" , function(user){
+                    console.log("past the GETfollowedby and user is: ", user);
+                    GET_follows(user, "" , function(user){
+                      console.log("past the GETfollowing and user is: ", user);
 
-                      // TODO this does not take asynchronous process into consideration
-                      //puts in mysql each users
-                      for (var i = 0; i < users.length; i++) {
-                        connection.query('INSERT INTO s_followed_by set fancrawl_instagram_id = "'+req.query.id+'", followed_by_full_name = "'+users[i].full_name+'", followed_by_username = "'+users[i].username+'", followed_by_id = "'+users[i].id+'"', function(err, rows, fields) {
+                      var followed_by;
+                      var following;
+
+                      connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        followed_by = rows[0]['count(*)'];
+
+                        connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
                           if (err) throw err;
-                        });
-                      };
-
-                      // goes through each pagination to add to the followers list.
-                      if (pagination && pagination.next) {
-                        pagination.next(paginationFollowed_by);
-                      } else {
-                      console.log('Done with s_followed_by list');
-
-                        // instagram API calls
-                        // go get current instagram following users
-                        var paginationFollowing = function (err, users, pagination, limit) {
-                          if(err){
-                            console.log("fresh error - paginationFollowing: ", err);
-                          } else {
-
-                            // TODO this does not take asynchronous process into consideration
-                            //puts in mysql each users
-                            for (var i = 0; i < users.length; i++) {
-                              connection.query('INSERT INTO s_following set fancrawl_instagram_id = "'+req.query.id+'", following_full_name = "'+users[i].full_name+'", following_username = "'+users[i].username+'", following_id = "'+users[i].id+'"', function(err, rows, fields) {
-                                if (err) throw err;
-                              });
-                            };
-
-                            // goes through each pagination to add to the followers list.
-                            if (pagination && pagination.next) {
-                              pagination.next(paginationFollowing);
-                            } else {
+                            following = rows[0]['count(*)'];
+                            console.log('following '+following+' and is followed_by '+followed_by+' instagram users');
                             console.log('Done with s_following list');
-
-                            // update database status from busy to fresh
-                            connection.query('UPDATE access_right set state = "fresh" where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
-                              if (err) throw err;
-                            });
-
-                            // variables to ejs pages
-                            var followed_by;
-                            var following;
-
-                            connection.query('SELECT count(*) from s_followed_by', function(err, rows, fields) {
-                              if (err) throw err;
-                              followed_by = rows[0]['count(*)'];
-
-                              connection.query('SELECT count(*) from s_following', function(err, rows, fields) {
-                                if (err) throw err;
-                                following = rows[0]['count(*)'];
-                                  console.log('following '+following+' and is followed_by '+followed_by+' instagram users');
-                                  console.log('Done with s_following list');
-                                  res.render('./partials/dashboard.ejs',  {
-                                                                            'state': 'fresh',
-                                                                            'followed_by': followed_by,
-                                                                            'following': following
-                                                                          })
-                                return;
-                              });
-                            });
-
-                            return;
-                            };
-                          };
-                        };
-
-
-                        ig.user_follows(req.query.id, paginationFollowing);
-                      }
-                    }
-                  };
-
-                  ig.user_followers(req.query.id, paginationFollowed_by);
+                            res.render('./partials/dashboard.ejs',  {
+                                                                      'state': 'fresh',
+                                                                      'followed_by': followed_by,
+                                                                      'following': following
+                                                                    });
+                        });
+                      });
+                    });
+                  });
                 });
-
 
               } else if (rows[0].state === "busy"){
                 console.log("In a busy state");
