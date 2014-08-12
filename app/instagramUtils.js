@@ -810,20 +810,24 @@ var https                     = require('https'),
                       var followed_by;
                       var following;
 
-                      connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
+                      connection.query('UPDATE access_right set state = "fresh" where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
                         if (err) throw err;
-                        followed_by = rows[0]['count(*)'];
 
-                        connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
+                        connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
                           if (err) throw err;
-                            following = rows[0]['count(*)'];
-                            console.log('following '+following+' and is followed_by '+followed_by+' instagram users');
-                            console.log('Done with s_following list');
-                            res.render('./partials/dashboard.ejs',  {
-                                                                      'state': 'fresh',
-                                                                      'followed_by': followed_by,
-                                                                      'following': following
-                                                                    });
+                          followed_by = rows[0]['count(*)'];
+
+                          connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+user+'"', function(err, rows, fields) {
+                            if (err) throw err;
+                              following = rows[0]['count(*)'];
+                              console.log('following '+following+' and is followed_by '+followed_by+' instagram users');
+                              console.log('Done with s_following list');
+                              res.render('./partials/dashboard.ejs',  {
+                                                                        'state': 'fresh',
+                                                                        'followed_by': followed_by,
+                                                                        'following': following
+                                                                      });
+                          });
                         });
                       });
                     });
