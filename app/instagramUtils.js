@@ -464,7 +464,9 @@ var https                     = require('https'),
 
             // IS A NEW USER
             if( status === "neither" ) {
-              GO_follow( fancrawl_instagram_id, new_instagram_following_id);
+              if ( is_new === "new" ) {
+                GO_follow( fancrawl_instagram_id, new_instagram_following_id);
+              }
 
             // FOLLOWED BY BACK
             } else if( status === "both" || status === "followed_by" || status === "followed_by_and_requested" ) {
@@ -473,7 +475,7 @@ var https                     = require('https'),
             }
 
             if ( is_new === "new" ) {
-              verify( fancrawl_instagram_id, next_follower);
+              verify( fancrawl_instagram_id, next_follower, "new");
             }
 
           // ERROR
@@ -713,10 +715,8 @@ var https                     = require('https'),
 //  SECOND = link to instagram authentication api for access token ==============
   exports.authorize_user      = function(req, res) {
     console.log("authorizing");
-    // https://instagram.com/accounts/login/?next=/oauth/authorize%3Fclient_id%3D8527a4d35d6c4d63b9006f6233dd4860%26redirect_uri%3Dhttp%253A%252F%252Flocalhost%253A3000%252Fauth%252Finstagram%252Fcallback%26response_type%3Dcode%26state%3Da%2520state%26scope%3Dlikes%2Bcomments%2Brelationships
     var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
     res.redirect(url);
-    // res.redirect(ig.get_authorization_url(redirect_uri, { scope: ['likes', 'comments', 'relationships'], state: 'a state' }));
     };
 
 //  THIRD = handle instagram response and check access rights ===================
