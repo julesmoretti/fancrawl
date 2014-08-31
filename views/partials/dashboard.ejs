@@ -73,7 +73,7 @@
           </div>
         </div>
         <div class="mainStats center">
-          <span>Your current relationships</span>
+          <span>Your FanCrawled relationships</span>
           <div class="figures">
             <div class="followedBy">
               <span>Followed by</span>
@@ -112,38 +112,38 @@
           </div>
         </div>
         <div class="mainStats right">
-          <span>Weekly averages</span>
+          <span>Your current relationships</span>
           <div class="figures">
             <div class="followedBy">
-              <span>Avg. weekly new followed by</span>
+              <span>Currently followed by</span>
 
               <!-- check ejs for weekly followed by data -->
-              <% if ( weeklyFollowedBy ){ %>
-                <span><%= weeklyFollowedBy %></span>
+              <% if ( actualFollowedBy ){ %>
+                <span><%= actualFollowedBy %></span>
               <% } else { %>
                 <span>N/A</span>
               <% } %>
 
               <!-- computed percentage increase -->
-              <% if ( weeklyFollowedByPercentage ){ %>
-                <span class="instGreen <%= wfbpClass %>"><%= weeklyFollowedByPercentage %>%</span>
+              <% if ( actualFollowedByPercentage ){ %>
+                <span class="instGreen <%= afbpClass %>"><%= actualFollowedByPercentage %>%</span>
               <% } else { %>
                 <span class="instGreen">N/A</span>
               <% } %>
 
             </div>
             <div class="following">
-              <span>Avg. weekly new followings</span>
+              <span>Current followings</span>
               <!-- check ejs for weekly following data -->
-              <% if ( weeklyFollowing ){ %>
-                <span><%= weeklyFollowing %></span>
+              <% if ( actualFollowing ){ %>
+                <span><%= actualFollowing %></span>
               <% } else { %>
                 <span>N/A</span>
               <% } %>
 
               <!-- computed percentage increase -->
-              <% if ( weeklyFollowingPercentage ){ %>
-                <span class="instBlue <%= wfpClass %>"><%= weeklyFollowingPercentage %>%</span>
+              <% if ( actualFollowingPercentage ){ %>
+                <span class="instBlue <%= afpClass %>"><%= actualFollowingPercentage %>%</span>
               <% } else { %>
                 <span class="instBlue">N/A</span>
               <% } %>

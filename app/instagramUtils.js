@@ -647,6 +647,58 @@ var crypto                    = require('crypto'),
     });
     }
 
+//  ZERO = current users followers data ========================================= X
+  var GET_stats               = function ( fancrawl_instagram_id, callback ) {
+    connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      if (err) throw err;
+      // instagram header secret system
+      var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+          hmac.setEncoding('hex');
+          hmac.write(process.env.LOCALIP);
+          hmac.end();
+      var hash = hmac.read();
+
+      // Set the headers
+      var headers = {
+          'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+      }
+
+      // Configure the request
+      var options = {
+          uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
+          qs: {'access_token': rows[0].token},
+          method: 'GET',
+          headers: headers
+      }
+
+      request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var pbody = JSON.parse(body);
+          if( pbody ) {
+            if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
+              console.log("GO_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
+              // check for rate limit reach... if so keep on looping
+              // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
+              usersInfo.OAuthRateLimitException = "OAuthRateLimitException";
+              callback("N/A", "N/A");
+
+            } else if( pbody.data ){
+              if ( pbody.data.counts && pbody.data.counts.follows ) {
+                if ( usersInfo.OAuthRateLimitException ) {
+                  delete usersInfo.OAuthRateLimitException;
+                }
+                callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
+              }
+            } else {
+              console.log("GO_follow - did not complete properly...");
+            }
+          }
+        } else if (error) {
+          console.log('GO_follow error ('+new_instagram_following_id+'): ', error);
+        }
+      });
+    });
+    }
 
 //  ZERO = Clock Manage  ======================================================== X
   var clockManager            = function ( fancrawl_instagram_id, new_instagram_following_id, process, callback ) {
@@ -944,7 +996,7 @@ var crypto                    = require('crypto'),
     }();
 
 //  ZERO = Get list of followed_by user ========================================= X
-  var GET_follows             = function ( fancrawl_instagram_id, pagination, callback ) {
+  var GET_follows             = function ( fancrawl_instagram_id, pagination, write, callback ) {
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
       // instagram header secret system
@@ -976,9 +1028,11 @@ var crypto                    = require('crypto'),
         if ( !error && response.statusCode == 200 ) {
           if ( pbody.data) {
             for ( var i = 0; i < pbody.data.length; i++ ) {
-              connection.query('INSERT INTO s_following set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", following_full_name = '+JSON.stringify(pbody.data[i].full_name)+', following_username = "'+pbody.data[i].username+'", following_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
-                if (err) throw err;
-              });
+              if ( write ) {
+                connection.query('INSERT INTO s_following set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", following_full_name = '+JSON.stringify(pbody.data[i].full_name)+', following_username = "'+pbody.data[i].username+'", following_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                });
+              }
             }
           }
         } else if (error) {
@@ -986,7 +1040,7 @@ var crypto                    = require('crypto'),
         }
 
         if (pbody.pagination && pbody.pagination.next_cursor) {
-          GET_follows( fancrawl_instagram_id, pbody.pagination.next_cursor, callback);
+          GET_follows( fancrawl_instagram_id, pbody.pagination.next_cursor, write, callback);
         } else {
           console.log("done with pagination of GET_follows for user: "+fancrawl_instagram_id);
           if ( callback ) {
@@ -1000,7 +1054,7 @@ var crypto                    = require('crypto'),
     };
 
 //  ZERO = Get list of followed_by user ========================================= X
-  var GET_followed_by         = function ( fancrawl_instagram_id, pagination, callback ) {
+  var GET_followed_by         = function ( fancrawl_instagram_id, pagination, write, callback ) {
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
       // instagram header secret system
@@ -1033,9 +1087,11 @@ var crypto                    = require('crypto'),
         if ( !error && response.statusCode == 200 ) {
           if ( pbody.data && pbody.data[0] ) {
             for ( var i = 0; i < pbody.data.length; i++ ) {
-              connection.query('INSERT INTO s_followed_by set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", followed_by_full_name = '+JSON.stringify(pbody.data[i].full_name)+', followed_by_username = "'+pbody.data[i].username+'", followed_by_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
-                if (err) throw err;
-              });
+              if ( write ) {
+                connection.query('INSERT INTO s_followed_by set fancrawl_instagram_id = "'+fancrawl_instagram_id+'", followed_by_full_name = '+JSON.stringify(pbody.data[i].full_name)+', followed_by_username = "'+pbody.data[i].username+'", followed_by_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                });
+              }
             }
           }
         } else if (error) {
@@ -1043,7 +1099,7 @@ var crypto                    = require('crypto'),
         }
 
         if (pbody.pagination && pbody.pagination.next_cursor) {
-          GET_followed_by( fancrawl_instagram_id, pbody.pagination.next_cursor, callback );
+          GET_followed_by( fancrawl_instagram_id, pbody.pagination.next_cursor, write, callback );
         } else {
           console.log("done with pagination of GET_followed_by for user: "+fancrawl_instagram_id);
           if ( callback ) {
@@ -1127,7 +1183,7 @@ var crypto                    = require('crypto'),
                         res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
                       } else {
                         // goes to get following instagram and inserts them into the s_following table
-                        GET_follows( pbody.user.id, "" , function(users){
+                        GET_follows( pbody.user.id, "" , true, function(users){
                             console.log("GOT_follows and users are: ", users );
 
                             // redirect to the dashboard
@@ -1139,7 +1195,7 @@ var crypto                    = require('crypto'),
                   // otherwise go GET_followed_by for current user and then check for s_following database
                   } else {
                     // goes to get followed_by instagram and inserts them into the s_followed_by table
-                    GET_followed_by( pbody.user.id, "" , function(users){
+                    GET_followed_by( pbody.user.id, "" , true, function(users){
                       console.log("GOT_followed_by and users are: ", users );
 
                       // check the existence of data in secured s_following database for current user
@@ -1151,7 +1207,7 @@ var crypto                    = require('crypto'),
                           res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
                         } else {
                           // goes to get following instagram and inserts them into the s_following table
-                          GET_follows( pbody.user.id, "" , function(users){
+                          GET_follows( pbody.user.id, "" , true, function(users){
                               console.log("GOT_follows and users are: ", users );
 
                               // redirect to the dashboard
@@ -1188,12 +1244,12 @@ var crypto                    = require('crypto'),
                     'latestFollowingPercentage': '',
                     'lfbpClass': 'up',
                     'lfpClass': 'up',
-                    'weeklyFollowedBy': 0,
-                    'weeklyFollowing': 0,
-                    'weeklyFollowedByPercentage': '',
-                    'weeklyFollowingPercentage': '',
-                    'wfbpClass': 'down',
-                    'wfpClass': 'down',
+                    'actualFollowedBy': 0,
+                    'actualFollowing': 0,
+                    'actualFollowedByPercentage': '',
+                    'actualFollowingPercentage': '',
+                    'afbpClass': 'down',
+                    'afpClass': 'down',
                     'status': '',
                     'cleaningTime' : 'Some time metric goes here'
                   };
@@ -1290,8 +1346,30 @@ var crypto                    = require('crypto'),
                           } else {
                             var timeLeft = minutesLeft+"min Remaining...";
                           }
+
                       metrics.cleaningTime = timeLeft;
-                      res.render('./partials/dashboard.ejs',  metrics );
+
+                      GET_stats( req.query.id, function( follows, followed_by ){
+                        metrics.actualFollowedBy = followed_by;
+                        metrics.actualFollowing = follows;
+
+                        metrics.actualFollowedByPercentage = Math.floor( ( ( metrics.actualFollowedBy / metrics.followedBy ) * 100 ) - 100);
+                        metrics.actualFollowingPercentage = Math.floor( ( ( metrics.actualFollowing / metrics.following ) * 100 ) - 100);
+
+                        if ( metrics.actualFollowedByPercentage >= 0 ) {
+                          metrics.afbpClass = 'up';
+                        } else {
+                          metrics.afbpClass = 'down';
+                        }
+
+                        if ( metrics.actualFollowingPercentage >= 0 ) {
+                          metrics.afpClass = 'up';
+                        } else {
+                          metrics.afpClass = 'down';
+                        }
+                        res.render('./partials/dashboard.ejs',  metrics );
+                      });
+
                     });
                   });
                 });
