@@ -375,7 +375,7 @@ html {
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input#switch2:checked ~ label:after {
                       background-color: #fdd900; }
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input.switch:empty {
-                      margin-left: -999px; }
+                      margin-left: -9999px; }
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input.switch:empty ~ label {
                       position: relative;
                       float: left;

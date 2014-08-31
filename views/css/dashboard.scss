@@ -472,7 +472,7 @@ html {
                           background-color: $inst_yellow;
                     }
                     input.switch:empty {
-                      margin-left: -999px;
+                      margin-left: -9999px;
                     }
                     input.switch:empty ~ label {
                       position: relative;
