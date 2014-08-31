@@ -1260,8 +1260,8 @@ var crypto                    = require('crypto'),
                       if (err) throw err;
                       metrics.latestFollowing = JSON.parse(rows[0]['count(*)'])  + metrics.following;
 
-                      metrics.latestFollowedByPercentage = Math.floor( ( metrics.latestFollowedBy / metrics.followedBy ) * 100 );
-                      metrics.latestFollowingPercentage = Math.floor( ( metrics.latestFollowing / metrics.following ) * 100 );
+                      metrics.latestFollowedByPercentage = Math.floor( ( ( metrics.latestFollowedBy / metrics.followedBy ) * 100 ) - 100);
+                      metrics.latestFollowingPercentage = Math.floor( ( ( metrics.latestFollowing / metrics.following ) * 100 ) - 100);
 
                       if ( metrics.latestFollowedByPercentage >= 0 ) {
                         metrics.lfbpClass = 'up';
