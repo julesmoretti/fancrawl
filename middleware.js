@@ -5,14 +5,14 @@ var favicon         = require('serve-favicon'),
     bodyParser      = require('body-parser'),
     morgan          = require('morgan');
 
-  if(process.env.LOCAL){
+  if( process.env.LOCAL ){
     sass            = require('node-sass');
   }
 
   module.exports    = function(app){
 
 //  sass css generator ==========================================================
-    if(process.env.LOCAL){
+    if( process.env.LOCAL ){
       sass.renderFile({
         file: './views/css/style.scss',
         success: function(css) {
@@ -25,6 +25,34 @@ var favicon         = require('serve-favicon'),
         includePaths: ['views/css'],
         // outputStyle: 'compressed',
         outFile: './views/css/style.css'
+      });
+
+      sass.renderFile({
+        file: './views/css/logIn.scss',
+        success: function(css) {
+          // console.log(css);
+          console.log('logIn.css overwritten');
+        },
+        error: function(error) {
+          console.log(error);
+        },
+        includePaths: ['views/css'],
+        // outputStyle: 'compressed',
+        outFile: './views/css/logIn.css'
+      });
+
+      sass.renderFile({
+        file: './views/css/dashboard.scss',
+        success: function(css) {
+          // console.log(css);
+          console.log('dashboard.css overwritten');
+        },
+        error: function(error) {
+          console.log(error);
+        },
+        includePaths: ['views/css'],
+        // outputStyle: 'compressed',
+        outFile: './views/css/dashboard.css'
       });
     }
 

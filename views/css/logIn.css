@@ -1,0 +1,131 @@
+/***********************************************/
+/** STYLE **/
+/** run the following to see changes live **/
+/** nodemon --watch / -e je,scss server.js **/
+@font-face {
+  font-family: ionicons;
+  src: url(/views/fonts/ionicons.woff); }
+
+@font-face {
+  font-family: fancrawl;
+  src: url(/views/fonts/ReklameScript-Regular.woff); }
+
+@font-face {
+  font-family: inst_reg;
+  src: url(/views/fonts/proximanova-reg-webfont.woff); }
+
+@font-face {
+  font-family: inst_semibold;
+  src: url(/views/fonts/ProximaNova-Semibold-webfont.woff); }
+
+@font-face {
+  font-family: inst_bold;
+  src: url(/views/fonts/proximanova-bold-webfont.woff); }
+
+@font-face {
+  font-family: access;
+  src: url(/views/fonts/RefrigeratorDeluxe-Heavy.woff); }
+
+html {
+  height: 100%; }
+  html body {
+    margin: 0;
+    padding: 0;
+    /*background: #000000 url(/views/img/loading.gif) center center no-repeat;*/
+    background: black;
+    height: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; }
+    html body a {
+      color: #aaa;
+      text-decoration: none; }
+      html body a a:hover {
+        text-decoration: underline; }
+    html body #line_left {
+      background: url(/views/img/inst_left.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: -1000px; }
+    html body #box {
+      width: 320px;
+      height: 320px;
+      position: fixed;
+      background: url(/views/img/instagram_logo.svg) center center no-repeat;
+      top: 50%;
+      left: 50%;
+      margin-top: -160px;
+      margin-left: -160px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 60px; }
+      html body #box .lens {
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        text-align: center;
+        vertical-align: middle; }
+        html body #box .lens span {
+          top: calc( 50% - 21px);
+          position: relative;
+          font-size: 37px;
+          color: white;
+          font-family: "access", sans-serif;
+          font-style: normal;
+          font-weight: 900;
+          opacity: 0.5; }
+          html body #box .lens span.page_not_found {
+            top: calc( 50% - 42px);
+            line-height: 22px; }
+      html body #box .fancrawl {
+        position: relative;
+        top: 246px;
+        color: black;
+        font-family: "fancrawl", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 60px;
+        font-weight: 100;
+        letter-spacing: 0px !important;
+        text-align: left;
+        text-indent: 30px;
+        opacity: 0.6; }
+    html body #line_right {
+      background: url(/views/img/inst_right.svg) center center no-repeat;
+      position: fixed;
+      height: 300px;
+      width: 840px;
+      top: 50%;
+      left: 50%;
+      margin-top: -150px;
+      margin-left: 160px; }
+    html body .description {
+      position: absolute;
+      left: 30px;
+      bottom: 10px;
+      color: white;
+      opacity: 0.6;
+      font-weight: 100;
+      font-style: italic;
+      padding-right: 20px; }
+    html body .status_bar {
+      position: fixed;
+      left: 0px;
+      bottom: 0px;
+      width: 100%;
+      height: 30px;
+      background-color: rgba(75, 75, 75, 0.5); }
+      html body .status_bar span {
+        color: #ECECEC;
+        margin-left: 20px;
+        line-height: 30px;
+        opacity: 0.3;
+        font-family: "inst_reg";
+        font-size: 10px; }

@@ -4,42 +4,288 @@
   <head>
     <title>FanCrawl</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="/views/css/style.css" media="all">
-    <!--script type="text/javascript" src="//use.typekit.net/jzq3ntm.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script-->
+    <link rel="stylesheet" type="text/css" href="/views/css/dashboard.css" media="all">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
   </head>
 
   <body>
+    <div class="header">
+      <div class="headerInner">
+        <!-- main logo -->
+        <span>FanCrawl</span>
 
-    <div class="profile">
-    Jules Moretti
+        <!-- toggle submenu -->
+        <div class="user" onclick="$('#hidden').toggleClass('hidden');">
+
+          <!-- check ejs for instagram user data -->
+          <% if ( userPicture ){ %>
+            <img src="<%= userPicture %>"/>
+          <% } else { %>
+            <img src="/views/img/profile_blank_gray.jpg"/>
+          <% } %>
+
+          <!-- check ejs for instagram user name data -->
+          <% if ( userName ){ %>
+            <span><%= userName %></span>
+          <% } else { %>
+            <span>John Smith</span>
+          <% } %>
+
+          <div></div>
+        </div>
+        <div id="hidden" class="userMenu">
+          <ul>
+            <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank">About FanCrawl</a></li>
+            <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank">Report Issues</a></li>
+            <li><a href="https://instagram.com/accounts/logout" target="_self">LOG OUT</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
+    <div class="banner">
+      <div class="bannerInner">
+        <span>Dashboard</span>
+      </div>
+    </div>
+    <div class="container">
+      <div class="containerInner">
+        <div class="mainStats left">
+          <span>Your original relationships</span>
+          <div class="figures">
+            <div class="followedBy">
+              <span>Followed by</span>
+              <!-- check ejs for secure followed by data -->
+              <% if ( followedBy ){ %>
+                <span><%= followedBy %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
+            </div>
+            <div class="following">
+              <span>Following</span>
+              <!-- check ejs for secure following data -->
+              <% if ( following ){ %>
+                <span><%= following %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="mainStats center">
+          <span>Your current relationships</span>
+          <div class="figures">
+            <div class="followedBy">
+              <span>Followed by</span>
+              <!-- check ejs for latest followed by data -->
+              <% if ( latestFollowedBy ){ %>
+                <span><%= latestFollowedBy %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
 
-    <a href="/button">
-      <% if (state === "fresh"){ %>
-        <div class="action_button fresh"><%= state %><br/>
-        followed by <%= followed_by %> instagram users<br/>
-        following <%= following %> instagram users</div>
-      <% } else if (state === "started") { %>
-        <div class="action_button started"><%= state %><br/>
-        followed by <%= followed_by %> instagram users<br/>
-        following <%= following %> instagram users</div>
-      <% } else if (state === "stopping") { %>
-        <div class="action_button stopping"><%= state %><br/>
-        followed by <%= followed_by %> instagram users<br/>
-        following <%= following %> instagram users</div>
-      <% } else if (state === "stopped") { %>
-        <div class="action_button stopped"><%= state %><br/>
-        followed by <%= followed_by %> instagram users<br/>
-        following <%= following %> instagram users</div>
-      <% } %>
-    </a>
+              <!-- computed percentage increase -->
+              <% if ( latestFollowedByPercentage ){ %>
+                <span class="instRed <%= lfbpClass %>"><%= latestFollowedByPercentage %>%</span>
+              <% } else { %>
+                <span class="instRed">N/A</span>
+              <% } %>
+            </div>
+            <div class="following">
+              <span>Following</span>
+
+              <!-- check ejs for latest following data -->
+              <% if ( latestFollowing ){ %>
+                <span><%= latestFollowing %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
+
+              <!-- computed percentage increase -->
+              <% if ( latestFollowingPercentage ){ %>
+                <span class="instYellow <%= lfpClass %>"><%= latestFollowingPercentage %>%</span>
+              <% } else { %>
+                <span class="instYellow">N/A</span>
+              <% } %>
+
+            </div>
+          </div>
+        </div>
+        <div class="mainStats right">
+          <span>Weekly averages</span>
+          <div class="figures">
+            <div class="followedBy">
+              <span>Avg. weekly new followed by</span>
+
+              <!-- check ejs for weekly followed by data -->
+              <% if ( weeklyFollowedBy ){ %>
+                <span><%= weeklyFollowedBy %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
+
+              <!-- computed percentage increase -->
+              <% if ( weeklyFollowedByPercentage ){ %>
+                <span class="instGreen <%= wfbpClass %>"><%= weeklyFollowedByPercentage %>%</span>
+              <% } else { %>
+                <span class="instGreen">N/A</span>
+              <% } %>
+
+            </div>
+            <div class="following">
+              <span>Avg. weekly new followings</span>
+              <!-- check ejs for weekly following data -->
+              <% if ( weeklyFollowing ){ %>
+                <span><%= weeklyFollowing %></span>
+              <% } else { %>
+                <span>N/A</span>
+              <% } %>
+
+              <!-- computed percentage increase -->
+              <% if ( weeklyFollowingPercentage ){ %>
+                <span class="instBlue <%= wfpClass %>"><%= weeklyFollowingPercentage %>%</span>
+              <% } else { %>
+                <span class="instBlue">N/A</span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="mainControllers">
+          <span>Main controllers</span>
+          <div class="controllerList">
+            <div class="controllerDescription">
+              <ul>
+                <li><span>FanCrawl status: </span></li>
+                <li><span>FanCrawl trigger: </span></li>
+                <li><span>Clean up database: </span></li>
+                <% if ( status === "statusCleaning" ){ %>
+                  <li><span>Approximate time remaining:</span></li>
+                <% } else { %>
+                <% } %>
+                <li><span>FanCrawled users so far: </span></li>
+                <li><span>Dont forget to save..........</span></li>
+              </ul>
+            </div>
+            <div class="controllerStatus">
+              <form name="input" action="/trigger" method="post">
+                <ul>
+                  <li>
+                    <% if ( status ){ %>
+                      <span class="<%= status %>"></span>
+                    <% } else { %>
+                      <span>N/A</span>
+                    <% } %>
+                  </li>
+                  <li>
+                    <div class="switchDiv">
+                      <% if ( status === "statusStopped" ){ %>
+                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()"/>
+                        <label id="switch1label" for="switch1">&nbsp;</label>
+                      <% } else if ( status === "statusStarted" ){ %>
+                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()" checked="checked"/>
+                        <label id="switch1label" for="switch1">&nbsp;</label>
+                      <% } else if ( status === "statusCleaning" ){ %>
+                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" disabled="disabled"/>
+                        <label id="switch1label" for="switch1" class="muted">&nbsp;</label>
+                      <% } %>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="switchDiv">
+                      <% if ( status === "statusStopped" ){ %>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2()"/>
+                        <label id="switch2label" for="switch2">&nbsp;</label>
+                      <% } else if ( status === "statusStarted" ){ %>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" disabled="disabled"/>
+                        <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
+                      <% } else if ( status === "statusCleaning" ){ %>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" disabled="disabled"/>
+                        <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
+                      <% } %>
+                    </div>
+                  </li>
+
+                  <% if ( status === "statusCleaning" ){ %>
+                    <li><span><%= cleaningTime %></span></li>
+                  <% } else { %>
+                  <% } %>
+
+                  <li>
+                    <% if ( totalCrawled ){ %>
+                      <span><%= totalCrawled %></span>
+                    <% } else { %>
+                      <span>N/A</span>
+                    <% } %>
+                  </li>
+                  <li>
+                    <input id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" disabled>
+                  </li>
+                </ul>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="status_bar">
-      <span>Welcome to the dashboad!</span>
-      <div class="log_out" onclick="location.href='https://instagram.com/accounts/logout';">LOG OUT</div>
+      <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
     </div>
+    <script>
 
+      function toggleAttributes1() {
+
+        // tobbles other tab
+        var switch2 = document.getElementById("switch2");
+        var disabled = switch2.getAttribute("disabled");
+
+        if ( disabled === 'disabled' ) {
+          switch2.removeAttribute("disabled");
+          document.getElementById("switch2label").removeAttribute("class");
+        } else {
+          switch2.setAttribute("disabled", "disabled");
+          document.getElementById("switch2label").setAttribute("class", "muted");
+        }
+
+        // toggles save button
+        var submitButton = document.getElementById("submitButton");
+        var subDisabled = submitButton.getAttribute("disabled");
+        if ( subDisabled !== null || subDisabled === 'disabled' ) {
+          submitButton.removeAttribute("disabled");
+          document.getElementById("submitButton").className = "saveButton ";
+        } else {
+          submitButton.setAttribute("disabled", "disabled");
+          document.getElementById("submitButton").className = "saveButton disabledButton";
+        }
+
+      };
+
+      function toggleAttributes2() {
+
+        // tobbles other tab
+        var switch1 = document.getElementById("switch1");
+        var disabled = switch1.getAttribute("disabled");
+
+        if ( disabled === 'disabled' ) {
+          switch1.removeAttribute("disabled");
+          document.getElementById("switch1label").removeAttribute("class");
+        } else {
+          switch1.setAttribute("disabled", "disabled");
+          document.getElementById("switch1label").setAttribute("class", "muted");
+        }
+
+        // toggles save button
+        var submitButton = document.getElementById("submitButton");
+        var subDisabled = submitButton.getAttribute("disabled");
+        if ( subDisabled !== null || subDisabled === 'disabled' ) {
+          submitButton.removeAttribute("disabled");
+          document.getElementById("submitButton").className = "saveButton ";
+        } else {
+          submitButton.setAttribute("disabled", "disabled");
+          document.getElementById("submitButton").className = "saveButton disabledButton";
+        }
+      };
+    </script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

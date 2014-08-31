@@ -22,10 +22,19 @@ var instagramUtils = require('./instagramUtils.js');
     app.get('/auth/instagram/callback', instagramUtils.handleauth);
 
     // main dashboard page
-    app.get('/fresh', instagramUtils.fresh);
+    app.get('/dashboard', instagramUtils.dashboard);
 
     // trigger different function like GO_Follow etc...
-    app.get('/button', instagramUtils.button);
+    // app.get('/button', instagramUtils.button);
+
+    // goes through database and cleans user base making sure to unfollow unwanted followers
+    // app.get('/clean', instagramUtils.clean);
+
+    // loads dashboard
+    // app.get('/temp', instagramUtils.temp);
+
+    // loads dashboard
+    app.post('/trigger', instagramUtils.trigger);
 
     // 404 not found error page
     app.get('/404/', function(req, res){
