@@ -264,7 +264,47 @@ var crypto                    = require('crypto'),
                   }
                 });
 
-              // } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
+              } else if ( process === "unfollow_verify" ) {
+                // check relationship and then time difference if needs be
+                relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
+                  if ( relationship === "access_token" ) {
+                    // error to deal with...
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
+                    }
+                    usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
+
+                  } else if ( relationship === "oauth_limit" ) {
+                    // error to deal with...
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
+                    }
+                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+
+                  } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      delete usersInfo[ fancrawl_instagram_id ].access_token;
+                    }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                    }
+
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+
+                  // neither or just follow or just requested
+                  } else {
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      delete usersInfo[ fancrawl_instagram_id ].access_token;
+                    }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                    }
+
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
+                  }
+                }):
 
               } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
 
@@ -486,7 +526,7 @@ var crypto                    = require('crypto'),
           if (rows[0]) {
             // found in secure database so do not unfollow
             // on success update database with right values
-            connection.query('UPDATE beta_followers SET count = '+count+', following_status = 1, followed_by_status = '+followed_by+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+            connection.query('UPDATE beta_followers SET count = 5, following_status = 1, followed_by_status = '+followed_by+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
               if (err) throw err;
               console.log("its part of the s_followed_by so do not unfollow");
               callback( fancrawl_instagram_id, new_instagram_following_id );
@@ -537,7 +577,7 @@ var crypto                    = require('crypto'),
                       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                         delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                       }
-                      connection.query('UPDATE beta_followers SET count = '+count+', following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                         if (err) throw err;
                         console.log( "UN-FOLLOWED SUCCESSFULLY: ", new_instagram_following_id );
                         callback( fancrawl_instagram_id, new_instagram_following_id );
@@ -842,7 +882,7 @@ var crypto                    = require('crypto'),
 
           // less then 2 days
           if ( code === 4 ) {
-            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
+            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_verify" );
           } else if ( code === 3 ) {
             var two_days  = 1000 * 60 * 60 * 48,
                 delay     = two_days - time_diff;
@@ -933,7 +973,7 @@ var crypto                    = require('crypto'),
 
 //  ZERO = check status of current database users =============================== X
   var cleanDatabase           = function ( fancrawl_instagram_id, callback ) {
-    connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
+    connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
 
