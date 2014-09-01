@@ -128,7 +128,7 @@
               <% if ( actualFollowedByPercentage ){ %>
                 <span class="instGreen <%= afbpClass %>"><%= actualFollowedByPercentage %>%</span>
               <% } else { %>
-                <span class="instGreen">N/A</span>
+                <span class="instGreen">0</span>
               <% } %>
 
             </div>
@@ -145,7 +145,7 @@
               <% if ( actualFollowingPercentage ){ %>
                 <span class="instBlue <%= afpClass %>"><%= actualFollowingPercentage %>%</span>
               <% } else { %>
-                <span class="instBlue">N/A</span>
+                <span class="instBlue">0</span>
               <% } %>
             </div>
           </div>
@@ -163,6 +163,9 @@
                 <% } else { %>
                 <% } %>
                 <li><span>FanCrawled users so far: </span></li>
+                <% for(keys in errorLogs) {%>
+                   <li><%= errorLogs[keys] %></li>
+                <% } %>
                 <li><span>Dont forget to save..........</span></li>
               </ul>
             </div>
@@ -173,7 +176,7 @@
                     <% if ( status ){ %>
                       <span class="<%= status %>"></span>
                     <% } else { %>
-                      <span>N/A</span>
+                      <span>0</span>
                     <% } %>
                   </li>
                   <li>
@@ -214,9 +217,12 @@
                     <% if ( totalCrawled ){ %>
                       <span><%= totalCrawled %></span>
                     <% } else { %>
-                      <span>N/A</span>
+                      <span>0</span>
                     <% } %>
                   </li>
+                  <% for(keys in errorLogs) {%>
+                     <li><span>WARNINGS</span></li>
+                  <% } %>
                   <li>
                     <input id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" disabled>
                   </li>

@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `access_right`;
 
 CREATE TABLE `access_right` (
   `id` INT(20) AUTO_INCREMENT,
-  `state` VARCHAR(255) DEFAULT 'empty',
+  `state` VARCHAR(255) DEFAULT 'stopped',
   `fancrawl_full_name` VARCHAR(255),
   `fancrawl_username` VARCHAR(255),
   `fancrawl_instagram_id` VARCHAR(20),
