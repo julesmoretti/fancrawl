@@ -1512,6 +1512,18 @@ var crypto                    = require('crypto'),
     // dashboard sent a switchFancrawl on so start FanCrawl
     if ( req.body.switchFancrawl && req.body.switchFancrawl === "on") {
       console.log("switchFancrawl detected");
+
+
+      // START USER SPECIFIC CLOCK
+      if ( !timer[ fancrawl_instagram_id ] ) {
+        timer_post( fancrawl_instagram_id ); // setup timer structure on start
+        timer_quick( fancrawl_instagram_id ); // setup timer structure on start
+      } else if ( !timer[ fancrawl_instagram_id ].post_queue ) {
+        timer_post( fancrawl_instagram_id ); // setup timer structure on start
+      } else if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
+        timer_quick( fancrawl_instagram_id ); // setup timer structure on start
+      }
+
       connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
         console.log("cleanDB for: ", fancrawl_instagram_id);
