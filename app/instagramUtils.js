@@ -83,8 +83,8 @@ var crypto                    = require('crypto'),
       timer[ fancrawl_instagram_id ]                 = {};
       timer[ fancrawl_instagram_id ].post_queue      = {}; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].quick_queue     = {}; // handles sequence of people to verify
-      timer[ fancrawl_instagram_id ].post_minute     = false; // keep track of a minute has gone by
-      timer[ fancrawl_instagram_id ].quick_seconds   = false; // keep track of minimum seconds separation
+      timer[ fancrawl_instagram_id ].post_minute     = true; // keep track of a minute has gone by
+      timer[ fancrawl_instagram_id ].quick_seconds   = true; // keep track of minimum seconds separation
     }
 
     // IF POST_MINUTE = FALSE
@@ -97,7 +97,7 @@ var crypto                    = require('crypto'),
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         console.log("/////////////////////////////////////////////////////");
         console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
-        console.log("TIMER POST: "+fancrawl_instagram_id+": "+JSON.stringify(timer) );
+        console.log("TIMER POST: "+fancrawl_instagram_id+": "+JSON.stringify(timer[ fancrawl_instagram_id ]) );
         // CHECK STATE OF USER
         connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
           if (err) throw err;
@@ -145,6 +145,7 @@ var crypto                    = require('crypto'),
 
                 });
               } else if ( process === "unfollow" ) {
+                console.log("TIMER_POST: unfollow for "+last_instagram_following_id);
                 GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                   delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
                   console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
@@ -179,8 +180,8 @@ var crypto                    = require('crypto'),
       timer[ fancrawl_instagram_id ]                 = {};
       timer[ fancrawl_instagram_id ].post_queue      = {}; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].quick_queue     = {}; // handles sequence of people to verify
-      timer[ fancrawl_instagram_id ].post_minute     = false; // keep track of a minute has gone by
-      timer[ fancrawl_instagram_id ].quick_seconds   = false; // keep track of minimum seconds separation
+      timer[ fancrawl_instagram_id ].post_minute     = true; // keep track of a minute has gone by
+      timer[ fancrawl_instagram_id ].quick_seconds   = true; // keep track of minimum seconds separation
     }
 
     // IF POST_MINUTE = FALSE
@@ -556,7 +557,7 @@ var crypto                    = require('crypto'),
                   headers: headers,
                   form:{action:'unfollow'}
               }
-
+              console.log("G0_UNFOLLOW: ", new_instagram_following_id );
               request(options, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                   var pbody = JSON.parse(body);
@@ -1093,7 +1094,7 @@ var crypto                    = require('crypto'),
 
         // IF USER WAS CLEANING
         } else if ( rows[0].state && rows[0].state === "cleaning" ) {
-          // console.log("CLEANING STATE: ", fancrawl_instagram_id);
+          console.log("CLEANING STATE: ", fancrawl_instagram_id);
           var state = rows[0].state;
           // CLEAN DATABASE
           cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
