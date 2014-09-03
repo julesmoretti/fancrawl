@@ -159,7 +159,15 @@
           <div class="controllerList">
             <div class="controllerDescription">
               <ul>
-                <li><span>FanCrawl status: </span></li>
+                <li>
+                  <% if ( status === "statusStopped" ){ %>
+                    <span>FanCrawl is stopped: </span>
+                  <% } else if ( status === "statusStarted" ){ %>
+                    <span>FanCrawl is started: </span>
+                  <% } else if ( status === "statusCleaning" ){ %>
+                    <span>FanCrawl is cleaning: </span>
+                  <% } %>
+                </li>
                 <li><span>FanCrawl trigger: </span></li>
                 <li><span>Clean up database: </span></li>
                 <% if ( status === "statusCleaning" ){ %>
