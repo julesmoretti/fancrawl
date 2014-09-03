@@ -432,8 +432,8 @@ var crypto                    = require('crypto'),
           }
 
       request(options, function (error, response, body) {
+          console.log("RELATIONSHIP FOR: "+ fancrawl_instagram_id + " & " + new_instagram_following_id+" & body: "+ body);
           var pbody = JSON.parse(body);
-
           // CHECK FOR BODY
           if (pbody) {
 
