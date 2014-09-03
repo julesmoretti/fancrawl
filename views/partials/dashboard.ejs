@@ -67,7 +67,7 @@
               <% if ( following ){ %>
                 <span><%= following %></span>
               <% } else { %>
-                <span>N/A</span>
+                <span></span>
               <% } %>
             </div>
           </div>
@@ -88,7 +88,7 @@
               <% if ( latestFollowedByPercentage ){ %>
                 <span class="instRed <%= lfbpClass %>"><%= latestFollowedByPercentage %>%</span>
               <% } else { %>
-                <span class="instRed">N/A</span>
+                <span class="instRed"></span>
               <% } %>
             </div>
             <div class="following">
@@ -105,7 +105,7 @@
               <% if ( latestFollowingPercentage ){ %>
                 <span class="instYellow <%= lfpClass %>"><%= latestFollowingPercentage %>%</span>
               <% } else { %>
-                <span class="instYellow">N/A</span>
+                <span class="instYellow"></span>
               <% } %>
 
             </div>
@@ -117,7 +117,7 @@
             <div class="followedBy">
               <span>Currently followed by</span>
 
-              <!-- check ejs for weekly followed by data -->
+              <!-- check ejs for current relationships -->
               <% if ( actualFollowedBy ){ %>
                 <span><%= actualFollowedBy %></span>
               <% } else { %>
@@ -128,7 +128,7 @@
               <% if ( actualFollowedByPercentage ){ %>
                 <span class="instGreen <%= afbpClass %>"><%= actualFollowedByPercentage %>%</span>
               <% } else { %>
-                <span class="instGreen">0</span>
+                <span class="instGreen"></span>
               <% } %>
 
             </div>
@@ -145,7 +145,7 @@
               <% if ( actualFollowingPercentage ){ %>
                 <span class="instBlue <%= afpClass %>"><%= actualFollowingPercentage %>%</span>
               <% } else { %>
-                <span class="instBlue">0</span>
+                <span class="instBlue"></span>
               <% } %>
             </div>
           </div>

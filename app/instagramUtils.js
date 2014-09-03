@@ -304,7 +304,7 @@ var crypto                    = require('crypto'),
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
                   }
-                }):
+                });
 
               } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
 
@@ -423,19 +423,19 @@ var crypto                    = require('crypto'),
             // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
             if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
-              console.log(new_instagram_following_id+" does not exist");
+              console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
               callback(fancrawl_instagram_id, new_instagram_following_id, "not_exit");
 
             // OAUTH TOKEN EXPIRED
             } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
               // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-              console.log("MUST LOG IN AGAIN - NEED NEW TOKEN - OR VALIDATE ACCOUNT AGAIN");
+              console.log( "RELATIONSHIP: "+new_instagram_following_id+" MUST LOG IN AGAIN - NEED NEW TOKEN - OR VALIDATE ACCOUNT AGAIN");
               callback(fancrawl_instagram_id, new_instagram_following_id, "access_token");
 
             // OAUTH TIME LIMIT REACHED LET TIMER KNOW AND TRIES AGAIN
             } else if( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
               // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-              console.log("GO_follow limit reach ("+new_instagram_following_id+"): ", body);
+              console.log("RELATIONSHIP: LIMIT REACH FOR: "+new_instagram_following_id+" - ", body);
               callback(fancrawl_instagram_id, new_instagram_following_id, "oauth_limit");
 
             } else if ( pbody.data ) {
@@ -449,20 +449,20 @@ var crypto                    = require('crypto'),
                   // NEITHER YOU OR THE ARE FOLLOWING ONE ANOTHER
                   if( pbody.data.outgoing_status === "none" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"none"}}
-                    console.log( "you and user: "+new_instagram_following_id+" are not following one another" );
+                    console.log( "RELATIONSHIP: you and user "+new_instagram_following_id+" are not following one another" );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "neither");
 
                   // ONLY FOLLOWS NEW USER
                   } else if( pbody.data.outgoing_status === "requested"  ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"none"}}
-                    console.log( "you have requested to follow this user: "+new_instagram_following_id );
+                    console.log( "RELATIONSHIP: you have requested to follow this user: "+new_instagram_following_id );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "requested");
 
 
                   // ONLY FOLLOWS NEW USER
                   } else if( pbody.data.outgoing_status === "follows"  ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"none"}}
-                    console.log( "you are only following user: "+new_instagram_following_id );
+                    console.log( "RELATIONSHIP: you are only following user: "+new_instagram_following_id );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "follows");
                   }
 
@@ -471,32 +471,32 @@ var crypto                    = require('crypto'),
                   // ONLY FOLLOWED_BY BACK
                   if( pbody.data.outgoing_status === "none" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    console.log( new_instagram_following_id+" is following you back" );
+                    console.log( "RELATIONSHIP: "+new_instagram_following_id+" is following you back" );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "followed_by");
 
                   // BOTH FOLLOW AND FOLLOWED_BY BACK
                   } else if( pbody.data.outgoing_status === "requested" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    console.log( "You are following user: "+new_instagram_following_id+" and he is following you back" );
+                    console.log( "RELATIONSHIP: you have requested to follow user "+new_instagram_following_id+" and he is following you back" );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "followed_by_and_requested");
 
                   // BOTH FOLLOW AND FOLLOWED_BY BACK
                   } else if( pbody.data.outgoing_status === "follows" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    console.log( "You are following user: "+new_instagram_following_id+" and he is following you back" );
+                    console.log( "RELATIONSHIP: you are following user "+new_instagram_following_id+" and he is following you back" );
                     callback(fancrawl_instagram_id, new_instagram_following_id, "both");
 
                   }
                 }
 
               } else {
-                console.log("Relationship did not pick up on this body ("+new_instagram_following_id+"): ", body);
+                console.log("RELATIONSHIP: did not pick up on body of user "+new_instagram_following_id+" - ", body);
                 callback(fancrawl_instagram_id, new_instagram_following_id, "error");
               }
 
             }
           } else if (error) {
-            console.log("Relationship error ("+new_instagram_following_id+"): ", error);
+            console.log("RELATIONSHIP: error "+new_instagram_following_id+" - ", error);
             callback(fancrawl_instagram_id, new_instagram_following_id, "error");
           }
       });
@@ -580,7 +580,10 @@ var crypto                    = require('crypto'),
                       connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                         if (err) throw err;
                         console.log( "UN-FOLLOWED SUCCESSFULLY: ", new_instagram_following_id );
-                        callback( fancrawl_instagram_id, new_instagram_following_id );
+                        if ( callback ) {
+                          console.log( "CALLBACK OF GO_UNFOLLOW FOR: ", new_instagram_following_id );
+                          callback( fancrawl_instagram_id, new_instagram_following_id );
+                        }
                       });
                     }
                   }
@@ -650,6 +653,7 @@ var crypto                    = require('crypto'),
                   verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
                   console.log( "FOLLOWED SUCCESSFULLY: ", new_instagram_following_id );
                   if ( callback ) {
+                    console.log( "CALL BACK FROM GO_FOLLOW FOR: ", new_instagram_following_id );
                     callback( fancrawl_instagram_id, new_instagram_following_id );
                   }
                 });
@@ -752,7 +756,6 @@ var crypto                    = require('crypto'),
 
     // TIMER QUICK CONFIGURATIONS
     } else {
-      // console.log("CURRENT USER: ", fancrawl_instagram_id);
       // console.log("CLOCK MANAGER QUICK: ",timer);
       var quick_count = 0;
       for (keys in timer[ fancrawl_instagram_id ].quick_queue ) {
@@ -766,6 +769,7 @@ var crypto                    = require('crypto'),
 
       // if < then 100 = add to queue and run callback
       if ( quick_count < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+      // console.log("CURRENT USER: ", fancrawl_instagram_id);
         // timer[ fancrawl_instagram_id ].quick_queue = JSON.parse('{"' + new_instagram_following_id + '":"' + process + '"}');
         timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ] = process;
         if ( callback ) {
@@ -880,10 +884,15 @@ var crypto                    = require('crypto'),
               time_now    = JSON.parse(rows[0]['UNIX_TIMESTAMP(now())']),
               time_diff     = (time_now - time_start) * 1000;
 
-          // less then 2 days
+
+          // more then 2 days
+              // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
           if ( code === 4 ) {
             clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_verify" );
+
+          // less then 2 days
           } else if ( code === 3 ) {
+              // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
             var two_days  = 1000 * 60 * 60 * 48,
                 delay     = two_days - time_diff;
 
@@ -934,7 +943,8 @@ var crypto                    = require('crypto'),
 //  ZERO = check on the cleaning process and updates state if done ==============
   var verifyCleaning          = function ( fancrawl_instagram_id, callback ) {
     if ( timer[ fancrawl_instagram_id ] ) {
-      if ( timer[ fancrawl_instagram_id ].post_queue ) {
+      if ( timer[ fancrawl_instagram_id ].post_queue || timer[ fancrawl_instagram_id ].quick_queue ) {
+        // console.log("VERIFY CLEANING FOUND QUEUES");
         var postCount = 0;
         for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
           postCount++;
@@ -944,20 +954,26 @@ var crypto                    = require('crypto'),
           quickCount++;
         }
         if ( postCount !== 0 || quickCount !== 0 ) {
+          // console.log("POST COUNT: ", postCount );
+          // console.log("QUICK COUNT: ", quickCount );
           // not done check again after some time....
           // still got data to go through wait longer to check
           var postDelay = postCount * 60 * 1000;
           var quickDelay = quickCount * 5 * 1000;
           var totalDelay = postDelay + quickDelay;
 
+
+          // console.log("TOTAL DELAY: ", totalDelay );
+
           setTimeout(
             function(){
-            verifyCleaning( fancrawl_instagram_id );
+            verifyCleaning( fancrawl_instagram_id, callback );
           }, totalDelay);
 
         } else {
           // no post queue so can keep going
           if ( callback ) {
+            console.log("VERIFY CLEANING CALLBACK");
             callback( fancrawl_instagram_id );
           }
         }
@@ -965,6 +981,7 @@ var crypto                    = require('crypto'),
       // no post_queue check quick_queue
       } else {
         if ( callback ) {
+          console.log("VERIFY CLEANING DID NOT FIND SHIT IN QUEUES");
           callback( fancrawl_instagram_id );
         }
       }
@@ -973,47 +990,54 @@ var crypto                    = require('crypto'),
 
 //  ZERO = check status of current database users =============================== X
   var cleanDatabase           = function ( fancrawl_instagram_id, callback ) {
-    connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
+    // console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
+    connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 0', function(err, rows, fields) {
       if (err) throw err;
-      if ( rows && rows[0] ) {
-
-        // DATABASE HAS USERS TO DEAL WITH
+      if ( rows && rows[0] ){
         for ( var i = 0; i < rows.length; i++ ) {
-          var new_instagram_following_id = rows[i].added_follower_instagram_id;
-
-          // CHECK TIME DIFFERENCE
-          // time_difference( fancrawl_instagram_id, new_instagram_following_id, rows[i]['UNIX_TIMESTAMP(creation_date)'], rows[i]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
-          //   connection.query('UPDATE beta_followers SET count = '+code+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //     if (err) throw err;
-          //     clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
-          //   });
-          // });
-          verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
+          connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+          });
         }
-
-        var quickCount = 0;
-        var postCount = 0;
-
-        for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-          quickCount++;
-        }
-        var quickCountTime = quickCount * 1000 * 5;
-        for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-          postCount++;
-        }
-        var postCountTime = postCount * 1000 * 80;
-        var totalCountTime = quickCountTime + postCountTime;
-
-        setTimeout(
-          function(){
-          verifyCleaning( fancrawl_instagram_id, callback(fancrawl_instagram_id) );
-        }, totalCountTime);
-
-      } else {
-        // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
-        // PROCEED WITH CALLBACK
-        callback( fancrawl_instagram_id );
       }
+      connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
+        if (err) throw err;
+        if ( rows && rows[0] ) {
+
+          // DATABASE HAS USERS TO DEAL WITH
+          for ( var i = 0; i < rows.length; i++ ) {
+            var new_instagram_following_id = rows[i].added_follower_instagram_id;
+
+            verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
+          }
+
+          var quickCount = 0;
+          var postCount = 0;
+
+          for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
+            quickCount++;
+          }
+          var quickCountTime = quickCount * 1000 * 5;
+          for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
+            postCount++;
+          }
+          var postCountTime = postCount * 1000 * 80;
+          var totalCountTime = quickCountTime + postCountTime;
+
+          // console.log("CLEAN DATABASE - ROWS FOUND PRE SET TIMEOUT CALLBACK");
+          setTimeout(
+            function(){
+            // console.log("CLEAN DATABASE - ROWS FOUND SET TIMEOUT CALLBACK");
+            verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id, callback ) { callback( fancrawl_instagram_id ); });
+          }, totalCountTime + 500 );
+
+        } else {
+          // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
+          // PROCEED WITH CALLBACK
+          // ("CLEAN DATABASE - NO ROWS FOUND SO CALLBACK");
+          callback( fancrawl_instagram_id );
+        }
+      });
     });
     };
 
@@ -1059,8 +1083,8 @@ var crypto                    = require('crypto'),
                   console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
 
                   // START BY VERIFYING
-                  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                  console.log("FETCHING - FROM START");
+                  // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                  // console.log("FETCHING - FROM START");
                   fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
                 });
               });
@@ -1069,7 +1093,7 @@ var crypto                    = require('crypto'),
 
         // IF USER WAS CLEANING
         } else if ( rows[0].state && rows[0].state === "cleaning" ) {
-          console.log("CLEANING STATE: ", fancrawl_instagram_id);
+          // console.log("CLEANING STATE: ", fancrawl_instagram_id);
           var state = rows[0].state;
           // CLEAN DATABASE
           cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
@@ -1088,7 +1112,7 @@ var crypto                    = require('crypto'),
 //  ZERO = server restart check ================================================= X
   var GO_start                = function () {
     console.log("SERVER RESTARTED - STARTING CLEANING PROCESS");
-    connection.query('SELECT state, fancrawl_instagram_id FROM access_right', function(err, rows, fields) {
+    connection.query('SELECT fancrawl_instagram_id FROM access_right', function(err, rows, fields) {
       if (err) throw err;
       if( rows && rows[0] ) {
         for (var i = 0; i < rows.length; i++){
@@ -1600,7 +1624,7 @@ var crypto                    = require('crypto'),
           //done cleaning so set to stopped
           connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
-            console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER");
+            console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", fancrawl_instagram_id );
           });
         });
         res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
@@ -1623,6 +1647,4 @@ var crypto                    = require('crypto'),
       });
     }
     };
-
-
 
