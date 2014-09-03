@@ -569,6 +569,7 @@ var crypto                    = require('crypto'),
                       if ( !usersInfo[ fancrawl_instagram_id ] ) {
                         usersInfo[ fancrawl_instagram_id ] = {};
                       }
+                      CONSOLE.LOG("GO_UNFOLLOW: OAUTH LIMIT RATE FOR: ", fancrawl_instagram_id );
 
                       usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
 
