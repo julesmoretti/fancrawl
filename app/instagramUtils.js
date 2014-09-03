@@ -268,6 +268,7 @@ var crypto                    = require('crypto'),
               } else if ( process === "unfollow_verify" ) {
                 // check relationship and then time difference if needs be
                 relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
+                  console.log("RELATIONSHIP RESPONSE STATUS FOR USER "+fancrawl_instagram_id+" & "+new_instagram_following_id+" = "+relationship );
                   if ( relationship === "access_token" ) {
                     // error to deal with...
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
