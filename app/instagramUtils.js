@@ -77,7 +77,7 @@ var crypto                    = require('crypto'),
 //  ZERO = neutral timer function for post requests ============================= X
   var timer_post              = function ( fancrawl_instagram_id ) {
     // random minute generator between 1 ~ 1.5 min
-    var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 60000;
+    var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 70000;
 
     if ( !timer[ fancrawl_instagram_id ] ) {
       timer[ fancrawl_instagram_id ]                 = {};
@@ -174,7 +174,7 @@ var crypto                    = require('crypto'),
 //  ZERO = neutral timer function for regular request =========================== X
   var timer_quick             = function ( fancrawl_instagram_id ) {
     // random second generator between 3.6 ~ 5.6 sec
-    var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600;
+    var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 5000;
 
     if ( !timer[ fancrawl_instagram_id ] ) {
       timer[ fancrawl_instagram_id ]                 = {};
@@ -239,7 +239,11 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    });
 
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
@@ -282,7 +286,7 @@ var crypto                    = require('crypto'),
               } else if ( process === "unfollow_verify" ) {
                 // check relationship and then time difference if needs be
                 relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
-                  console.log("RELATIONSHIP RESPONSE STATUS FOR USER "+fancrawl_instagram_id+" & "+new_instagram_following_id+" = "+relationship );
+                  // console.log("RELATIONSHIP RESPONSE STATUS FOR USER "+fancrawl_instagram_id+" & "+new_instagram_following_id+" = "+relationship );
                   if ( relationship === "access_token" ) {
                     // error to deal with...
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -292,10 +296,15 @@ var crypto                    = require('crypto'),
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
+
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    });
 
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
@@ -369,7 +378,11 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    });
 
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
@@ -476,11 +489,10 @@ var crypto                    = require('crypto'),
           }
 
       request(options, function (error, response, body) {
-          // console.log("RELATIONSHIP FOR: "+ fancrawl_instagram_id + " & " + new_instagram_following_id+" & body: "+ body);
 
-          var pbody = JSON.parse(body);
           // CHECK FOR BODY
-          if (pbody) {
+          if (body) {
+            var pbody = JSON.parse(body);
 
             // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
             if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
@@ -1020,8 +1032,8 @@ var crypto                    = require('crypto'),
           quickCount++;
         }
         if ( postCount !== 0 || quickCount !== 0 ) {
-          console.log("VERIFY CLEANING - POST COUNT: "+postCount+" for "+fancrawl_instagram_id );
-          console.log("VERIFY CLEANING - QUICK COUNT: "+quickCount+" for "+fancrawl_instagram_id );
+          // console.log("VERIFY CLEANING - POST COUNT: "+postCount+" for "+fancrawl_instagram_id );
+          // console.log("VERIFY CLEANING - QUICK COUNT: "+quickCount+" for "+fancrawl_instagram_id );
           // not done check again after some time....
           // still got data to go through wait longer to check
           var postDelay = postCount * 60 * 1000;
@@ -1029,7 +1041,7 @@ var crypto                    = require('crypto'),
           var totalDelay = postDelay + quickDelay;
 
 
-          console.log("VERIFY CLEANING - TOTAL DELAY: "+totalDelay+" for "+fancrawl_instagram_id );
+          // console.log("VERIFY CLEANING - TOTAL DELAY: "+totalDelay+" for "+fancrawl_instagram_id );
           console.log("VERIFY CLEANING - "+fancrawl_instagram_id+": "+JSON.stringify( timer[ fancrawl_instagram_id ] ) );
           setTimeout(
             function(){
@@ -1464,12 +1476,9 @@ var crypto                    = require('crypto'),
                     'errorLogs': {}
                   };
 
-    if ( usersInfo[req.query.id] && usersInfo[req.query.id].errorLogs ) {
-      metrics.errorLogs = usersInfo[req.query.id].errorLogs;
+    if ( usersInfo[req.query.id] && JSON.stringify( usersInfo[req.query.id] ).length > 2 ) {
+      metrics.errorLogs = usersInfo[req.query.id];
     }
-
-    //TODO add the weekly increase stats...
-    //TODO add the daily monthly stats also...
 
     if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
       console.log("has valid structure");

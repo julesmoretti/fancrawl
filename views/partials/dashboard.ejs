@@ -167,8 +167,8 @@
                 <% } else { %>
                 <% } %>
                 <li><span>FanCrawled users so far: </span></li>
-                <% for(keys in errorLogs) {%>
-                   <li><%= errorLogs[keys] %></li>
+                <% for ( keys in errorLogs ) {%>
+                   <li><span><%= errorLogs[ keys ] %></span></li>
                 <% } %>
                 <li><span>Dont forget to save..........</span></li>
               </ul>
@@ -224,7 +224,7 @@
                       <span>0</span>
                     <% } %>
                   </li>
-                  <% for(keys in errorLogs) {%>
+                  <% for ( keys in errorLogs ) {%>
                      <li><span>WARNINGS</span></li>
                   <% } %>
                   <li>
