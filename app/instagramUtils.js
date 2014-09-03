@@ -234,6 +234,13 @@ var crypto                    = require('crypto'),
                     }
                     usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
 
+                  } else if ( relationship === "APINotAllowedError" ) {
+                    // error to deal with...
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
+                    }
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -249,6 +256,9 @@ var crypto                    = require('crypto'),
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
                     }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                    }
 
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
@@ -260,6 +270,10 @@ var crypto                    = require('crypto'),
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
                     }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                    }
+
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow");
                   }
@@ -276,6 +290,13 @@ var crypto                    = require('crypto'),
                     }
                     usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
 
+                  } else if ( relationship === "APINotAllowedError" ) {
+                    // error to deal with...
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
+                    }
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -290,6 +311,9 @@ var crypto                    = require('crypto'),
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
                     }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                    }
 
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
@@ -301,6 +325,9 @@ var crypto                    = require('crypto'),
                     }
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                    }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                     }
 
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
@@ -316,6 +343,9 @@ var crypto                    = require('crypto'),
                     }
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                    }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                     }
 
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
@@ -334,6 +364,13 @@ var crypto                    = require('crypto'),
                     }
                     usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
 
+                  } else if ( relationship === "APINotAllowedError" ) {
+                    // error to deal with...
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
+                    }
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+
                   } else if ( relationship === "oauth_limit" ) {
                     // error to deal with...
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -348,6 +385,9 @@ var crypto                    = require('crypto'),
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
                     }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                    }
 
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
@@ -360,6 +400,10 @@ var crypto                    = require('crypto'),
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
                       delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
                     }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                    }
+
                     // delete from queue
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     // console.log("TIMER QUICK - deleted "+fancrawl_instagram_id+": "+new_instagram_following_id+" of process "+process);
@@ -432,7 +476,8 @@ var crypto                    = require('crypto'),
           }
 
       request(options, function (error, response, body) {
-          console.log("RELATIONSHIP FOR: "+ fancrawl_instagram_id + " & " + new_instagram_following_id+" & body: "+ body);
+          // console.log("RELATIONSHIP FOR: "+ fancrawl_instagram_id + " & " + new_instagram_following_id+" & body: "+ body);
+
           var pbody = JSON.parse(body);
           // CHECK FOR BODY
           if (pbody) {
@@ -442,6 +487,10 @@ var crypto                    = require('crypto'),
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
               // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
               callback(fancrawl_instagram_id, new_instagram_following_id, "not_exist");
+
+            if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError") {
+              // {"meta":{"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
+              callback(fancrawl_instagram_id, new_instagram_following_id, "APINotAllowedError");
 
             // OAUTH TOKEN EXPIRED
             } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
