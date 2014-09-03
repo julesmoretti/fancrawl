@@ -4,19 +4,6 @@ CREATE DATABASE `fancrawl`;
 
 USE fancrawl;
 
-
-
-/* You can also create more tables, if you need them... */
-
-/*  Execute this file from the command line by typing:
- *    mysql -u root < schema.sql
- *  to create the database and the tables.
- *  then to get into the sql database
- *    sudo mysql
- *  look at cheat sheet bellow
- * */
-
-
 -- ---
 -- Globals
 -- ---
@@ -40,8 +27,6 @@ CREATE TABLE `access_right` (
   `code` VARCHAR(255),
   `token` VARCHAR(255),
   `fancrawl_profile_picture` VARCHAR(255),
-  `last_following_id` VARCHAR(20) DEFAULT 3,
-  `last_ip` VARCHAR(20),
   PRIMARY KEY (`id`)
 ) COMMENT 'Original access_right list';
 
@@ -95,16 +80,3 @@ CREATE TABLE `beta_followers` (
   `refresh_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
-
--- ---
--- Foreign Keys
--- ---
-
--- count = count of following test
--- f = if nid is now following iid or not
--- cd = creation date
--- rd = refresh date
--- state = fresh (never started)
-        -- started (initiated the crawl)
-        -- stopping (cleaning up directory back to original)
-        -- stopped (finished removing test followers)

@@ -1,6 +1,19 @@
 sudo mysql < schema.sql
 sudo mysql < schema_data.sql  
 
+
+/* You can also create more tables, if you need them... */
+
+/*  Execute this file from the command line by typing:
+ *    mysql -u root < schema.sql
+ *  to create the database and the tables.
+ *  then to get into the sql database
+ *    sudo mysql
+ *  look at cheat sheet bellow
+ * */
+
+
+
 alter table access_right modify state varchar(255) default "stopped";
 alter table beta_followers modify column count int(9) default '1';
 created my.cnf into /usr/local/etc/ to solve for utf8mb4 characters
