@@ -295,6 +295,21 @@ var crypto                    = require('crypto'),
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
 
                   // neither or just follow or just requested
+                  } else if ( relationship === "not_exist" ) {
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      delete usersInfo[ fancrawl_instagram_id ].access_token;
+                    }
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                    }
+
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                    connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      console.log("USER DELETED THERE ACCOUNT");
+                    });
+
+
                   } else {
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
                       delete usersInfo[ fancrawl_instagram_id ].access_token;
@@ -426,7 +441,7 @@ var crypto                    = require('crypto'),
             if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
               // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
-              callback(fancrawl_instagram_id, new_instagram_following_id, "not_exit");
+              callback(fancrawl_instagram_id, new_instagram_following_id, "not_exist");
 
             // OAUTH TOKEN EXPIRED
             } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
