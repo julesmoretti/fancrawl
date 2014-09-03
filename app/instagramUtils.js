@@ -557,8 +557,8 @@ var crypto                    = require('crypto'),
                   headers: headers,
                   form:{action:'unfollow'}
               }
-              console.log("G0_UNFOLLOW: ", new_instagram_following_id );
               request(options, function (error, response, body) {
+              console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
                 if (!error && response.statusCode == 200) {
                   var pbody = JSON.parse(body);
                   if( pbody ) {
