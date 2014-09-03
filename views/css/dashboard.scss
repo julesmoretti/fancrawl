@@ -461,6 +461,10 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%;
+                  #submitButton {
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                  }
                   .switchDiv {
                     display: table-cell;
                     vertical-align: middle;

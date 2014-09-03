@@ -366,6 +366,9 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%; }
+                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li #submitButton {
+                    -webkit-appearance: none;
+                    -moz-appearance: none; }
                   html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv {
                     display: table-cell;
                     vertical-align: middle;
