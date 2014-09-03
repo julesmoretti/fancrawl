@@ -1029,7 +1029,7 @@ var crypto                    = require('crypto'),
           setTimeout(
             function(){
             // console.log("CLEAN DATABASE - ROWS FOUND SET TIMEOUT CALLBACK");
-            verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id, callback ) {
+            verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id ) {
               // console.log("CALLLLLLLLBACKKKKKK");
               // console.log(fancrawl_instagram_id);
               callback( fancrawl_instagram_id );
