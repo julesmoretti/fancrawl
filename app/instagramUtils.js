@@ -957,7 +957,7 @@ var crypto                    = require('crypto'),
           connection.query('UPDATE beta_followers SET count = '+code+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
             if (err) throw err;
           });
-
+          console.log("VERIFY RELATIONSHIP CODE: "+code+" for user "+new_instagram_following_id);
           var time_start  = JSON.parse(rows[0]['UNIX_TIMESTAMP(creation_date)']),
               time_now    = JSON.parse(rows[0]['UNIX_TIMESTAMP(now())']),
               time_diff     = (time_now - time_start) * 1000;
