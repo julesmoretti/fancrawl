@@ -19,7 +19,7 @@
         <span>FanCrawl</span>
 
         <!-- toggle submenu -->
-        <div class="user" onclick="$('#hidden').toggleClass('hidden');">
+        <div class="user" onclick="$('#hidden').toggleClass('show');">
 
           <!-- check ejs for instagram user data -->
           <% if ( userPicture ){ %>
@@ -37,6 +37,7 @@
 
           <div></div>
         </div>
+        <div></div>
         <div id="hidden" class="userMenu">
           <ul>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank">About FanCrawl</a></li>

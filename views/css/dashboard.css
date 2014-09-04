@@ -78,16 +78,15 @@ html {
           color: #999999;
           margin-left: 8px; }
         html body .header .headerInner .user {
-          margin-top: 5px;
-          margin-right: 5px;
           border-radius: 4px;
           border: 1px solid #4d4d4d;
-          float: right;
           width: 158px;
           height: 32px;
           background-color: #333333;
-          position: relative;
-          cursor: pointer; }
+          position: absolute;
+          cursor: pointer;
+          top: 5px;
+          right: 5px; }
           html body .header .headerInner .user:hover {
             background-color: #3D3D3D; }
           html body .header .headerInner .user img {
@@ -97,38 +96,43 @@ html {
           html body .header .headerInner .user span {
             font-family: "inst_reg";
             font-size: 12px;
-            position: absolute;
-            top: 9px;
-            margin-left: 8px; }
+            position: relative;
+            bottom: 12px;
+            margin-left: 6px; }
           html body .header .headerInner .user div {
             width: initial;
             height: initial;
             font-family: "ionicons";
-            /* background-color: red; */
             position: absolute;
             top: 10px;
-            right: 11px;
+            right: 12px;
             color: #727272;
             font-size: 12px; }
             html body .header .headerInner .user div:before {
               content: "\f104"; }
+        html body .header .headerInner div:nth-of-type(2) {
+          width: 127px;
+          height: 44px;
+          background-color: #212121;
+          position: absolute;
+          top: 0px;
+          right: 5px;
+          z-index: -5; }
         html body .header .headerInner .userMenu {
           width: 125px;
-          float: right;
-          margin-top: -154px;
-          margin-right: 5px;
+          top: -61px;
+          right: 5px;
           border-radius: 0 0 4px 4px;
           border: 1px solid #4d4d4d;
           background-color: rgba(42, 42, 42, 0.5);
-          position: relative;
-          clear: both;
+          position: absolute;
           opacity: 0;
-          z-index: -60;
+          z-index: -10;
           -webkit-transition: all 0.2s linear;
           -moz-transition: all 0.2s linear; }
-          html body .header .headerInner .userMenu.hidden {
-            margin-top: 5px;
-            opacity: 1; }
+          html body .header .headerInner .userMenu.show {
+            opacity: 1;
+            top: 44px; }
           html body .header .headerInner .userMenu ul {
             font-family: "inst_reg";
             font-size: 12px;
@@ -150,7 +154,8 @@ html {
                   color: #cccccc; }
             html body .header .headerInner .userMenu ul li:nth-last-of-type(1) {
               font-family: "inst_semibold";
-              border-bottom: 0px solid #4d4d4d; }
+              border-bottom: 0px solid #4d4d4d;
+              padding-top: 2px; }
     html body .banner {
       position: absolute;
       width: 100%;
