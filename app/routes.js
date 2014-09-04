@@ -10,7 +10,7 @@ var instagramUtils = require('./instagramUtils.js');
 //  ROUTES
 //  =============================================================================
 
-  module.exports = function(app, passport) {
+  module.exports = function(app) {
 
     // landing page to site loads default - login.ejs
     app.get('/', instagramUtils.login);
@@ -23,15 +23,6 @@ var instagramUtils = require('./instagramUtils.js');
 
     // main dashboard page
     app.get('/dashboard', instagramUtils.dashboard);
-
-    // trigger different function like GO_Follow etc...
-    // app.get('/button', instagramUtils.button);
-
-    // goes through database and cleans user base making sure to unfollow unwanted followers
-    // app.get('/clean', instagramUtils.clean);
-
-    // loads dashboard
-    // app.get('/temp', instagramUtils.temp);
 
     // loads dashboard
     app.post('/trigger', instagramUtils.trigger);
