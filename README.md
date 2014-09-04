@@ -1,88 +1,27 @@
-sudo mysql < schema.sql
-sudo mysql < schema_data.sql  
+#FanCrawl
 
+<img src="https://mir-cdn.behance.net/v1/rendition/wip/hd/1304341.53e709e625f46.jpg" style="max-width:100%;">
 
-/* You can also create more tables, if you need them... */
+Instagram bot to increase the user's following
 
-/*  Execute this file from the command line by typing:
- *    mysql -u root < schema.sql
- *  to create the database and the tables.
- *  then to get into the sql database
- *    sudo mysql
- *  look at cheat sheet bellow
- * */
+You can see the front page of the live version of FanCrawl at http://fancrawl.io, but there is a restriction access currently in place so your account will not work on it unless I add it manually.
 
+##Table of Content:
 
+ - [Wiki](https://github.com/julesmoretti/fancrawl/wiki) - Access to the Wiki documentation.
 
-alter table access_right modify state varchar(255) default "stopped";
-alter table beta_followers modify column count int(9) default '1';
-created my.cnf into /usr/local/etc/ to solve for utf8mb4 characters
+---
+###User's manual###
+ - [Introduction](https://github.com/julesmoretti/fancrawl/wiki/Introduction) - fancrawl in a nutshell
+ - [Features](https://github.com/julesmoretti/fancrawl/wiki/Features) - Brief list of supported features
+ - [Dependencies](https://github.com/julesmoretti/fancrawl/wiki/Dependencies) - Information about third-party libraries and ways to get those
+ - [Local Install](https://github.com/julesmoretti/fancrawl/wiki/Local Install) - Workflow to clone repo and get it up and running from your computer
+ - [Server Side Implementation](https://github.com/julesmoretti/fancrawl/wiki/Server Side Implementation) - Work flow to migrate project repo from your local machine to your own physical server hosted on Digital Ocean
+ - [DNS Address Redirection](https://github.com/julesmoretti/fancrawl/wiki/DNS Address Redirection) - Instructions on how to get your domain to point your servers IP
 
-```
-[client]
-default-character-set = utf8mb4
+---
+###Miscellaneous###
+ - [FAQ](https://github.com/julesmoretti/fancrawl/wiki/FAQ) - Frequently Asked Questions
+ - [Screenshots](https://github.com/julesmoretti/fancrawl/wiki/Screenshots) - Collection of screen shots demonstrating some of features
 
-[mysql]
-default-character-set = utf8mb4
-
-[mysqld]
-character-set-client-handshake = FALSE
-character-set-server = utf8mb4
-collation-server = utf8mb4_unicode_ci
-```
-
-on server side fresh mysql use
-
-```
-aptitude install mysql-server mysql-client
-```
-
-to check if it is running
-
-```
-service mysql status
-```
-
-Check with admin status
-
-```
-mysqladmin -u root -p status
-```
-
-to login
-
-```
-mysql -u root -p
-```
-
-
-local machine sql password reset
-```
-mysql --user=root mysql
-
-update user set Password=PASSWORD('new-password') where user='root';
-flush privileges;
-exit;
-```
-
-in server side use 
-```
-mysql --user=root -p
-mysql --user=root -p < schema.sql
-```
-
-followed this tutorial to update mysql to 5.6
-
-http://xmodulo.com/2013/12/upgrade-mysql-server-debian-ubuntu.html
-
-
-ADDED local variable local in order to control sass bug...
-
-pm2 command to start server `pm2 start server.js --name fancrawl -i max --watch`
-
-to set mysql timezone
-```
-SET GLOBAL time_zone = '-7:00';
-SET time_zone = "-7:00";
-```
-
+Thank you and enjoy...
