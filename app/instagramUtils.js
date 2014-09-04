@@ -224,7 +224,7 @@ var crypto                    = require('crypto'),
               if ( process === "new" ) {
                 // check relationship and unfollow with proper
                 relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
-                  if ( relationship === "not_exit" ) {
+                  if ( relationship === "not_exist" ) {
                     // DELETE FROM LIST
                     delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     console.log("NEW ADDED USER DID NOT EXIST - Deleted from quick list");
