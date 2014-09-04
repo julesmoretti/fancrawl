@@ -493,7 +493,7 @@ var crypto                    = require('crypto'),
       request(options, function (error, response, body) {
 
         if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
-          console.log("relationship: ", body);
+          console.log("relationship "+new_instagram_following_id+" : ", body);
         }
           // CHECK FOR BODY
           if (body) {
