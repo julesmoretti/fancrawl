@@ -201,7 +201,7 @@
                         <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()" checked="checked"/>
                         <label id="switch1label" for="switch1">&nbsp;</label>
                       <% } else if ( status === "statusCleaning" ){ %>
-                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" disabled="disabled"/>
+                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                         <label id="switch1label" for="switch1" class="muted">&nbsp;</label>
                       <% } %>
                     </div>
@@ -209,13 +209,13 @@
                   <li>
                     <div class="switchDiv">
                       <% if ( status === "statusStopped" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2()"/>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2();"/>
                         <label id="switch2label" for="switch2">&nbsp;</label>
                       <% } else if ( status === "statusStarted" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" disabled="disabled"/>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                         <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
                       <% } else if ( status === "statusCleaning" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" disabled="disabled"/>
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                         <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
                       <% } %>
                     </div>
@@ -237,7 +237,7 @@
                      <li><span>WARNINGS</span></li>
                   <% } %>
                   <li>
-                    <button id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" disabled>SAVE</button>
+                    <button id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" onclick="$('#hidden').removeClass('show');" disabled>SAVE</button>
                   </li>
                 </ul>
               </form>
@@ -254,6 +254,8 @@
     <script>
 
       function toggleAttributes1() {
+
+        $('#hidden').removeClass('show');
 
         // tobbles other tab
         var switch2 = document.getElementById("switch2");
@@ -281,6 +283,8 @@
       };
 
       function toggleAttributes2() {
+
+        $('#hidden').removeClass('show');
 
         // tobbles other tab
         var switch1 = document.getElementById("switch1");
