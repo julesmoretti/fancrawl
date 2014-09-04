@@ -196,7 +196,7 @@ html {
         right: 0px; }
         html body .container .containerInner .mainStats {
           width: calc(100% - 16px);
-          max-width: calc(33% - 16px);
+          max-width: calc(50% - 18px);
           /*min-width: 100px;*/
           border-radius: 6px;
           background-color: #808080;
@@ -248,20 +248,22 @@ html {
                 font-size: 20px;
                 font-family: "inst_bold";
                 position: absolute; }
-                html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).instRed {
-                  color: #f13d32; }
                 html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).instGreen {
-                  color: #64dd7c; }
-                html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).up:before {
-                  font-family: "ionicons";
-                  font-size: 18px;
-                  content: "\f10c";
-                  margin-right: 4px; }
-                html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).down:before {
-                  font-family: "ionicons";
-                  font-size: 18px;
-                  content: "\f103";
-                  margin-right: 4px; }
+                  color: #64dd7c !important; }
+                html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).up_by {
+                  color: #64dd7c !important; }
+                  html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).up_by:before {
+                    font-family: "ionicons";
+                    font-size: 18px;
+                    content: "\f10c";
+                    margin-right: 4px; }
+                html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).down_by {
+                  color: #f13d32 !important; }
+                  html body .container .containerInner .mainStats .figures .followedBy span:nth-of-type(3).down_by:before {
+                    font-family: "ionicons";
+                    font-size: 18px;
+                    content: "\f103";
+                    margin-right: 4px; }
             html body .container .containerInner .mainStats .figures .following {
               width: 50%;
               position: absolute;
@@ -289,20 +291,22 @@ html {
                 text-align: right;
                 font-size: 20px;
                 position: absolute; }
-                html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).instYellow {
-                  color: #fdd900; }
                 html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).instBlue {
                   color: #35b4f4; }
-                html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).up:before {
-                  font-family: "ionicons";
-                  font-size: 18px;
-                  content: "\f10c";
-                  margin-right: 4px; }
-                html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).down:before {
-                  font-family: "ionicons";
-                  font-size: 18px;
-                  content: "\f103";
-                  margin-right: 4px; }
+                html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).up_ing {
+                  color: #35b4f4; }
+                  html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).up_ing:before {
+                    font-family: "ionicons";
+                    font-size: 18px;
+                    content: "\f10c";
+                    margin-right: 4px; }
+                html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).down_ing {
+                  color: #fdd900; }
+                  html body .container .containerInner .mainStats .figures .following span:nth-of-type(3).down_ing:before {
+                    font-family: "ionicons";
+                    font-size: 18px;
+                    content: "\f103";
+                    margin-right: 4px; }
         html body .container .containerInner .mainControllers {
           width: calc(100% - 16px);
           height: inherit;

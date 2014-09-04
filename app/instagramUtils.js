@@ -1678,15 +1678,15 @@ var crypto                    = require('crypto'),
                         metrics.actualFollowingPercentage = Math.floor( ( ( metrics.actualFollowing / metrics.following ) * 100 ) - 100);
 
                         if ( metrics.actualFollowedByPercentage >= 0 ) {
-                          metrics.afbpClass = 'up';
+                          metrics.afbpClass = 'up_by';
                         } else {
-                          metrics.afbpClass = 'down';
+                          metrics.afbpClass = 'down_by';
                         }
 
                         if ( metrics.actualFollowingPercentage >= 0 ) {
-                          metrics.afpClass = 'up';
+                          metrics.afpClass = 'up_ing';
                         } else {
-                          metrics.afpClass = 'down';
+                          metrics.afpClass = 'down_ing';
                         }
                         res.render('./partials/dashboard.ejs',  metrics );
                       });

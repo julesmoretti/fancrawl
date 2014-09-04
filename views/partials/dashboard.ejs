@@ -55,7 +55,7 @@
     <div class="container">
       <div class="containerInner">
         <div class="mainStats left">
-          <span>Your original relationships</span>
+          <span>Pre-FanCrawl</span>
           <div class="figures">
             <div class="followedBy">
               <span>Followed by</span>
@@ -77,50 +77,11 @@
             </div>
           </div>
         </div>
-        <div class="mainStats center">
-          <span>Your FanCrawled relationships</span>
+        <div class="mainStats right">
+          <span>Current</span>
           <div class="figures">
             <div class="followedBy">
               <span>Followed by</span>
-              <!-- check ejs for latest followed by data -->
-              <% if ( latestFollowedBy ){ %>
-                <span><%= latestFollowedBy %></span>
-              <% } else { %>
-                <span>N/A</span>
-              <% } %>
-
-              <!-- computed percentage increase -->
-              <% if ( latestFollowedByPercentage ){ %>
-                <span class="instRed <%= lfbpClass %>"><%= latestFollowedByPercentage %>%</span>
-              <% } else { %>
-                <span class="instRed"></span>
-              <% } %>
-            </div>
-            <div class="following">
-              <span>Following</span>
-
-              <!-- check ejs for latest following data -->
-              <% if ( latestFollowing ){ %>
-                <span><%= latestFollowing %></span>
-              <% } else { %>
-                <span>N/A</span>
-              <% } %>
-
-              <!-- computed percentage increase -->
-              <% if ( latestFollowingPercentage ){ %>
-                <span class="instYellow <%= lfpClass %>"><%= latestFollowingPercentage %>%</span>
-              <% } else { %>
-                <span class="instYellow"></span>
-              <% } %>
-
-            </div>
-          </div>
-        </div>
-        <div class="mainStats right">
-          <span>Your current relationships</span>
-          <div class="figures">
-            <div class="followedBy">
-              <span>Currently followed by</span>
 
               <!-- check ejs for current relationships -->
               <% if ( actualFollowedBy ){ %>
@@ -131,14 +92,14 @@
 
               <!-- computed percentage increase -->
               <% if ( actualFollowedByPercentage ){ %>
-                <span class="instGreen <%= afbpClass %>"><%= actualFollowedByPercentage %>%</span>
+                <span class="<%= afbpClass %>"><%= actualFollowedByPercentage %>%</span>
               <% } else { %>
                 <span class="instGreen"></span>
               <% } %>
 
             </div>
             <div class="following">
-              <span>Current followings</span>
+              <span>Following</span>
               <!-- check ejs for weekly following data -->
               <% if ( actualFollowing ){ %>
                 <span><%= actualFollowing %></span>
@@ -148,7 +109,7 @@
 
               <!-- computed percentage increase -->
               <% if ( actualFollowingPercentage ){ %>
-                <span class="instBlue <%= afpClass %>"><%= actualFollowingPercentage %>%</span>
+                <span class="<%= afpClass %>"><%= actualFollowingPercentage %>%</span>
               <% } else { %>
                 <span class="instBlue"></span>
               <% } %>
@@ -156,12 +117,12 @@
           </div>
         </div>
         <div class="mainControllers">
-          <span>Main controllers</span>
+          <span>Actions</span>
           <div class="controllerList">
             <div class="controllerDescription">
               <ul>
                 <li><span>Current status: </span></li>
-                <li><span>Clean up database: </span></li>
+                <li><span>Clean up? </span></li>
                 <% if ( status === "statusCleaning" ){ %>
                   <li><span>Approximate time remaining:</span></li>
                 <% } else { %>
