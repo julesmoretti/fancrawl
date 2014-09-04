@@ -42,7 +42,7 @@
           <ul>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
-            <li><a href="/" target="_self" onclick="$('#hidden').removeClass('show');">LOG OUT</a></li>
+            <li><a onclick="logOut();">SIGN OUT</a></li>
           </ul>
         </div>
       </div>
@@ -196,9 +196,24 @@
       <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
     </div>
     <div id="menuHide" onclick="$('#hidden').removeClass('show');"></div>
-    <script>
 
-      function toggleAttributes1() {
+    <script type="text/javascript">
+      var logOut = function(){
+        $.ajax( {url: "https://instagram.com/accounts/logout", dataType: 'jsonp' } )
+          .done(function() {
+            console.log( "success" );
+            window.location.replace("/");
+          })
+          .fail(function(e) {
+            console.log('Error::' + e.responseText);
+            window.location.replace("/");
+          })
+          .always(function() {
+            console.log( "complete" );
+          });
+      }
+
+      var toggleAttributes1 = function() {
 
         $('#hidden').removeClass('show');
 
@@ -227,7 +242,7 @@
 
       };
 
-      function toggleAttributes2() {
+      var toggleAttributes2 =  function() {
 
         $('#hidden').removeClass('show');
 

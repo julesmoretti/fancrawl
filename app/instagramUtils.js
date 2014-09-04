@@ -234,7 +234,7 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
+                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -243,7 +243,7 @@ var crypto                    = require('crypto'),
                     }
                     connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                       if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
                       delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     });
 
@@ -294,7 +294,7 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
+                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -304,7 +304,7 @@ var crypto                    = require('crypto'),
                     }
                     connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                       if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
                       delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     });
 
@@ -313,7 +313,7 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
 
                   } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
@@ -373,7 +373,7 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "access_token error";
+                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -382,7 +382,7 @@ var crypto                    = require('crypto'),
                     }
                     connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                       if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "APINotAllowedError error";
+                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
                       delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
                     });
 
@@ -391,7 +391,7 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
 
                   } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
@@ -653,7 +653,7 @@ var crypto                    = require('crypto'),
                       }
                       CONSOLE.LOG("GO_UNFOLLOW: OAUTH LIMIT RATE FOR: ", fancrawl_instagram_id );
 
-                      usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
+                      usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "The maximum number of IG requests per hour has been exceeded.";
 
                       clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
 
@@ -725,7 +725,7 @@ var crypto                    = require('crypto'),
               if ( !usersInfo[ fancrawl_instagram_id ] ) {
                 usersInfo[ fancrawl_instagram_id ] = {};
               }
-              usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
+              usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "The maximum number of IG requests per hour has been exceeded.";
 
               clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
 
