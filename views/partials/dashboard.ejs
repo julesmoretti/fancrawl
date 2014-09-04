@@ -40,9 +40,9 @@
         <div></div>
         <div id="hidden" class="userMenu">
           <ul>
-            <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank">About FanCrawl</a></li>
-            <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank">Report Issues</a></li>
-            <li><a href="https://instagram.com/accounts/logout" target="_self">LOG OUT</a></li>
+            <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
+            <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
+            <li><a href="https://instagram.com/accounts/logout" target="_self" onclick="$('#hidden').removeClass('show');">LOG OUT</a></li>
           </ul>
         </div>
       </div>
@@ -250,6 +250,7 @@
     <div class="status_bar">
       <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
     </div>
+    <div id="menuHide" onclick="$('#hidden').removeClass('show');"></div>
     <script>
 
       function toggleAttributes1() {
