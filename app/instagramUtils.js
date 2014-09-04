@@ -1066,60 +1066,98 @@ var crypto                    = require('crypto'),
     }
    };
 
+//  ZERO = database duplicates and resets there count to zero to be rechecked ===
+  var checkDuplicate          = function (fancrawl_instagram_id, callback ) {
+    connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      if (err) throw err;
+      // need to check for duplicate
+      if ( rows && rows[0] ) {
+        for ( var i = 0; i < ( rows.length - 1); i++ ) {
+          for ( var j = ( i + 1 ); j < rows.length; j++ ) {
+            if ( rows[i].added_follower_instagram_id === rows[j].added_follower_instagram_id ) {
+              console.log("Found Duplicate ID #: ", rows[i].added_follower_instagram_id );
+              // console.log("should delete all dups and add it back to DB as a 0 value to be checked again");
+              var new_instagram_following_id = rows[i].added_follower_instagram_id;
+              connection.query('DELETE FROM beta_followers WHERE added_follower_instagram_id = "'+new_instagram_following_id+'" AND fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                if (err) throw err;
+                console.log("fancrawl_instagram_id", fancrawl_instagram_id);
+                console.log("new_instagram_following_id", new_instagram_following_id);
+                                  // insert into beta_followers set fancrawl_instagram_id = 571377691, added_follower_instagram_id = 871
+                connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = "'+fancrawl_instagram_id+'", added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                  // console.log("should restart the check duplicate with same callback");
+                  checkDuplicate( fancrawl_instagram_id, callback );
+                });
+              });
+              return;
+            }
+          }
+        }
+        console.log("NO DUPLICATE FOUND SO FINISHED / CALLBACK");
+        if ( callback ) {
+          callback( fancrawl_instagram_id );
+        }
+      }
+    });
+  }
+
 //  ZERO = check status of current database users =============================== X
   var cleanDatabase           = function ( fancrawl_instagram_id, callback ) {
     // console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
-    connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 0', function(err, rows, fields) {
-      if (err) throw err;
-      if ( rows && rows[0] ){
-        for ( var i = 0; i < rows.length; i++ ) {
-          connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
-            if (err) throw err;
-          });
-        }
-      }
-      connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
+    checkDuplicate (fancrawl_instagram_id, function (fancrawl_instagram_id){
+
+      connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 0', function(err, rows, fields) {
         if (err) throw err;
-        if ( rows && rows[0] ) {
-        // console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
-
-          // DATABASE HAS USERS TO DEAL WITH
+        if ( rows && rows[0] ){
           for ( var i = 0; i < rows.length; i++ ) {
-            var new_instagram_following_id = rows[i].added_follower_instagram_id;
-
-            verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
-          }
-
-          var quickCount = 0;
-          var postCount = 0;
-
-          for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-            quickCount++;
-          }
-          var quickCountTime = quickCount * 1000 * 5;
-          for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-            postCount++;
-          }
-          var postCountTime = postCount * 1000 * 80;
-          var totalCountTime = quickCountTime + postCountTime;
-
-          // console.log("CLEAN DATABASE - ROWS FOUND PRE SET TIMEOUT CALLBACK");
-          setTimeout(
-            function(){
-            // console.log("CLEAN DATABASE - ROWS FOUND SET TIMEOUT CALLBACK");
-            verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id ) {
-              // console.log("CALLLLLLLLBACKKKKKK");
-              // console.log(fancrawl_instagram_id);
-              callback( fancrawl_instagram_id );
+            connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
+              if (err) throw err;
             });
-          }, totalCountTime + 1000 );
-
-        } else {
-          // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
-          // PROCEED WITH CALLBACK
-          console.log("CLEAN DATABASE - NO ROWS FOUND SO CALLBACK");
-          callback( fancrawl_instagram_id );
+          }
         }
+        connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
+          if (err) throw err;
+          if ( rows && rows[0] ) {
+          // console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
+
+            // DATABASE HAS USERS TO DEAL WITH
+            for ( var i = 0; i < rows.length; i++ ) {
+              var new_instagram_following_id = rows[i].added_follower_instagram_id;
+
+              verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
+            }
+
+            var quickCount = 0;
+            var postCount = 0;
+
+            for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
+              quickCount++;
+            }
+            var quickCountTime = quickCount * 1000 * 5;
+            for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
+              postCount++;
+            }
+            var postCountTime = postCount * 1000 * 80;
+            var totalCountTime = quickCountTime + postCountTime;
+
+            // console.log("CLEAN DATABASE - ROWS FOUND PRE SET TIMEOUT CALLBACK");
+            setTimeout(
+              function(){
+              // console.log("CLEAN DATABASE - ROWS FOUND SET TIMEOUT CALLBACK");
+              verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id ) {
+                // console.log("CALLLLLLLLBACKKKKKK");
+                // console.log(fancrawl_instagram_id);
+                callback( fancrawl_instagram_id );
+              });
+            }, totalCountTime + 1000 );
+
+          } else {
+            // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
+            // PROCEED WITH CALLBACK
+            console.log("CLEAN DATABASE - NO ROWS FOUND SO CALLBACK");
+            callback( fancrawl_instagram_id );
+          }
+        });
       });
     });
     };
