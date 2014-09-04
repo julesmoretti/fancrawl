@@ -492,9 +492,9 @@ var crypto                    = require('crypto'),
 
       request(options, function (error, response, body) {
 
-        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
-          console.log("relationship "+new_instagram_following_id+" : ", body);
-        }
+        // if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
+        //   console.log("relationship "+new_instagram_following_id+" : ", body);
+        // }
           // CHECK FOR BODY
           if (body) {
             var pbody = JSON.parse(body);
@@ -502,7 +502,7 @@ var crypto                    = require('crypto'),
             // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
             if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
-              // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
+              console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
               callback(fancrawl_instagram_id, new_instagram_following_id, "not_exist");
 
             } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError") {
