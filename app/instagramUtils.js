@@ -492,6 +492,9 @@ var crypto                    = require('crypto'),
 
       request(options, function (error, response, body) {
 
+        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
+          console.log("relationship: ", body);
+        }
           // CHECK FOR BODY
           if (body) {
             var pbody = JSON.parse(body);
@@ -709,6 +712,9 @@ var crypto                    = require('crypto'),
       }
 
       request(options, function (error, response, body) {
+        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
+          console.log("GO FOLLOW: ", body);
+        }
         if (!error && response.statusCode == 200) {
           var pbody = JSON.parse(body);
           if( pbody ) {
