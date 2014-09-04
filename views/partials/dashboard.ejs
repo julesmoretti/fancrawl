@@ -160,16 +160,7 @@
           <div class="controllerList">
             <div class="controllerDescription">
               <ul>
-                <li>
-                  <% if ( status === "statusStopped" ){ %>
-                    <span>FanCrawl is stopped: </span>
-                  <% } else if ( status === "statusStarted" ){ %>
-                    <span>FanCrawl is started: </span>
-                  <% } else if ( status === "statusCleaning" ){ %>
-                    <span>FanCrawl is cleaning: </span>
-                  <% } %>
-                </li>
-                <li><span>FanCrawl trigger: </span></li>
+                <li><span>Current status: </span></li>
                 <li><span>Clean up database: </span></li>
                 <% if ( status === "statusCleaning" ){ %>
                   <li><span>Approximate time remaining:</span></li>
@@ -185,13 +176,6 @@
             <div class="controllerStatus">
               <form name="input" action="/trigger" method="post">
                 <ul>
-                  <li>
-                    <% if ( status ){ %>
-                      <span class="<%= status %>"></span>
-                    <% } else { %>
-                      <span>0</span>
-                    <% } %>
-                  </li>
                   <li>
                     <div class="switchDiv">
                       <% if ( status === "statusStopped" ){ %>
