@@ -379,7 +379,7 @@ html {
                     -webkit-appearance: none;
                     -moz-appearance: none;
                     padding: 0px;
-                    z-index: 200; }
+                    z-index: 90; }
                   html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv {
                     display: table-cell;
                     vertical-align: middle;
@@ -402,7 +402,7 @@ html {
                       -ms-user-select: none;
                       user-select: none;
                       margin-left: calc(50% - 25px);
-                      z-index: 300; }
+                      z-index: 90; }
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input.switch:empty ~ label:before, html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input.switch:empty ~ label:after {
                       position: absolute;
                       display: block;
@@ -524,4 +524,5 @@ html {
       top: 0px;
       bottom: 0px;
       left: 0px;
-      right: 0px; }
+      right: 0px;
+      z-index: 50; }

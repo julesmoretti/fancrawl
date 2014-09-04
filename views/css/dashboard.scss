@@ -470,7 +470,7 @@ html {
                     -webkit-appearance: none;
                     -moz-appearance: none;
                     padding: 0px;
-                    z-index: 200;
+                    z-index: 90;
                   }
                   .switchDiv {
                     display: table-cell;
@@ -497,7 +497,7 @@ html {
                       -ms-user-select: none;
                       user-select: none;
                       margin-left: calc(50% - 25px);
-                      z-index: 300;
+                      z-index: 90;
                     }
                     input.switch:empty ~ label:before,
                     input.switch:empty ~ label:after {
@@ -662,6 +662,7 @@ html {
       bottom: 0px;
       left: 0px;
       right: 0px;
+      z-index: 50;
     }
   }
 }
