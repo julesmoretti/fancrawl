@@ -1,10 +1,10 @@
 #FanCrawl
 
-<img src="https://m1.behance.net/rendition/modules/131962913/disp/c82c277e3d782735eefb54552cec3344.jpg" style="max-width:100%;">
+<img src="https://m1.behance.net/rendition/modules/131963871/hd/125bc78c3de275d49edcc884b3c74966.jpg" style="max-width:100%;">
 
-<img src="https://m1.behance.net/rendition/modules/131962911/disp/b89bffb206f44372169d7cd917f357a7.jpg" style="max-width:100%;">
+<img src="https://m1.behance.net/rendition/modules/131962911/hd/b89bffb206f44372169d7cd917f357a7.jpg" style="max-width:100%;">
 
-Instagram bot to increase the user's following
+FanCrawl lets you follow the entire Instagram population!
 
 You can see the front page of the live version of FanCrawl at http://fancrawl.io, but there is a restriction access currently in place so your account will not work on it unless I add it manually.
 
