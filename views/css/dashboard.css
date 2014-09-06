@@ -566,8 +566,9 @@ html {
       position: absolute;
       z-index: 400;
       height: initial;
-      width: initial;
+      width: 200px;
       background: none;
+      text-align: center;
       color: #cccccc;
       font-size: 20px;
       font-family: "inst_semibold";

@@ -129,7 +129,7 @@ var dots = chart.selectAll("circle")
                     }
                   })
                   .on("mousemove", function(){
-                    return tooltip.style("top", (event.pageY-26)+"px").style("left",(event.pageX-8)+"px");
+                    return tooltip.style("top", (event.pageY-26)+"px").style("left",(event.pageX-100)+"px");
                   })
                   .on("mouseout", function(){
                     return tooltip.style("visibility", "hidden");
