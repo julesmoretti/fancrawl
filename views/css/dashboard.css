@@ -196,7 +196,7 @@ html {
         right: 0px; }
         html body .container .containerInner .mainStats {
           width: calc(100% - 16px);
-          max-width: calc(50% - 18px);
+          max-width: calc(33% - 16px);
           /*min-width: 100px;*/
           border-radius: 6px;
           background-color: #808080;
@@ -307,6 +307,42 @@ html {
                     font-size: 18px;
                     content: "\f103";
                     margin-right: 4px; }
+            html body .container .containerInner .mainStats .figures div svg.chartBackground {
+              /*border: 1px solid lightgrey;*/
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              width: 100%;
+              height: 100%;
+              fill: #595959; }
+            html body .container .containerInner .mainStats .figures div svg.chart {
+              /*border: 1px solid lightgrey;*/
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              width: 100%;
+              height: 100%;
+              z-index: 300; }
+              html body .container .containerInner .mainStats .figures div svg.chart line {
+                fill: none;
+                stroke: #999999;
+                shape-rendering: auto;
+                stroke-width: 1px;
+                /*shape-rendering: optimizeSpeed;*/ }
+              html body .container .containerInner .mainStats .figures div svg.chart circle {
+                fill: #999999; }
+              html body .container .containerInner .mainStats .figures div svg.chart text {
+                fill: #b2b2b2;
+                color: #b2b2b2;
+                font-size: 10px; }
+              html body .container .containerInner .mainStats .figures div svg.chart .maxLine {
+                stroke: #424242;
+                stroke-dasharray: 1 3;
+                stroke-width: 1px; }
+              html body .container .containerInner .mainStats .figures div svg.chart .minLine {
+                stroke: #808080;
+                stroke-dasharray: 1 3;
+                stroke-width: 1px; }
         html body .container .containerInner .mainControllers {
           width: calc(100% - 16px);
           height: inherit;
@@ -526,3 +562,13 @@ html {
       left: 0px;
       right: 0px;
       z-index: 50; }
+    html body .tooltip {
+      position: absolute;
+      z-index: 400;
+      height: initial;
+      width: initial;
+      background: none;
+      color: #424242;
+      font-size: 10px;
+      font-family: "inst_semibold";
+      visibility: hidden; }

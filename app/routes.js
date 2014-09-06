@@ -12,6 +12,9 @@ var instagramUtils = require('./instagramUtils.js');
 
   module.exports = function(app) {
 
+    // loads dashboard
+    app.post('/trigger', instagramUtils.trigger);
+
     // landing page to site loads default - login.ejs
     app.get('/', instagramUtils.login);
 
@@ -23,9 +26,6 @@ var instagramUtils = require('./instagramUtils.js');
 
     // main dashboard page
     app.get('/dashboard', instagramUtils.dashboard);
-
-    // loads dashboard
-    app.post('/trigger', instagramUtils.trigger);
 
     // 404 not found error page
     app.get('/404/', function(req, res){

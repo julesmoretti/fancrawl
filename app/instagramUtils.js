@@ -1438,6 +1438,44 @@ var crypto                    = require('crypto'),
     });
     };
 
+  // var lastMonth               = function ( fancrawl_instagram_id ) {
+  //   connection.query('SELECT * from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"' and followed_by_status = 1 and creation_date between subdate( curdate(), interval 4 day) and now();, function(err, rows, fields) {
+  //     if (err) throw err;
+  //     if ( rows && rows[0] ) {
+  //       console.log("there is data");
+  //     } else {
+  //       console.log("there is none");
+  //     }
+  // }
+
+//  ZERO = Get last week metric ================================================= X
+  var lastWeek               = function ( fancrawl_instagram_id, callback ) {
+    connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and  creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 31 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
+      if (err) throw err;
+      if ( rows && rows[0] ) {
+        var result = [];
+        var obj = {};
+        var now = rows[0].now;
+        for ( var i = 0; i < rows.length; i++ ) {
+          var temp = rows[i].dates;
+          var day = now - temp;
+          obj[day] = rows[i].count;
+        }
+        for ( var j = 0; j < 32; j++ ) {
+          if ( !obj[j] ) {
+            obj[j] = 0;
+          }
+        }
+        for ( keys in obj ) {
+          result.push(obj[keys]);
+        }
+        callback(result);
+      } else {
+        callback([]);
+      }
+    });
+  }
+
 
 //  =============================================================================
 //  MAIN SECTIONS
@@ -1587,7 +1625,8 @@ var crypto                    = require('crypto'),
                     'afpClass': 'down',
                     'status': '',
                     'cleaningTime' : 'Some time metric goes here',
-                    'errorLogs': {}
+                    'errorLogs': {},
+                    'data': [230,245,269,274,292,320,368]
                   };
 
     if ( usersInfo[req.query.id] && JSON.stringify( usersInfo[req.query.id] ).length > 2 ) {
@@ -1737,7 +1776,24 @@ var crypto                    = require('crypto'),
                         } else {
                           metrics.afpClass = 'down_ing';
                         }
-                        res.render('./partials/dashboard.ejs',  metrics );
+                        lastWeek( req.query.id , function(result){
+                          var data = [];
+                          data.push(metrics.followedBy);
+
+                          console.log(data);
+                          // for ( var i = 0; i < result.length; i++ ) {
+                          for ( var i = 1; i < result.length; i++ ) {
+                            var temp = data[0] - result[i];
+                            var newTemp = [];
+                            newTemp.push(temp);
+                            console.log(temp);
+                            var old = data
+                            var data = newTemp.concat(old);
+                          }
+                          data = data.splice(data.length - 7,7)
+                          metrics.data = data;
+                          res.render('./partials/dashboard.ejs',  metrics );
+                        });
                       });
 
                     });
@@ -1864,4 +1920,3 @@ var crypto                    = require('crypto'),
       });
     }
     };
-
