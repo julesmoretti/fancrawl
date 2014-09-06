@@ -1768,7 +1768,7 @@ var crypto                    = require('crypto'),
                         }
                         lastWeek( req.query.id , metrics, function(result){
                           var data = [];
-                          data.push(metrics.followedBy);
+                          data.push(metrics.actualFollowedBy);
 
                           console.log(data);
                           // for ( var i = 0; i < result.length; i++ ) {
@@ -1784,10 +1784,10 @@ var crypto                    = require('crypto'),
                           if ( data.length > 0 ) {
                             metrics.data = data;
                           }
+                          console.log(metrics);
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
                       });
-
                     });
                   });
                 });
