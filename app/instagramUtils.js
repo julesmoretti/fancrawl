@@ -1440,13 +1440,13 @@ var crypto                    = require('crypto'),
 
 //  ZERO = Get last week metric ================================================= X
   var lastWeek               = function ( fancrawl_instagram_id, callback ) {
-    connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and  creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
+    connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and followed_by_status = 1 creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
         var result = [];
         var obj = {};
         var now = rows[0].now;
-        // console.log(now);
+        console.log(now);
         for ( var i = 0; i < rows.length; i++ ) {
           var temp = rows[i].dates;
           // console.log(temp);
