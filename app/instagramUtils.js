@@ -1439,29 +1439,41 @@ var crypto                    = require('crypto'),
     };
 
 //  ZERO = Get last week metric ================================================= X
-  var lastWeek               = function ( fancrawl_instagram_id, metrics, callback ) {
-    connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and  creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 31 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
+  var lastWeek               = function ( fancrawl_instagram_id, callback ) {
+    connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and  creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
         var result = [];
         var obj = {};
         var now = rows[0].now;
+        // console.log(now);
         for ( var i = 0; i < rows.length; i++ ) {
           var temp = rows[i].dates;
-          var day = now - temp;
+          // console.log(temp);
+          var day = ( now - temp );
           obj[day] = rows[i].count;
         }
-        for ( var j = 0; j < 32; j++ ) {
+        // 0 = 0
+        // 1 = 0
+        // 2 = 10
+        // 3 = 6
+        // 4 = 0
+        // 5 = 12
+        // 6 = 11
+
+        // console.log(obj);
+        for ( var j = 0; j < 6; j++ ) {
           if ( !obj[j] ) {
             obj[j] = 0;
           }
         }
+        // console.log(obj);
         for ( keys in obj ) {
           result.push(obj[keys]);
         }
-        callback(result, metrics);
+        callback(result);
       } else {
-        callback([], metrics);
+        callback([]);
       }
     });
   }
@@ -1766,28 +1778,23 @@ var crypto                    = require('crypto'),
                         } else {
                           metrics.afpClass = 'down_ing';
                         }
-                        lastWeek( req.query.id , metrics, function(result){
+                        lastWeek( req.query.id , function(result){
                           var data = [];
                           data.push(metrics.actualFollowedBy);
-
-                          console.log(data);
-                          // for ( var i = 0; i < result.length; i++ ) {
+                          // console.log(metrics.actualFollowedBy);
+                          // console.log(result);
                           for ( var i = 1; i < result.length; i++ ) {
                             var temp = data[0] - result[i];
                             var newTemp = [];
                             newTemp.push(temp);
-                            console.log(temp);
                             var old = data
                             var data = newTemp.concat(old);
                           }
-                          data = data.splice(data.length - 7,7)
+                          // data = data.splice(data.length - 7,7)
                           if ( data.length > 0 ) {
                             metrics.data = data;
                           }
-                          if ( !metrics.data ) {
-                            metrics.data = [1,2,3,4,5];
-                          }
-                          console.log(metrics);
+                          console.log(metrics.data);
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
                       });
