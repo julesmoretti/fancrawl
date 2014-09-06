@@ -1784,6 +1784,9 @@ var crypto                    = require('crypto'),
                           if ( data.length > 0 ) {
                             metrics.data = data;
                           }
+                          if ( !metrics.data ) {
+                            metrics.data = [1,2,3,4,5];
+                          }
                           console.log(metrics);
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
