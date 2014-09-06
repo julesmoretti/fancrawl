@@ -118,7 +118,7 @@ var dots = chart.selectAll("circle")
                     var diff = d3.max(data) - d;
                     return (((diff / range) * 80) + 5) +"%";
                   })
-                  .attr("r", 2)
+                  .attr("r", 4)
                   .on("mouseover", function(d, i){
 
                     var diff = data[i] - ( data[i-1] );
@@ -129,7 +129,7 @@ var dots = chart.selectAll("circle")
                     }
                   })
                   .on("mousemove", function(){
-                    return tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX-2)+"px");
+                    return tooltip.style("top", (event.pageY-26)+"px").style("left",(event.pageX-8)+"px");
                   })
                   .on("mouseout", function(){
                     return tooltip.style("visibility", "hidden");
