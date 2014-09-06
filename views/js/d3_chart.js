@@ -119,8 +119,14 @@ var dots = chart.selectAll("circle")
                     return (((diff / range) * 80) + 5) +"%";
                   })
                   .attr("r", 2)
-                  .on("mouseover", function(d){
-                    return tooltip.style("visibility", "visible").text(d);
+                  .on("mouseover", function(d, i){
+
+                    var diff = data[i] - ( data[i-1] );
+                    if ( i === 0 || diff === 0) {
+                      return tooltip.style("visibility", "visible").text(d);
+                    } else {
+                      return tooltip.style("visibility", "visible").text(d+" (+"+(data[i]-data[i-1])+")");
+                    }
                   })
                   .on("mousemove", function(){
                     return tooltip.style("top", (event.pageY-15)+"px").style("left",(event.pageX-2)+"px");

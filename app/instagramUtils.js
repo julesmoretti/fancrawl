@@ -1446,28 +1446,19 @@ var crypto                    = require('crypto'),
         var result = [];
         var obj = {};
         var now = rows[0].now;
-        console.log(now);
+
         for ( var i = 0; i < rows.length; i++ ) {
           var temp = rows[i].dates;
-          // console.log(temp);
           var day = ( now - temp );
           obj[day] = rows[i].count;
         }
-        // 0 = 0
-        // 1 = 0
-        // 2 = 10
-        // 3 = 6
-        // 4 = 0
-        // 5 = 12
-        // 6 = 11
 
-        // console.log(obj);
         for ( var j = 0; j < 6; j++ ) {
           if ( !obj[j] ) {
             obj[j] = 0;
           }
         }
-        // console.log(obj);
+
         for ( keys in obj ) {
           result.push(obj[keys]);
         }
