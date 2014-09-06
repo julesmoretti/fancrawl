@@ -1438,18 +1438,8 @@ var crypto                    = require('crypto'),
     });
     };
 
-  // var lastMonth               = function ( fancrawl_instagram_id ) {
-  //   connection.query('SELECT * from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"' and followed_by_status = 1 and creation_date between subdate( curdate(), interval 4 day) and now();, function(err, rows, fields) {
-  //     if (err) throw err;
-  //     if ( rows && rows[0] ) {
-  //       console.log("there is data");
-  //     } else {
-  //       console.log("there is none");
-  //     }
-  // }
-
 //  ZERO = Get last week metric ================================================= X
-  var lastWeek               = function ( fancrawl_instagram_id, callback ) {
+  var lastWeek               = function ( fancrawl_instagram_id, metrics, callback ) {
     connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and  creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 31 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -1469,9 +1459,9 @@ var crypto                    = require('crypto'),
         for ( keys in obj ) {
           result.push(obj[keys]);
         }
-        callback(result);
+        callback(result, metrics);
       } else {
-        callback([]);
+        callback([], metrics);
       }
     });
   }
@@ -1776,7 +1766,7 @@ var crypto                    = require('crypto'),
                         } else {
                           metrics.afpClass = 'down_ing';
                         }
-                        lastWeek( req.query.id , function(result){
+                        lastWeek( req.query.id , metrics, function(result){
                           var data = [];
                           data.push(metrics.followedBy);
 
