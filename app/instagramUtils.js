@@ -1791,7 +1791,9 @@ var crypto                    = require('crypto'),
                             var data = newTemp.concat(old);
                           }
                           data = data.splice(data.length - 7,7)
-                          metrics.data = data;
+                          if ( data.length > 0 ) {
+                            metrics.data = data;
+                          }
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
                       });
