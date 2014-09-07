@@ -22,11 +22,11 @@ d3.selectAll("circle")
     })
   .transition()
     .duration(function(){
-      var delay = Math.floor(Math.random() * 1000) * 5;
-      return delay;
+      var duration = ( Math.floor(Math.random() * 1000) * 3 ) + 500;
+      return duration;
     })
     .delay(function(){
-      var delay = Math.floor(Math.random() * 1000) * 5;
+      var delay = ( Math.floor(Math.random() * 1000) * 3 ) + 0;
       return delay;
     })
     .style("stroke-width", function(d, i){
@@ -46,11 +46,11 @@ d3.selectAll("line, polyline")
     })
   .transition()
     .duration(function(){
-      var delay = Math.floor(Math.random() * 1000) * 5;
-      return delay;
+      var duration = (Math.floor(Math.random() * 1000 ) * 3) + 1000;
+      return duration;
     })
     .delay(function(){
-      var delay = Math.floor(Math.random() * 1000) * 5;
+      var delay = (Math.floor(Math.random() * 1000 ) * 2) + 500;
       return delay;
     })
     .style("stroke-width", function(d, i){

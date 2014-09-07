@@ -322,7 +322,7 @@ html {
               left: 0px;
               width: 100%;
               height: 100%;
-              z-index: 300; }
+              z-index: 99; }
               html body .container .containerInner .mainStats .figures div svg.chart line {
                 fill: none;
                 stroke: #999999;
