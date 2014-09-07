@@ -44,7 +44,7 @@ html {
       html body a a:hover {
         text-decoration: underline; }
     html body #line_left {
-      background: url(/views/img/inst_left.svg) center center no-repeat;
+      /*background: url(/views/img/inst_left.svg) center center no-repeat;*/
       position: fixed;
       height: 300px;
       width: 840px;
@@ -52,6 +52,18 @@ html {
       left: 50%;
       margin-top: -150px;
       margin-left: -1000px; }
+      html body #line_left line {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3; }
+      html body #line_left polyline {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3; }
+      html body #line_left circle {
+        fill: #E1DDD2;
+        stroke: #E1DDD2;
+        stroke-width: 2; }
     html body #box {
       width: 320px;
       height: 320px;
@@ -98,7 +110,7 @@ html {
         text-indent: 30px;
         opacity: 0.6; }
     html body #line_right {
-      background: url(/views/img/inst_right.svg) center center no-repeat;
+      /*background: url(/views/img/inst_right.svg) center center no-repeat;*/
       position: fixed;
       height: 300px;
       width: 840px;
@@ -106,6 +118,18 @@ html {
       left: 50%;
       margin-top: -150px;
       margin-left: 160px; }
+      html body #line_right line {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3; }
+      html body #line_right polyline {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3; }
+      html body #line_right circle {
+        fill: #E1DDD2;
+        stroke: #E1DDD2;
+        stroke-width: 2; }
     html body .description {
       position: absolute;
       left: 30px;

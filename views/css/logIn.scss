@@ -69,7 +69,7 @@ html {
     }
 
     #line_left {
-      background: url(/views/img/inst_left.svg) center center no-repeat;
+      /*background: url(/views/img/inst_left.svg) center center no-repeat;*/
       position: fixed;
       height: 300px;
       width: 840px;
@@ -77,6 +77,21 @@ html {
       left: 50%;
       margin-top: -150px;
       margin-left: -1000px;
+      line {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3;
+      }
+      polyline {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3;
+      }
+      circle {
+        fill: #E1DDD2;
+        stroke: #E1DDD2;
+        stroke-width: 2;
+      }
     }
 
     #box {
@@ -135,7 +150,7 @@ html {
     }
 
     #line_right {
-      background: url(/views/img/inst_right.svg) center center no-repeat;
+      /*background: url(/views/img/inst_right.svg) center center no-repeat;*/
       position: fixed;
       height: 300px;
       width: 840px;
@@ -143,6 +158,21 @@ html {
       left: 50%;
       margin-top: -150px;
       margin-left: 160px;
+      line {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3;
+      }
+      polyline {
+        fill: none;
+        stroke: #333333;
+        stroke-width: 3;
+      }
+      circle {
+        fill: #E1DDD2;
+        stroke: #E1DDD2;
+        stroke-width: 2;
+      }
     }
 
     .description {

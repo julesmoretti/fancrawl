@@ -1,11 +1,6 @@
-      // Optimize code so that it does not crash!
 //  app/instagramUtils.js
 
-//  TODO check verifyRelationship...
 //  TODO - fix node-sass on server side
-//  TODO - organize and cap the count of people to add
-//    >  anarray.unshift("x"); // add to beguining
-//    >  anarray.pop(); // remove from the end
 
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
@@ -16,7 +11,7 @@ var crypto                    = require('crypto'),
     mysql                     = require('mysql'),
     usersInfo                 = {},
     timer                     = {},
-    queueCap                  = 17,
+    queueCap                  = 200,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -1643,9 +1638,6 @@ var crypto                    = require('crypto'),
           metrics.userName = rows[0].fancrawl_full_name;
           metrics.userPicture = rows[0].fancrawl_profile_picture;
 
-
-          // TODO alter if API call excess... or blocked
-
           // check state for particular fancrawl_instagram_id
           connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
             if (err) throw err;
@@ -1785,7 +1777,6 @@ var crypto                    = require('crypto'),
                           if ( data.length > 0 ) {
                             metrics.data = data;
                           }
-                          console.log(metrics.data);
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
                       });
@@ -1913,3 +1904,4 @@ var crypto                    = require('crypto'),
       });
     }
     };
+

@@ -1,8 +1,7 @@
 //  middleware.js
 
 //  set up ======================================================================
-var favicon         = require('serve-favicon'),
-    bodyParser      = require('body-parser'),
+var bodyParser      = require('body-parser'),
     morgan          = require('morgan');
 
   if( process.env.LOCAL ){
@@ -61,9 +60,6 @@ var favicon         = require('serve-favicon'),
     app.use(bodyParser.urlencoded({
       extended: true
     }));
-
-//  favicon directive ===========================================================
-    app.use(favicon('./views/img/favicon.ico', { maxAge: 500 }));
 
 //  logger for development ======================================================
     app.use(morgan('dev')); // log every request to the console
