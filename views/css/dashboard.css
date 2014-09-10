@@ -330,19 +330,21 @@ html {
                 stroke-width: 1px;
                 /*shape-rendering: optimizeSpeed;*/ }
               html body .container .containerInner .mainStats .figures div svg.chart circle {
-                fill: #999999; }
+                fill: #595959;
+                stroke: #b2b2b2;
+                stroke-width: 2px; }
               html body .container .containerInner .mainStats .figures div svg.chart text {
                 fill: #b2b2b2;
                 color: #b2b2b2;
                 font-size: 10px; }
               html body .container .containerInner .mainStats .figures div svg.chart .maxLine {
                 stroke: #424242;
-                stroke-dasharray: 1 3;
-                stroke-width: 1px; }
+                stroke-dasharray: 2 6;
+                stroke-width: 2px; }
               html body .container .containerInner .mainStats .figures div svg.chart .minLine {
                 stroke: #808080;
-                stroke-dasharray: 1 3;
-                stroke-width: 1px; }
+                stroke-dasharray: 2 6;
+                stroke-width: 2px; }
         html body .container .containerInner .mainControllers {
           width: calc(100% - 16px);
           height: inherit;
