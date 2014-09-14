@@ -32,7 +32,7 @@ var crypto                    = require('crypto'),
 //  UTILITIES CALLED BY MAIN SECTIONS
 //  =============================================================================
 
-//  ZERO = manage setTimout of timers =========================================== X
+//  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
     var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600;
     var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 60000;
@@ -70,7 +70,7 @@ var crypto                    = require('crypto'),
     }
     };
 
-//  ZERO = neutral timer function for post requests ============================= X
+//  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
     // random minute generator between 1 ~ 1.5 min
     var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 70000;
@@ -168,7 +168,7 @@ var crypto                    = require('crypto'),
     }
     };
 
-//  ZERO = neutral timer function for regular request =========================== X
+//  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function ( fancrawl_instagram_id ) {
     // random second generator between 3.6 ~ 5.6 sec
     var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 5000;
@@ -438,7 +438,7 @@ var crypto                    = require('crypto'),
     }
     };
 
-//  ZERO = time difference calculator =========================================== X
+//  ZERO = time difference calculator ===========================================
   var time_difference         = function ( fancrawl_instagram_id, new_instagram_following_id, original_time, current_time, callback ) {
     // 1407473384 UNIX TIME in seconds
     var five_min              = 300, // 5 minutes in seconds
@@ -581,7 +581,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = unfollow function ==================================================== X
+//  ZERO = unfollow function ====================================================
   var GO_unfollow             = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, callback ) {
 
     if ( followed_by ) {
@@ -680,7 +680,7 @@ var crypto                    = require('crypto'),
 
     }
 
-//  ZERO = follow function ====================================================== X
+//  ZERO = follow function ======================================================
   var GO_follow               = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
     console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -751,7 +751,7 @@ var crypto                    = require('crypto'),
     });
     }
 
-//  ZERO = current users followers data ========================================= X
+//  ZERO = current users followers data =========================================
   var GET_stats               = function ( fancrawl_instagram_id, callback ) {
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
@@ -807,7 +807,7 @@ var crypto                    = require('crypto'),
     });
     }
 
-//  ZERO = Clock Manage  ======================================================== X
+//  ZERO = Clock Manage  ========================================================
   var clockManager            = function ( fancrawl_instagram_id, new_instagram_following_id, process, callback ) {
 
     // look up relevant clock queue
@@ -1143,7 +1143,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = check status of current database users =============================== X
+//  ZERO = check status of current database users ===============================
   var cleanDatabase           = function ( fancrawl_instagram_id, callback ) {
     // console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
     checkDuplicate (fancrawl_instagram_id, function (fancrawl_instagram_id){
@@ -1204,7 +1204,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = isolate scopes per users ============================================= X
+//  ZERO = isolate scopes per users =============================================
   var startIndividual         = function ( fancrawl_instagram_id ) {
 
     // START USER SPECIFIC CLOCK
@@ -1301,7 +1301,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = server restart check ================================================= X
+//  ZERO = server restart check =================================================
   var GO_start                = function () {
     console.log("SERVER RESTARTED - STARTING CLEANING PROCESS");
     connection.query('SELECT fancrawl_instagram_id FROM access_right', function(err, rows, fields) {
@@ -1317,7 +1317,7 @@ var crypto                    = require('crypto'),
     });
     }();
 
-//  ZERO = Get list of followed_by user ========================================= X
+//  ZERO = Get list of followed_by user =========================================
   var GET_follows             = function ( fancrawl_instagram_id, pagination, write, callback ) {
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
@@ -1375,7 +1375,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = Get list of followed_by user ========================================= X
+//  ZERO = Get list of followed_by user =========================================
   var GET_followed_by         = function ( fancrawl_instagram_id, pagination, write, callback ) {
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
@@ -1433,8 +1433,8 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = Get last week metric ================================================= X
-  var lastWeek               = function ( fancrawl_instagram_id, callback ) {
+//  ZERO = Get last week metric =================================================
+  var lastWeek                = function ( fancrawl_instagram_id, callback ) {
     connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and followed_by_status = 1 and creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -1462,27 +1462,27 @@ var crypto                    = require('crypto'),
         callback([]);
       }
     });
-  }
+    };
 
 
 //  =============================================================================
 //  MAIN SECTIONS
 //  =============================================================================
 
-//  FIRST = load landing page '/' =============================================== X
+//  FIRST = load landing page '/' ===============================================
   exports.login               = function ( req, res ) {
     console.log("loggedin");
     res.render('./partials/login.ejs');
     };
 
-//  SECOND = link to instagram authentication api for access token ============== X
+//  SECOND = link to instagram authentication api for access token ==============
   exports.authorize_user      = function ( req, res ) {
     console.log("authorizing");
     var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
     res.redirect(url);
     };
 
-//  THIRD = handle instagram response and check access rights =================== X
+//  THIRD = handle instagram response and check access rights ===================
   exports.handleauth          = function ( req, res ) {
     // queryCode           = req.query.code;
     // form data
@@ -1591,7 +1591,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  FOURTH = go grab instagram follower/ed data and show it ===================== Y
+//  FOURTH = go grab instagram follower/ed data and show it =====================
   exports.dashboard           = function ( req, res ) {
     var metrics = {
                     'userName': '',
@@ -1798,7 +1798,7 @@ var crypto                    = require('crypto'),
     return;
     };
 
-//  ZERO = trigger FanCrawl ===================================================== Y
+//  ZERO = trigger FanCrawl =====================================================
   exports.trigger             = function ( req, res ) {
     var original_url        = req.headers.referer,
         url_split           = original_url.split("?"),
