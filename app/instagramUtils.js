@@ -733,6 +733,7 @@ var crypto                    = require('crypto'),
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
       // instagram header secret system
+
       var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
           hmac.setEncoding('hex');
           hmac.write(process.env.LOCALIP);
@@ -754,6 +755,7 @@ var crypto                    = require('crypto'),
 
       request(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
+          console.log("758");
           var pbody = JSON.parse(body);
           if( pbody ) {
             if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
@@ -764,7 +766,7 @@ var crypto                    = require('crypto'),
                 usersInfo[ fancrawl_instagram_id ] = {};
               }
               usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-              callback("N/A", "N/A");
+              callback("N/A", "N/A" );
 
             } else if( pbody.data ){
               if ( pbody.data.counts && pbody.data.counts.follows ) {
@@ -779,6 +781,12 @@ var crypto                    = require('crypto'),
           }
         } else if (error) {
           console.log('GO_follow error ('+new_instagram_following_id+'): ', error);
+        } else {
+          if ( !usersInfo[ fancrawl_instagram_id ] ) {
+            usersInfo[ fancrawl_instagram_id ] = {};
+          }
+          usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "Refresh token by signing out and back in";
+          callback( "N/A" , "N/A" );
         }
       });
     });
@@ -1617,7 +1625,7 @@ var crypto                    = require('crypto'),
           // check state for particular fancrawl_instagram_id
           connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
             if (err) throw err;
-            // console.log("/////////////////////////////////");
+
             // console.log(rows[0].state);
             if (rows[0].state === "stopped" ){
               metrics.status = 'statusStopped';
@@ -1719,7 +1727,7 @@ var crypto                    = require('crypto'),
 
                       metrics.cleaningTime = timeLeft;
 
-                      GET_stats( req.query.id, function( follows, followed_by ){
+                      GET_stats( req.query.id, function( follows, followed_by, error ){
                         metrics.actualFollowedBy = followed_by;
                         metrics.actualFollowing = follows;
 
@@ -1752,6 +1760,13 @@ var crypto                    = require('crypto'),
                           // data = data.splice(data.length - 7,7);
                           if ( data.length > 0 ) {
                             metrics.data = data;
+                          }
+                          if ( usersInfo[ req.query.id ] ) {
+                            for ( keys in usersInfo[ req.query.id ]) {
+                              if ( !metrics[ keys ] ){
+                                metrics.errorLogs[ keys ] = usersInfo[ req.query.id ][ keys ];
+                              }
+                            }
                           }
                           res.render('./partials/dashboard.ejs',  metrics );
                         });
