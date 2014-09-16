@@ -1243,19 +1243,19 @@ var crypto                    = require('crypto'),
                     var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
                     // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
 
-                    console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
+                    // console.log("RESTARTED & PRE STARTED: ", fancrawl_instagram_id);
 
                     // START BY VERIFYING
-                    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                    console.log("FETCHING - FROM START: ", new_instagram_following_id);
+                    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id);
                     // console.log("oldestUser: ", oldestUser);
                     // console.log("obj: ", obj);
                     fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
                   } else {
 
-                    console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
-                    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                    console.log("FETCHING - FROM START: 1");
+                    // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
+                    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: 1");
                     fetchNewFollowers( fancrawl_instagram_id, 1 );
                   }
 
