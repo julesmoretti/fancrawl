@@ -773,6 +773,9 @@ var crypto                    = require('crypto'),
                 if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                   delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                 }
+                if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException ) {
+                  delete usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException;
+                }
                 callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
               }
             } else {
