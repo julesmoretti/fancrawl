@@ -116,13 +116,13 @@ var crypto                    = require('crypto'),
               if ( process === "follow" ) {
                 GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                   delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-                  // console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                  console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
                 });
               } else if ( process === "unfollow" ) {
-                console.log("TIMER_POST: unfollow for "+last_instagram_following_id);
+                // console.log("TIMER_POST: unfollow for "+last_instagram_following_id);
                 GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                   delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-                  // console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
+                  console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
                 });
               } else if ( process === "unfollow_followedby" ) {
                 GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
@@ -751,7 +751,6 @@ var crypto                    = require('crypto'),
 
       request(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-          console.log("758");
           var pbody = JSON.parse(body);
           if( pbody ) {
             if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
