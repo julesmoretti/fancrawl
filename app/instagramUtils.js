@@ -11,7 +11,9 @@ var crypto                    = require('crypto'),
     mysql                     = require('mysql'),
     usersInfo                 = {},
     timer                     = {},
-    queueCap                  = 200,
+    random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
+    random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
+    queueCap                  = 2000,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -34,8 +36,6 @@ var crypto                    = require('crypto'),
 
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
-    var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 3600;
-    var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 60000;
 
     if ( state === "quick_short" ) {
       setTimeout(
@@ -72,8 +72,6 @@ var crypto                    = require('crypto'),
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
-    // random minute generator between 1 ~ 1.5 min
-    var random_minute = ( Math.floor((( Math.random() * 30 ) + 0 ) * 1000 )) + 70000;
 
     if ( !timer[ fancrawl_instagram_id ] ) {
       timer[ fancrawl_instagram_id ]                 = {};
@@ -149,8 +147,6 @@ var crypto                    = require('crypto'),
 
 //  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function ( fancrawl_instagram_id ) {
-    // random second generator between 3.6 ~ 5.6 sec
-    var random_second = (Math.floor(((Math.random() * 2) + 0)*1000)) + 5000;
 
     if ( !timer[ fancrawl_instagram_id ] ) {
       timer[ fancrawl_instagram_id ]                 = {};
