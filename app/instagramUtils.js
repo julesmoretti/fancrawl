@@ -37,36 +37,43 @@ var crypto                    = require('crypto'),
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
 
-    if ( state === "quick_short" ) {
-      setTimeout(
-        function(){
-            timer_quick( fancrawl_instagram_id );
-      }, 500); // 0.5 sec
-
-    } else if ( state === "quick_long" ) {
-      setTimeout(
-        function(){
-            if ( timer[ fancrawl_instagram_id ] ) {
-              timer[ fancrawl_instagram_id ].quick_seconds = false;
+    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+        setTimeout(
+          function(){
+              callTimer( fancrawl_instagram_id, state );
+        }, 1000 * 60 * 1 ); // 1 min wait
+    } else {
+      if ( state === "quick_short" ) {
+        setTimeout(
+          function(){
               timer_quick( fancrawl_instagram_id );
-            }
-      }, random_second); // 3.6 ~ 5.6 sec
+        }, 500); // 0.5 sec
 
-    } else if ( state === "post_short" ) {
+      } else if ( state === "quick_long" ) {
+        setTimeout(
+          function(){
+              if ( timer[ fancrawl_instagram_id ] ) {
+                timer[ fancrawl_instagram_id ].quick_seconds = false;
+                timer_quick( fancrawl_instagram_id );
+              }
+        }, random_second); // 3.6 ~ 5.6 sec
 
-      setTimeout(
-        function(){
-          timer_post( fancrawl_instagram_id );
-      }, 5000); // (1~1.5 minute delay)
+      } else if ( state === "post_short" ) {
 
-    } else if ( state === "post_long" ) {
-      setTimeout(
-        function(){
-          if ( timer[ fancrawl_instagram_id ] ) {
-            timer[ fancrawl_instagram_id ].post_minute = false;
+        setTimeout(
+          function(){
             timer_post( fancrawl_instagram_id );
-          }
-      }, random_minute); // (1~1.5 minute delay)
+        }, 5000); // (1~1.5 minute delay)
+
+      } else if ( state === "post_long" ) {
+        setTimeout(
+          function(){
+            if ( timer[ fancrawl_instagram_id ] ) {
+              timer[ fancrawl_instagram_id ].post_minute = false;
+              timer_post( fancrawl_instagram_id );
+            }
+        }, random_minute); // (1~1.5 minute delay)
+      }
     }
     };
 
