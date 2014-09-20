@@ -1747,21 +1747,22 @@ var crypto                    = require('crypto'),
                           var data = [];
                           if ( !metrics.actualFollowedBy === "N/A" ){
                             data.push(metrics.actualFollowedBy);
+                            // console.log(metrics.actualFollowedBy);
+                            // console.log(result);
+                            for ( var i = 1; i < result.length; i++ ) {
+                              var temp = data[0] - result[i];
+                              var newTemp = [];
+                              newTemp.push(temp);
+                              var old = data
+                              var data = newTemp.concat(old);
+                            }
+                            // data = data.splice(data.length - 7,7);
+                            if ( data.length > 0 ) {
+                              metrics.data = data;
+                            }
+
                           } else {
-                            data.push(0);
-                          }
-                          // console.log(metrics.actualFollowedBy);
-                          // console.log(result);
-                          for ( var i = 1; i < result.length; i++ ) {
-                            var temp = data[0] - result[i];
-                            var newTemp = [];
-                            newTemp.push(temp);
-                            var old = data
-                            var data = newTemp.concat(old);
-                          }
-                          // data = data.splice(data.length - 7,7);
-                          if ( data.length > 0 ) {
-                            metrics.data = data;
+                            metrics.data = [0];
                           }
                           if ( usersInfo[ req.query.id ] ) {
                             for ( keys in usersInfo[ req.query.id ]) {
@@ -1897,3 +1898,4 @@ var crypto                    = require('crypto'),
       });
     }
     };
+
