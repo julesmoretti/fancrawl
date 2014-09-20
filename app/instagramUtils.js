@@ -1745,7 +1745,7 @@ var crypto                    = require('crypto'),
                         }
                         lastWeek( req.query.id , function(result){
                           var data = [];
-                          if ( !metrics.actualFollowedBy === "N/A" ){
+                          if ( metrics.actualFollowedBy !== "N/A" ){
                             data.push(metrics.actualFollowedBy);
                             // console.log(metrics.actualFollowedBy);
                             // console.log(result);
@@ -1764,6 +1764,7 @@ var crypto                    = require('crypto'),
                           } else {
                             metrics.data = [0];
                           }
+
                           if ( usersInfo[ req.query.id ] ) {
                             for ( keys in usersInfo[ req.query.id ]) {
                               if ( !metrics[ keys ] ){
