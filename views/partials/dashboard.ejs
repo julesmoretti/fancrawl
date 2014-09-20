@@ -3,6 +3,15 @@
 
   <head>
     <title>FanCrawl</title>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-53564857-1', 'auto');
+      ga('send', 'pageview');
+    </script>
     <link rel="icon" type="image/svg+xml" href="/views/img/instagram_logo.svg">
     <link rel="alternate icon" type="image/svg+xml" href="/views/img/instagram_logo.png">
     <meta charset="utf-8">
@@ -123,7 +132,14 @@
           <span>Weekly</span>
           <div class="figures">
             <div>
-              <svg class="chartBackground" viewBox="0 0 400 400" preserveAspectRatio=none></svg>
+              <svg class="chartBackground" viewBox="0 0 400 400" preserveAspectRatio=none>
+                <defs>
+                  <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#26404d; stop-opacity:0.7"></stop>
+                    <stop offset="100%" style="stop-color:#26404d; stop-opacity:0"></stop>
+                  </linearGradient>
+                </defs>
+              </svg>
               <svg class="chart"></svg>
             </div>
           </div>
@@ -172,8 +188,10 @@
                         <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                         <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
                       <% } else if ( status === "statusCleaning" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
-                        <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
+                        <!-- <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="$('#hidden').removeClass('show');" disabled="disabled"/> -->
+                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="toggleAttributes3()"/>
+                        <label id="switch2label" for="switch2">&nbsp;</label>
+                        <!-- <label id="switch2label" for="switch2" class="muted">&nbsp;</label> -->
                       <% } %>
                     </div>
                   </li>
@@ -209,162 +227,19 @@
     </div>
     <div id="menuHide" onclick="$('#hidden').removeClass('show');"></div>
 
-    <script type="text/javascript">
 
-      /**
-       * Calculate incremental amounts of pixels scrolled in each axis.
-       * Value is signed to its direction.
-       */
-      function incrementalScroll(e) {
-
-          var scrollX = (this.x || window.pageXOffset) - window.pageXOffset;
-          var scrollY = (this.y || window.pageYOffset) - window.pageYOffset;
-
-          this.x = window.pageXOffset;
-          this.y = window.pageYOffset;
-
-          direction(scrollX, scrollY);
-      }
-
-      function direction(scrollX, scrollY){
-
-          var directionX = !scrollX ? "NONE" : scrollX>0 ? "LEFT" : "RIGHT";
-          var directionY = !scrollY ? "NONE" : scrollY>0 ? "UP" : "DOWN";
-          var diff = window.screen.availHeight - window.pageYOffset - 36;
-
-          if ( directionY === "UP" ) {
-              d3.selectAll(".header")
-                .transition()
-                .duration(100)
-                .style("top", 0+"px");
-            if ( diff > 30 ) {
-              d3.selectAll(".status_bar")
-                .transition()
-                .duration(100)
-                .style("bottom", -30+"px");
-            } else if ( diff < 0 ) {
-              d3.selectAll(".status_bar")
-                .style("bottom", 0+"px");
-            } else {
-              d3.selectAll(".status_bar")
-                .style("bottom", "-"+diff+"px");
-            }
-
-          } else if ( directionY === "DOWN" ) {
-
-            if ( window.pageYOffset > 44 ) {
-              d3.selectAll(".header")
-                .transition()
-                .duration(100)
-                .style("top", -44+"px");
-            } else if ( window.pageYOffset < 0 ) {
-              d3.selectAll(".header")
-                .style("top", 0+"px");
-            } else {
-              d3.selectAll(".header")
-                .style("top", "-"+window.pageYOffset+"px");
-            }
-
-            d3.selectAll(".status_bar")
-              .transition()
-              .duration(100)
-              .style("bottom", 0+"px");
-
-          }
-      }
-
-      window.onscroll = incrementalScroll;
-
-      var logOut = function(){
-        $.ajax( {url: "https://instagram.com/accounts/logout", dataType: 'jsonp' } )
-          .done(function() {
-            console.log( "success" );
-            window.location.replace("/");
-          })
-          .fail(function(e) {
-            console.log('Error::' + e.responseText);
-            window.location.replace("/");
-          })
-          .always(function() {
-            console.log( "complete" );
-          });
-      }
-
-      var toggleAttributes1 = function() {
-
-        $('#hidden').removeClass('show');
-
-        // tobbles other tab
-        var switch2 = document.getElementById("switch2");
-        var disabled = switch2.getAttribute("disabled");
-
-        if ( disabled === 'disabled' ) {
-          switch2.removeAttribute("disabled");
-          document.getElementById("switch2label").removeAttribute("class");
-        } else {
-          switch2.setAttribute("disabled", "disabled");
-          document.getElementById("switch2label").setAttribute("class", "muted");
-        }
-
-        // toggles save button
-        var submitButton = document.getElementById("submitButton");
-        var subDisabled = submitButton.getAttribute("disabled");
-        if ( subDisabled !== null || subDisabled === 'disabled' ) {
-          submitButton.removeAttribute("disabled");
-          document.getElementById("submitButton").className = "saveButton ";
-        } else {
-          submitButton.setAttribute("disabled", "disabled");
-          document.getElementById("submitButton").className = "saveButton disabledButton";
-        }
-
-      };
-
-      var toggleAttributes2 =  function() {
-
-        $('#hidden').removeClass('show');
-
-        // tobbles other tab
-        var switch1 = document.getElementById("switch1");
-        var disabled = switch1.getAttribute("disabled");
-
-        if ( disabled === 'disabled' ) {
-          switch1.removeAttribute("disabled");
-          document.getElementById("switch1label").removeAttribute("class");
-        } else {
-          switch1.setAttribute("disabled", "disabled");
-          document.getElementById("switch1label").setAttribute("class", "muted");
-        }
-
-        // toggles save button
-        var submitButton = document.getElementById("submitButton");
-        var subDisabled = submitButton.getAttribute("disabled");
-        if ( subDisabled !== null || subDisabled === 'disabled' ) {
-          submitButton.removeAttribute("disabled");
-          document.getElementById("submitButton").className = "saveButton ";
-        } else {
-          submitButton.setAttribute("disabled", "disabled");
-          document.getElementById("submitButton").className = "saveButton disabledButton";
-        }
-      };
-    </script>
     <% if ( data ){ %>
       <script type="text/javascript">
         var data = [<%= data %>];
       </script>
+    <% } else { %>
+      <script type="text/javascript">
+        var data = [0];
+      </script>
     <% } %>
     <script src="/views/js/d3_chart.js" charset="utf-8"></script>
     <script src="/views/js/d3_ani_dash.js" charset="utf-8"></script>
-
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-53564857-1', 'auto');
-      ga('send', 'pageview');
-    </script>
-
+    <script src="/views/js/toggles.js" charset="utf-8"></script>
   </body>
 
 </html>

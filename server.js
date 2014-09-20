@@ -1,6 +1,7 @@
 //  server.js
 
 //  set up ======================================================================
+// var port            = process.env.PORT || 3000,
 var port            = process.env.PORT || 3000,
     express         = require('express'),
     app             = express();

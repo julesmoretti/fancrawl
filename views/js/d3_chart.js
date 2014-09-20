@@ -1,4 +1,14 @@
 // var data = [230,245,269,274,292,320,368];
+var dataError = false;
+for ( var i = 0; i < data.length; i++ ) {
+  if ( data[i] === "N/A") {
+    dataError = true;
+  }
+}
+
+if ( dataError ) {
+  data = [0];
+}
 
 var chart = d3.select(".chart");
 var chartBackground = d3.select(".chartBackground");
@@ -10,51 +20,54 @@ var chartBackground = d3.select(".chartBackground");
 //                     750,375 750,100 850,100 850,375
 //                     950,375 950,25 1050,25 1050,375
 //                     1150,375" />
-var polygon = chartBackground.append("polygon")
-                      // .attr("fill", "lime")
-                      .attr("points", function(){
-                        var result = [];
-                        var range = d3.max(data) - d3.min(data);
 
-                        for ( var i  = 0; i < data.length; i++ ) {
-                          var xCo = Math.floor(((( i / ( data.length - 1 ) ) * 90 ) + 5) * 4 );
-                          result.push(xCo);
+if ( data.length !== 1 ){
+  var polygon = chartBackground.append("polygon")
+                        .attr("fill", "url(#grad1)")
+                        .attr("points", function(){
+                          var result = [];
+                          var range = d3.max(data) - d3.min(data);
 
-                          var diff = d3.max(data) - data[i];
-                          var yCo =  Math.floor((((diff / range) * 80) + 5) * 4 );
+                          for ( var i  = 0; i < data.length; i++ ) {
+                            var xCo = Math.floor(((( i / ( data.length - 1 ) ) * 90 ) + 5) * 4 );
+                            result.push(xCo);
 
-                          result.push(yCo);
-                        }
+                            var diff = d3.max(data) - data[i];
+                            var yCo =  Math.floor((((diff / range) * 80) + 5) * 4 );
 
-                        var xTopRight = 400;
-                        result.push(xTopRight);
+                            result.push(yCo);
+                          }
 
-                        var lastDataPoint = data.length - 1;
-                        var diffLast = d3.max(data) - data[lastDataPoint];
-                        var yTopRight = ((((diffLast / range) * 80) + 5) * 4 );
-                        result.push(yTopRight);
+                          var xTopRight = 400;
+                          result.push(xTopRight);
 
-                        result.push(400);
-                        result.push(400);
-                        result.push(0);
-                        result.push(400);
-                        result.push(0);
+                          var lastDataPoint = data.length - 1;
+                          var diffLast = d3.max(data) - data[lastDataPoint];
+                          var yTopRight = ((((diffLast / range) * 80) + 5) * 4 );
+                          result.push(yTopRight);
 
-                        var firstDataPoint = data[0];
-                        var diffFirst = d3.max(data) - firstDataPoint;
-                        var yBotLeft = ((((diffFirst / range) * 80) + 5) * 4 );
-                        result.push(yBotLeft);
+                          result.push(400);
+                          result.push(400);
+                          result.push(0);
+                          result.push(400);
+                          result.push(0);
 
-                        var string = "";
-                        for ( var j = 0; j < result.length; j++) {
-                            if( j % 2) {
-                              string = string + result[j]+" "
-                            } else {
-                              string = string + result[j]+","
-                            }
-                        }
-                        return string;
-                      });
+                          var firstDataPoint = data[0];
+                          var diffFirst = d3.max(data) - firstDataPoint;
+                          var yBotLeft = ((((diffFirst / range) * 80) + 5) * 4 );
+                          result.push(yBotLeft);
+
+                          var string = "";
+                          for ( var j = 0; j < result.length; j++) {
+                              if( j % 2) {
+                                string = string + result[j]+" "
+                              } else {
+                                string = string + result[j]+","
+                              }
+                          }
+                          return string;
+                        });
+}
 
 // <line x1="25%" y1="75%" x2="50%" y2="25%"></line>
 var lines =  chart.selectAll("line")
@@ -87,12 +100,14 @@ var lines =  chart.selectAll("line")
                       }
                     });
 
-var maxLine = chart.append("line")
-                  .attr("class", "maxLine")
-                  .attr("x1", 0)
-                  .attr("y1", 5 +"%")
-                  .attr("x2", 100+"%")
-                  .attr("y2", 5 +"%");
+if ( data.length !== 1 ){
+  var maxLine = chart.append("line")
+                    .attr("class", "maxLine")
+                    .attr("x1", 0)
+                    .attr("y1", 5 +"%")
+                    .attr("x2", 100+"%")
+                    .attr("y2", 5 +"%");
+}
 
 var minLine = chart.append("line")
                   .attr("class", "minLine")
@@ -105,44 +120,48 @@ var tooltip = d3.select("body")
                 .append("div")
                 .attr("class", "tooltip")
 
-// <circle cx="75%" cy="50%" r="4"></circle>
-var dots = chart.selectAll("circle")
-                .data(data)
-                .enter().append("circle")
-                  .attr("cx", function(d, i){
-                    var percent = Math.floor((( i / ( data.length - 1 ) ) * 90 ) + 5 );
-                    return percent+"%";
-                  })
-                  .attr("cy", function(d){
-                    var range = d3.max(data) - d3.min(data);
-                    var diff = d3.max(data) - d;
-                    return (((diff / range) * 80) + 5) +"%";
-                  })
-                  .attr("r", 4)
-                  .on("mouseover", function(d, i){
+if ( data.length !== 1 ){
+  // <circle cx="75%" cy="50%" r="4"></circle>
+  var dots = chart.selectAll("circle")
+                  .data(data)
+                  .enter().append("circle")
+                    .attr("cx", function(d, i){
+                      var percent = Math.floor((( i / ( data.length - 1 ) ) * 90 ) + 5 );
+                      return percent+"%";
+                    })
+                    .attr("cy", function(d){
+                      var range = d3.max(data) - d3.min(data);
+                      var diff = d3.max(data) - d;
+                      return (((diff / range) * 80) + 5) +"%";
+                    })
+                    .attr("r", 4)
+                    .on("mouseover", function(d, i){
 
-                    var diff = data[i] - ( data[i-1] );
-                    if ( i === 0 || diff === 0) {
-                      return tooltip.style("visibility", "visible").text(d);
-                    } else {
-                      return tooltip.style("visibility", "visible").text(d+" (+"+(data[i]-data[i-1])+")");
-                    }
-                  })
-                  .on("mousemove", function(){
-                    return tooltip.style("top", (event.pageY-26)+"px").style("left",(event.pageX-100)+"px");
-                  })
-                  .on("mouseout", function(){
-                    return tooltip.style("visibility", "hidden");
-                  });
-
-var labelMax = chart.append("text")
-                    .attr("x", "5%")
-                    .attr("y", "7%")
-                    .attr("dy", ".71em")
-                    .text(function(){
-                      var maxVal = data.length - 1;
-                      return data[maxVal];
+                      var diff = data[i] - ( data[i-1] );
+                      if ( i === 0 || diff === 0) {
+                        return tooltip.style("visibility", "visible").text(d);
+                      } else {
+                        return tooltip.style("visibility", "visible").text(d+" (+"+(data[i]-data[i-1])+")");
+                      }
+                    })
+                    .on("mousemove", function(){
+                      return tooltip.style("top", (event.pageY-26)+"px").style("left",(event.pageX-100)+"px");
+                    })
+                    .on("mouseout", function(){
+                      return tooltip.style("visibility", "hidden");
                     });
+}
+
+if ( data.length !== 1 ){
+  var labelMax = chart.append("text")
+                      .attr("x", "5%")
+                      .attr("y", "7%")
+                      .attr("dy", ".71em")
+                      .text(function(){
+                        var maxVal = data.length - 1;
+                        return data[maxVal];
+                      });
+}
 
 var labelMin = chart.append("text")
                     .attr("x", "95%")
