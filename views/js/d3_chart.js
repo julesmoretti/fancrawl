@@ -1,14 +1,14 @@
 // var data = [230,245,269,274,292,320,368];
-var dataError = false;
-for ( var i = 0; i < data.length; i++ ) {
-  if ( data[i] === "N/A") {
-    dataError = true;
-  }
-}
+// var dataError = false;
+// for ( var i = 0; i < data.length; i++ ) {
+//   if ( data[i] === "N/A") {
+//     dataError = true;
+//   }
+// }
 
-if ( dataError ) {
-  data = [0];
-}
+// if ( dataError ) {
+//   data = [0];
+// }
 
 var chart = d3.select(".chart");
 var chartBackground = d3.select(".chartBackground");
