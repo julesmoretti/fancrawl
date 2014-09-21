@@ -1504,6 +1504,10 @@ var crypto                    = require('crypto'),
           if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
             console.log("User "+pbody.user.id+" granted");
 
+            if ( usersInfo[ pbody.user.id ] ) {
+              delete usersInfo[ pbody.user.id ];
+            }
+
               connection.query('UPDATE access_right set fancrawl_full_name = "'+pbody.user.full_name+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
                 if (err) throw err;
 
@@ -1906,4 +1910,3 @@ var crypto                    = require('crypto'),
       });
     }
     };
-
