@@ -383,7 +383,7 @@ html {
                   border-bottom: 1px solid #808080;
                   display: table;
                   width: 100%; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li .actionWarning {
+                  html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li.actionWarning {
                     background-color: rgba(252, 81, 0, 0.75); }
                   html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li span {
                     display: table-cell;
@@ -415,7 +415,7 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .actionWarningDark {
+                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li.actionWarningDark {
                     background-color: rgba(252, 81, 0, 0.5); }
                   html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li #submitButton {
                     -webkit-appearance: none;

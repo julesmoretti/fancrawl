@@ -483,7 +483,7 @@ html {
                   display: table;
                   width: 100%;
 
-                  .actionWarning {
+                  &.actionWarning {
                     background-color: rgba(252, 81, 0, 0.75);
                   }
                   span {
@@ -521,7 +521,7 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%;
-                  .actionWarningDark {
+                  &.actionWarningDark {
                     background-color: rgba(252, 81, 0, 0.5);
                   }
                   #submitButton {
