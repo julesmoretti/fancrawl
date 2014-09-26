@@ -482,6 +482,10 @@ html {
                   border-bottom: 1px solid #808080;
                   display: table;
                   width: 100%;
+
+                  .actionWarning {
+                    background-color: rgba(252, 81, 0, 0.75);
+                  }
                   span {
                     display: table-cell;
                     vertical-align: middle;
@@ -517,6 +521,9 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%;
+                  .actionWarningDark {
+                    background-color: rgba(252, 81, 0, 0.5);
+                  }
                   #submitButton {
                     -webkit-appearance: none;
                     -moz-appearance: none;
