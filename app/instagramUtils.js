@@ -1238,13 +1238,16 @@ var crypto                    = require('crypto'),
                 // FIND LAST USER ADDED AND ADDS NEXT ONE
                 // connection.query('select MAX(beta_followers.added_follower_instagram_id) from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   // if (err) throw err;
-                connection.query('select added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
 
                   var obj = {};
 
                   if ( rows && rows[0] ) {
                     for ( var i = 0; i < rows.length; i++ ) {
+                      if ( rows[i].count !== 5 ) {
+                        verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                      };
                       var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
                       obj[ pickedOut ] = pickedOut;
                     }
