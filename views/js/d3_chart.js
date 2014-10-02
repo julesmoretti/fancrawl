@@ -112,7 +112,7 @@ var lines =  chart.selectAll("line")
                       }
                     });
 
-if ( data.length !== 1 ){
+if ( data.length !== 1 || d3.max(data) !== d3.min(data) ){
   var maxLine = chart.append("line")
                     .attr("class", "maxLine")
                     .attr("x1", 0)
@@ -170,7 +170,7 @@ if ( data.length !== 1 ){
                     });
 }
 
-if ( data.length !== 1 ){
+if ( data.length !== 1 || d3.max(data) !== d3.min(data)  ){
   var labelMax = chart.append("text")
                       .attr("x", "5%")
                       .attr("y", "7%")
