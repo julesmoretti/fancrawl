@@ -11,6 +11,7 @@ var crypto                    = require('crypto'),
     mysql                     = require('mysql'),
     usersInfo                 = {},
     timer                     = {},
+    setTimeouts               = {},
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
     queueCap                  = 2000,
@@ -825,9 +826,10 @@ var crypto                    = require('crypto'),
         // else setTimeout 5 min recursing same stats
         } else {
           var time = 1000 * 60 * 5;
-          setTimeout(
+          setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
             function(){
             clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
+            delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
           }, time );
         }
 
@@ -855,9 +857,10 @@ var crypto                    = require('crypto'),
       // else setTimeout 10 seconds recursing same stats
       } else {
         var time = 1000 * 10;
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
           function(){
           clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
+          delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
         }, time );
       }
     }
@@ -962,9 +965,10 @@ var crypto                    = require('crypto'),
                   });
                 } else {
                   var time = 1000 * 30;
-                  setTimeout(
+                  setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
                     function(){
                     fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                    delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
                   }, time );
                 }
 
@@ -1011,9 +1015,10 @@ var crypto                    = require('crypto'),
             var two_days  = 1000 * 60 * 60 * 48,
                 delay     = two_days - time_diff;
 
-            setTimeout(
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
                 clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
+                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
             }, delay); // time between adding new followers (1 min wait)
 
           // less then 1 day
@@ -1021,9 +1026,10 @@ var crypto                    = require('crypto'),
             var one_day   = 1000 * 60 * 60 * 24,
                 delay     = one_day - time_diff;
 
-            setTimeout(
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
                 clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
+                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
             }, delay); // time between adding new followers (1 min wait)
 
           // less then 1 hour
@@ -1031,9 +1037,10 @@ var crypto                    = require('crypto'),
             var one_hour  = 1000 * 60 * 60,
                 delay     = one_hour - time_diff;
 
-            setTimeout(
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
                 clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
+                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
             }, delay); // time between adding new followers (1 min wait)
 
           // less then 5 min
@@ -1041,9 +1048,10 @@ var crypto                    = require('crypto'),
             var five_min  = 1000 * 60 * 5,
                 delay     = five_min - time_diff;
 
-            setTimeout(
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
                 clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
+                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
             }, delay); // time between adding new followers (1 min wait)
           } else {
             console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
@@ -1212,6 +1220,10 @@ var crypto                    = require('crypto'),
       timer_post( fancrawl_instagram_id ); // setup timer structure on start
     } else if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
       timer_quick( fancrawl_instagram_id ); // setup timer structure on start
+    }
+
+    if ( !setTimeouts[ fancrawl_instagram_id ] ) {
+      setTimeouts[ fancrawl_instagram_id ] = {};
     }
 
     connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -1532,6 +1544,10 @@ var crypto                    = require('crypto'),
                   timer_quick( pbody.user.id ); // setup timer structure on start
                 }
 
+                if ( !setTimeouts[ pbody.user.id ] ) {
+                  setTimeouts[ pbody.user.id ] = {};
+                }
+
                 // check the existence of data in secured s_followed_by database for current user
                 connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
                   if (err) throw err;
@@ -1846,13 +1862,16 @@ var crypto                    = require('crypto'),
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
             // start fetching process
-            connection.query('select added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
               if (err) throw err;
 
               var obj = {};
 
               if ( rows && rows[0] ) {
                 for ( var i = 0; i < rows.length; i++ ) {
+                  if ( rows[i].count !== 5 ) {
+                    verifyRelationship( fancrawl_instagram_id, rows[j].added_follower_instagram_id );
+                  };
                   var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
                   obj[ pickedOut ] = pickedOut;
                 }
@@ -1909,11 +1928,18 @@ var crypto                    = require('crypto'),
       // change state to stopped in database for user and redirect back to dashboard
       connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
+
         // RESET post_timer & quick_timer
         console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].quick_queue ) {
           timer[ fancrawl_instagram_id ].post_queue = {};
           timer[ fancrawl_instagram_id ].quick_queue = {};
+        }
+
+        if ( setTimeouts && setTimeouts[ fancrawl_instagram_id ] ) {
+          for ( keys in setTimeouts[ fancrawl_instagram_id ] ) {
+            clearTimeout( setTimeouts[ fancrawl_instagram_id ][ keys ] );
+          }
         }
 
         res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
