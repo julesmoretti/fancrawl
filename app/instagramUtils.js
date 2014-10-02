@@ -1842,7 +1842,7 @@ var crypto                    = require('crypto'),
       connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
         console.log("cleanDB for: ", fancrawl_instagram_id);
-        cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+        // cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
             // start fetching process
@@ -1875,7 +1875,7 @@ var crypto                    = require('crypto'),
 
             });
           });
-        });
+        // });
         res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
       });
 
