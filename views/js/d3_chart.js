@@ -83,10 +83,10 @@ var lines =  chart.selectAll("line")
                       if ( i !== (data.length - 1) ) {
                         var range = d3.max(data) - d3.min(data);
                         var diff = d3.max(data) - d;
-                        if ( diff === 0 ) {
+                        if ( diff === 0 && d3.max(data) === d3.min(data) ) {
                           var diff = d3.max(data);
                         }
-                        if ( range === 0 ) {
+                        if ( range === 0 && d3.max(data) === d3.min(data) ) {
                           var range = d3.max(data);
                         }
                         return (((diff / range) * 80) + 5) +"%";
@@ -102,10 +102,10 @@ var lines =  chart.selectAll("line")
                       if ( i !== (data.length - 1) ) {
                         var range = d3.max(data) - d3.min(data);
                         var diff = d3.max(data) - data[i+1];
-                        if ( diff === 0 ) {
+                        if ( diff === 0 && d3.max(data) === d3.min(data) ) {
                           var diff = d3.max(data);
                         }
-                        if ( range === 0 ) {
+                        if ( range === 0 && d3.max(data) === d3.min(data) ) {
                           var range = d3.max(data);
                         }
                         return (((diff / range) * 80) + 5) +"%";
@@ -144,10 +144,10 @@ if ( data.length !== 1 ){
                     .attr("cy", function(d){
                       var range = d3.max(data) - d3.min(data);
                       var diff = d3.max(data) - d;
-                      if ( diff === 0 ) {
+                      if ( diff === 0 && d3.max(data) === d3.min(data) ) {
                         var diff = d3.max(data);
                       }
-                      if ( range === 0 ) {
+                      if ( range === 0 && d3.max(data) === d3.min(data) ) {
                         var range = d3.max(data);
                       }
                       return (((diff / range) * 80) + 5) +"%";
