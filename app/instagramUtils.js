@@ -1235,65 +1235,45 @@ var crypto                    = require('crypto'),
           console.log("STARTED STATE: ", fancrawl_instagram_id);
           var state = rows[0].state;
 
-          // UPDATE STATE to cleaning before starting again
-          // connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-            // if (err) throw err;
+          connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
 
-            // CLEAN DATABASE THEN PROCEED TO START AGAIN
-            // cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+            var obj = {};
 
+            if ( rows && rows[0] ) {
+              for ( var i = 0; i < rows.length; i++ ) {
+                if ( rows[i].count !== 5 ) {
+                  verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                };
+                var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
+                obj[ pickedOut ] = pickedOut;
+              }
 
-              // UPDATE STATE TO STARTED
-              // connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-                // if (err) throw err;
+              // var oldestUser = 0;
+              for ( keys in obj ) {
+                var oldestUser = keys;
+              }
 
-                // FIND LAST USER ADDED AND ADDS NEXT ONE
-                // connection.query('select MAX(beta_followers.added_follower_instagram_id) from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-                  // if (err) throw err;
-                connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-                  if (err) throw err;
+              // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
+              var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
+              // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
 
-                  var obj = {};
+              // console.log("RESTARTED & PRE STARTED: ", fancrawl_instagram_id);
 
-                  if ( rows && rows[0] ) {
-                    for ( var i = 0; i < rows.length; i++ ) {
-                      if ( rows[i].count !== 5 ) {
-                        verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
-                      };
-                      var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
-                      obj[ pickedOut ] = pickedOut;
-                    }
+              // START BY VERIFYING
+              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id);
+              // console.log("oldestUser: ", oldestUser);
+              // console.log("obj: ", obj);
+              fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+            } else {
 
-                    // var oldestUser = 0;
-                    for ( keys in obj ) {
-                      var oldestUser = keys;
-                    }
-
-                    // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
-                    var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
-                    // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
-
-                    // console.log("RESTARTED & PRE STARTED: ", fancrawl_instagram_id);
-
-                    // START BY VERIFYING
-                    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id);
-                    // console.log("oldestUser: ", oldestUser);
-                    // console.log("obj: ", obj);
-                    fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                  } else {
-
-                    // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
-                    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: 1");
-                    fetchNewFollowers( fancrawl_instagram_id, 1 );
-                  }
+              // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
+              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: 1");
+              fetchNewFollowers( fancrawl_instagram_id, 1 );
+            }
 
 
-                });
-              // });
-            // });
-          // });
+          });
 
         // IF USER WAS CLEANING
         } else if ( rows[0].state && rows[0].state === "cleaning" ) {
@@ -1794,6 +1774,7 @@ var crypto                    = require('crypto'),
                               var old = data
                               var data = newTemp.concat(old);
                             }
+
                             // data = data.splice(data.length - 7,7);
                             if ( data.length > 0 ) {
                               metrics.data = data;
@@ -1870,7 +1851,7 @@ var crypto                    = require('crypto'),
               if ( rows && rows[0] ) {
                 for ( var i = 0; i < rows.length; i++ ) {
                   if ( rows[i].count !== 5 ) {
-                    verifyRelationship( fancrawl_instagram_id, rows[j].added_follower_instagram_id );
+                    verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
                   };
                   var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
                   obj[ pickedOut ] = pickedOut;
@@ -1946,3 +1927,4 @@ var crypto                    = require('crypto'),
       });
     }
     };
+
