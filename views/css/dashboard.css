@@ -156,6 +156,50 @@ html {
               font-family: "inst_semibold";
               border-bottom: 0px solid #4d4d4d;
               padding-top: 2px; }
+    html body .warnings {
+      position: absolute;
+      width: 100%;
+      top: 54px;
+      z-index: 200;
+      /*border-bottom: 1px solid $background_boder;*/
+      /*z-index: 100;*/ }
+      html body .warnings .warningsInner {
+        max-width: 1000px;
+        min-width: 320px;
+        height: inherit;
+        margin-left: auto;
+        margin-right: auto; }
+        html body .warnings .warningsInner .warningBar {
+          background-color: #ff4400;
+          /*height: 44px;*/
+          border-radius: 5px;
+          width: calc(100% - 32px);
+          border-radius: 5px;
+          margin-left: 16px;
+          margin-bottom: 5px; }
+          html body .warnings .warningsInner .warningBar .warningClose {
+            display: inline;
+            float: right;
+            height: 44px;
+            line-height: 44px;
+            margin-right: 16px; }
+          html body .warnings .warningsInner .warningBar .warningClose:before {
+            font-family: ionicons;
+            content: "\f12a";
+            opacity: 0.75;
+            color: white;
+            opacity: 0.5; }
+          html body .warnings .warningsInner .warningBar .warningText {
+            color: white;
+            font-family: inst_reg;
+            line-height: 44px;
+            margin-left: 16px;
+            display: block; }
+          html body .warnings .warningsInner .warningBar .warningText:before {
+            font-family: ionicons;
+            content: "\f100";
+            opacity: 0.75;
+            /*font-size: 10px;*/ }
     html body .banner {
       position: absolute;
       width: 100%;

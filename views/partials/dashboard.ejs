@@ -20,8 +20,8 @@
     <meta name="viewport" content="width = 320,
        initial-scale = 1, user-scalable = no, minimal-ui">
     <link rel="stylesheet" type="text/css" href="/views/css/dashboard.css" media="all">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/app/jquery.js"></script>
+    <script src="/app/d3.min.js" charset="utf-8"></script>
   </head>
 
   <body>
@@ -59,6 +59,29 @@
         </div>
       </div>
     </div>
+    <script>
+      // var closeWarning = function(){
+      //   console.log("closing box");
+      //   var warnings = d3.select('.warningsInner');
+
+      //       warnings.selectAll(".warningBar")
+      //             .style("opacity", 1)
+      //             .transition()
+      //             .delay(200)
+      //             .duration(500)
+      //             .style("opacity", 0);
+
+      // };
+    </script>
+    <!-- <div class="warnings">
+      <div class="warningsInner">
+        <div class="warningBar" onclick="closeWarning();">
+          <div class="warningClose"></div>
+          <span class="warningText">YELLLOW</span>
+          <span class="warningText">YELLLOW</span>
+          <span class="warningText">YELLLOW</span>
+        </div>
+    </div> -->
     <div class="banner">
       <div class="bannerInner">
         <span>Dashboard</span>
