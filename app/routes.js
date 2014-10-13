@@ -12,6 +12,13 @@ var instagramUtils = require('./instagramUtils.js');
 
   module.exports = function(app) {
 
+    // allows for cross browser communication
+    app.all( '/*', function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
+      next();
+    });
+
     // loads dashboard
     app.post('/trigger', instagramUtils.trigger);
 
