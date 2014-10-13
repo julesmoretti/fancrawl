@@ -56,7 +56,7 @@ var crypto                    = require('crypto'),
         var mailOptions = {
             from: 'Jules Moretti <'+process.env.FANCRAWLEMAIL+'>', // sender address
             to: rows[0].email , // list of receivers
-            subject: 'Fancrawl.io - ' + subject +": "+rows[0].fancrawl_username, // Subject line
+            subject: 'FanCrawl.io - ' + subject +": "+rows[0].fancrawl_username, // Subject line
             text: error, // plaintext body
             html: error // html body
             // html: '<b>Hello world ✔</b>' // html body
