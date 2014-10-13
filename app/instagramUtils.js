@@ -43,8 +43,8 @@ var crypto                    = require('crypto'),
     var transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'jules.moretti@gmail.com',
-            pass: 'agrjadgrhwbbhbwg'
+            user: process.env.FANCRAWLEMAIL,
+            pass: process.env.FANCRAWLEMAILPASS
         }
     });
 
@@ -54,7 +54,7 @@ var crypto                    = require('crypto'),
 
         // setup e-mail data with unicode symbols
         var mailOptions = {
-            from: 'Jules Moretti <jules.moretti@gmail.com>', // sender address
+            from: 'Jules Moretti <'+process.env.FANCRAWLEMAIL+'>', // sender address
             to: rows[0].email , // list of receivers
             subject: 'Fancrawl.io | ' + subject, // Subject line
             text: error, // plaintext body
