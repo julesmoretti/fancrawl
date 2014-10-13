@@ -1544,7 +1544,7 @@ var crypto                    = require('crypto'),
 
     // request for the token and data back
     request(options, function (error, response, body) {
-      // var pbody = JSON.parse(body);
+      var pbody = JSON.parse(body);
       console.log(pbody);
       if (error) {
         console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + err.body);
