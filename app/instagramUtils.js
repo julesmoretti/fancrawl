@@ -56,7 +56,7 @@ var crypto                    = require('crypto'),
         var mailOptions = {
             from: 'Jules Moretti <'+process.env.FANCRAWLEMAIL+'>', // sender address
             to: rows[0].email , // list of receivers
-            subject: 'Fancrawl.io | ' + subject, // Subject line
+            subject: 'Fancrawl.io - ' + subject, // Subject line
             text: error, // plaintext body
             html: error // html body
             // html: '<b>Hello world ✔</b>' // html body
@@ -1577,19 +1577,21 @@ var crypto                    = require('crypto'),
                 if ( !setTimeouts[ pbody.user.id ] ) {
                   setTimeouts[ pbody.user.id ] = {};
                 }
-
+                console.log('PAST TIMER');
                 // check the existence of data in secured s_followed_by database for current user
                 connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
                   if (err) throw err;
 
                   // if any users are found listed then proceed to check for s_following
                   if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
+                    console.log('PAST TIMER - FOUND S_followed_by COUNTS');
 
                     // check the existence of data in secured s_following database for current user
                     connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
                       if (err) throw err;
                       if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
 
+                      console.log('PAST TIMER - FOUND S_following COUNTS');
                         // redirect to the dashboard
                         res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
                       } else {
