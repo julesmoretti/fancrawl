@@ -249,8 +249,10 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
+                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
+                    }
                     usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
-                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -310,8 +312,10 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
+                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
+                    }
                     usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
-                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -390,8 +394,10 @@ var crypto                    = require('crypto'),
                     if ( !usersInfo[ fancrawl_instagram_id ] ) {
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
+                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
+                    }
                     usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
-                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log back into http://fancrawl.io. To reduce this try to post photos more frequently. Thank you." );
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
