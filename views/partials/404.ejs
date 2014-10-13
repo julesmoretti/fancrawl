@@ -11,12 +11,66 @@
     <meta name="viewport" content="width = 320,
        initial-scale = 0.5, user-scalable = no,  minimal-ui">
     <link rel="stylesheet" type="text/css" href="/views/css/logIn.css" media="all">
+    <script src="/app/d3.min.js" charset="utf-8"></script>
   </head>
   </head>
 
   <body>
 
-    <div id="line_left"></div>
+    <div id="line_left">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 840 300" enable-background="new 0 0 840 300" xml:space="preserve">
+        <g id="Lines">
+          <line stroke-linejoin="round" x1="472.5" y1="175" x2="420" y2="175"/>
+          <line stroke-linejoin="round" x1="315" y1="250" x2="290" y2="225"/>
+          <line stroke-linejoin="round" x1="630" y1="125" x2="525" y2="125"/>
+          <line stroke-linejoin="round" x1="367.5" y1="150" x2="315" y2="150"/>
+          <line stroke-linejoin="round" x1="315" y1="75" x2="157.5" y2="75"/>
+          <line stroke-linejoin="round" x1="315" y1="250" x2="210" y2="250"/>
+          <polyline stroke-linejoin="round" points="735,200 577.5,200 552.5,225 290,225
+            "/>
+          <line stroke-linejoin="round" x1="840" y1="200" x2="735" y2="200"/>
+          <line stroke-linejoin="round" x1="710" y1="175" x2="472.5" y2="175"/>
+          <line stroke-linejoin="round" x1="840" y1="175" x2="710" y2="175"/>
+          <line stroke-linejoin="round" x1="630" y1="125" x2="605" y2="150"/>
+          <line stroke-linejoin="round" x1="840" y1="125" x2="630" y2="125"/>
+          <line stroke-linejoin="round" x1="605" y1="150" x2="367.5" y2="150"/>
+          <line stroke-linejoin="round" x1="840" y1="150" x2="605" y2="150"/>
+          <polyline stroke-linejoin="round" points="472.5,175 447.5,200 0,200   "/>
+          <polyline stroke-linejoin="round" points="367.5,150 342.5,175 210,175 185,150
+            0,150   "/>
+          <polyline stroke-linejoin="round" points="472.5,100 447.5,125 0,125   "/>
+          <line stroke-linejoin="round" x1="840" y1="100" x2="472.5" y2="100"/>
+          <line stroke-linejoin="round" x1="577.5" y1="50" x2="0" y2="50"/>
+          <polyline stroke-linejoin="round" points="840,75 682.5,75 657.5,50 577.5,50   "/>
+          <line stroke-linejoin="round" x1="315" y1="75" x2="290" y2="100"/>
+          <polyline stroke-linejoin="round" points="577.5,50 552.5,75 315,75  "/>
+          <line stroke-linejoin="round" x1="290" y1="100" x2="0" y2="100"/>
+          <line stroke-linejoin="round" x1="472.5" y1="100" x2="290" y2="100"/>
+          <line stroke-linejoin="round" x1="735" y1="200" x2="710" y2="175"/>
+          <polyline stroke-linejoin="round" points="840,225 630,225 605,250 315,250   "/>
+          <line stroke-linejoin="round" x1="288.8" y1="225" x2="0" y2="225"/>
+        </g>
+        <g id="Dot">
+          <circle stroke-miterlimit="10" cx="290" cy="225" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="290" cy="100" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="735" cy="200" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="710" cy="175" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="605" cy="150" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="472.5" cy="100" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="577.5" cy="50" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="525" cy="125" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="157.5" cy="75" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="315" cy="150" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="420" cy="175" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="367.5" cy="150" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="315" cy="75" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="472.5" cy="175" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="630" cy="125" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="315" cy="250" r="2.5"/>
+          <circle stroke-miterlimit="10" cx="210" cy="250" r="2.5"/>
+        </g>
+      </svg>
+    </div>
 
     <div id="box" onclick="location.href='/';">
 
@@ -30,9 +84,66 @@
 
     </div>
 
-    <div id="line_right"></div>
+    <div id="line_right">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 840 300" enable-background="new 0 0 840 300" xml:space="preserve">
+        <g id="Lines">
+          <line stroke-linejoin="round" x1="262.5" y1="250" x2="287.5" y2="225"/>
+          <polyline stroke-linejoin="round" points="262.5,150 287.5,175 367.5,175
+            417.5,125 630,125 655,150 840,150   "/>
+          <polyline stroke-linejoin="round" points="105,200 420,200 470,150 497.5,150   "/>
+          <polyline stroke-linejoin="round" points="105,200 130,225 287.5,225   "/>
+          <line stroke-linejoin="round" x1="105" y1="200" x2="130" y2="225"/>
+          <line stroke-linejoin="round" x1="0" y1="200" x2="105" y2="200"/>
+          <line stroke-linejoin="round" x1="157.5" y1="175" x2="182.5" y2="150"/>
+          <line stroke-linejoin="round" x1="0" y1="175" x2="157.5" y2="175"/>
+          <line stroke-linejoin="round" x1="182.5" y1="150" x2="262.5" y2="150"/>
+          <line stroke-linejoin="round" x1="0" y1="150" x2="182.5" y2="150"/>
+          <line stroke-linejoin="round" x1="497.5" y1="75" x2="840" y2="75"/>
+          <polyline stroke-linejoin="round" points="262.5,75 287.5,100 367.5,100 392.5,75
+            497.5,75  "/>
+          <line stroke-linejoin="round" x1="235" y1="75" x2="262.5" y2="75"/>
+          <polyline stroke-linejoin="round" points="157.5,100 182.5,75 235,75   "/>
+          <line stroke-linejoin="round" x1="0" y1="100" x2="157.5" y2="100"/>
+          <polyline stroke-linejoin="round" points="0,125 367.5,125 392.5,100 840,100   "/>
+          <polyline stroke-linejoin="round" points="497.5,150 522.5,175 840,175   "/>
+          <line stroke-linejoin="round" x1="157.5" y1="100" x2="210" y2="100"/>
+          <line stroke-linejoin="round" x1="262.5" y1="150" x2="315" y2="150"/>
+          <line stroke-linejoin="round" x1="497.5" y1="150" x2="577.5" y2="150"/>
+          <polyline stroke-linejoin="round" points="105,75 130,50 210,50 235,75   "/>
+          <line stroke-linejoin="round" x1="0" y1="75" x2="105" y2="75"/>
+          <line stroke-linejoin="round" x1="105" y1="75" x2="157.5" y2="75"/>
+          <line stroke-linejoin="round" x1="472.5" y1="50" x2="525" y2="50"/>
+          <line stroke-linejoin="round" x1="262.5" y1="250" x2="367.5" y2="250"/>
+          <polyline stroke-linejoin="round" points="262.5,75 315,75 340,50 472.5,50   "/>
+          <line stroke-linejoin="round" x1="472.5" y1="50" x2="497.5" y2="75"/>
+          <polyline stroke-linejoin="round" points="0,225 52.5,225 77.5,250 262.5,250   "/>
+          <line stroke-linejoin="round" x1="287.5" y1="225" x2="840" y2="225"/>
+        </g>
+        <g id="Dots">
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="105" cy="200" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="235" cy="75" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="262.5" cy="75" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="157.5" cy="75" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="157.5" cy="100" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="105" cy="75" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="287.5" cy="225" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="262.5" cy="250" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="525" cy="50" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="472.5" cy="50" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="210" cy="100" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="367.5" cy="250" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="157.5" cy="175" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="182.5" cy="150" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="497.5" cy="75" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="262.5" cy="150" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="315" cy="150" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="497.5" cy="150" r="2.5"/>
+          <circle fill="#E1DDD2" stroke="#E1DDD2" stroke-width="2" stroke-miterlimit="10" cx="577.5" cy="150" r="2.5"/>
+        </g>
+      </svg>
+    </div>
 
-
+    <script src="/views/js/d3_ani_login.js" charset="utf-8"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

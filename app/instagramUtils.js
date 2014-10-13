@@ -59,7 +59,7 @@ var crypto                    = require('crypto'),
             subject: 'FanCrawl.io - ' + subject +": "+rows[0].fancrawl_username, // Subject line
             text: error, // plaintext body
             html: error // html body
-            // html: '<b>Hello world ✔</b>' // html body
+            // html: '<b>Hello world</b></br><div class="width:100px; height: 200px; background-color: red;">YOLLO</div>' // html body
         };
 
         // send mail with defined transport object
@@ -73,6 +73,10 @@ var crypto                    = require('crypto'),
       }
     });
     };
+
+  var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
+
+      sendMail( 571377691, 'subject line for user', htmlBody );
 
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
