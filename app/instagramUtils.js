@@ -1316,16 +1316,7 @@ var crypto                    = require('crypto'),
                 var oldestUser = keys;
               }
 
-              // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
               var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
-              // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
-
-              // console.log("RESTARTED & PRE STARTED: ", fancrawl_instagram_id);
-
-              // START BY VERIFYING
-              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id);
-              // console.log("oldestUser: ", oldestUser);
-              // console.log("obj: ", obj);
 
               var currentUser = JSON.parse( fancrawl_instagram_id );
 
@@ -1335,14 +1326,16 @@ var crypto                    = require('crypto'),
               } else {
                 fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
               }
+              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
 
             } else {
 
               // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
-              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: 1");
 
               var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
               fetchNewFollowers( fancrawl_instagram_id, newUser );
+
+              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
 
             }
 
