@@ -1323,10 +1323,11 @@ var crypto                    = require('crypto'),
               if ( new_instagram_following_id < currentUser ) {
                 var newUser = ( currentUser + 1 );
                 fetchNewFollowers( fancrawl_instagram_id, newUser );
+                console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
               } else {
                 fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
               }
-              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
 
             } else {
 
