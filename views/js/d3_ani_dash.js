@@ -1,4 +1,24 @@
 // DASHBOARD
+
+// warning errors
+  d3.selectAll('.warnings')
+    .style("top", -300+"px")
+    .transition()
+    .delay(500)
+    .duration(2000)
+    .style("top", 54+"px");
+
+var closeWarning = function(){
+  console.log("closing box");
+
+  d3.selectAll('.warnings')
+    .style("opacity", 1)
+    .transition()
+    .delay(200)
+    .duration(500)
+    .style("opacity", 0);
+};
+
 // header
 d3.selectAll(".header")
     .style("top", -44+"px")

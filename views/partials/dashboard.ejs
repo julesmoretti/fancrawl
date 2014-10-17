@@ -60,28 +60,18 @@
       </div>
     </div>
     <script>
-      // var closeWarning = function(){
-      //   console.log("closing box");
-      //   var warnings = d3.select('.warningsInner');
 
-      //       warnings.selectAll(".warningBar")
-      //             .style("opacity", 1)
-      //             .transition()
-      //             .delay(200)
-      //             .duration(500)
-      //             .style("opacity", 0);
-
-      // };
     </script>
-    <!-- <div class="warnings">
+    <div class="warnings">
       <div class="warningsInner">
         <div class="warningBar" onclick="closeWarning();">
           <div class="warningClose"></div>
-          <span class="warningText">YELLLOW</span>
-          <span class="warningText">YELLLOW</span>
-          <span class="warningText">YELLLOW</span>
+          <% for ( keys in errorLogs ) {%>
+            <span class="warningText"><%= errorLogs[ keys ] %></span>
+          <% } %>
         </div>
-    </div> -->
+      </div>
+    </div>
     <div class="banner">
       <div class="bannerInner">
         <span>Dashboard</span>
@@ -179,9 +169,6 @@
                 <% } else { %>
                 <% } %>
                 <li><span>FanCrawled users so far</span></li>
-                <% for ( keys in errorLogs ) {%>
-                   <li class="actionWarning"><span><%= errorLogs[ keys ] %></span></li>
-                <% } %>
                 <li><span>Do not forget to save...</span></li>
               </ul>
             </div>
@@ -231,9 +218,6 @@
                       <span>0</span>
                     <% } %>
                   </li>
-                  <% for ( keys in errorLogs ) {%>
-                     <li class="actionWarningDark"><span>WARNINGS</span></li>
-                  <% } %>
                   <li>
                     <button id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" onclick="$('#hidden').removeClass('show');" disabled>SAVE</button>
                   </li>
@@ -256,6 +240,7 @@
         var data = [<%= data %>];
       </script>
     <% } %>
+
     <script src="/views/js/d3_chart.js" charset="utf-8"></script>
     <script src="/views/js/d3_ani_dash.js" charset="utf-8"></script>
     <script src="/views/js/toggles.js" charset="utf-8"></script>

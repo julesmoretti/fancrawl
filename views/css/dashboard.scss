@@ -227,10 +227,10 @@ html {
         margin-right: auto;
 
         .warningBar {
-          background-color: rgb(255, 68, 0);
+          background-color: rgba(252, 81, 0, 0.85);
           /*height: 44px;*/
           border-radius: 5px;
-          width: calc(100% - 32px);
+          width: calc(100% - 34px);
           border-radius: 5px;
           margin-left: 16px;
           margin-bottom: 5px;
@@ -258,7 +258,7 @@ html {
           }
           .warningText:before {
             font-family: ionicons;
-            content: "\f100";
+            content: "\f100 \00a0";
             opacity: 0.75;
             /*font-size: 10px;*/
           }
@@ -537,10 +537,6 @@ html {
                   border-bottom: 1px solid #808080;
                   display: table;
                   width: 100%;
-
-                  &.actionWarning {
-                    background-color: rgba(252, 81, 0, 0.75);
-                  }
                   span {
                     display: table-cell;
                     vertical-align: middle;
@@ -576,9 +572,6 @@ html {
                   border-bottom: 1px solid #444444;
                   display: table;
                   width: 100%;
-                  &.actionWarningDark {
-                    background-color: rgba(252, 81, 0, 0.5);
-                  }
                   #submitButton {
                     -webkit-appearance: none;
                     -moz-appearance: none;
