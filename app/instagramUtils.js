@@ -1326,12 +1326,16 @@ var crypto                    = require('crypto'),
               console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id);
               // console.log("oldestUser: ", oldestUser);
               // console.log("obj: ", obj);
-              if ( typeof new_instagram_following_id === "string" ) {
-                console.log("new_instagram_following_id was a string");
-              } else if ( typeof new_instagram_following_id === "number" ){
-                console.log("new_instagram_following_id was a number");
+
+              var currentUser = JSON.parse( fancrawl_instagram_id );
+
+              if ( new_instagram_following_id < currentUser ) {
+                var newUser = ( currentUser + 1 );
+                fetchNewFollowers( fancrawl_instagram_id, newUser );
+              } else {
+                fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
               }
-              fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+
             } else {
 
               // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
@@ -1935,24 +1939,20 @@ var crypto                    = require('crypto'),
 
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 console.log("FETCHING - FROM TRIGGER: ", new_instagram_following_id);
-                fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+
+                if ( new_instagram_following_id < currentUser ) {
+                  var newUser = ( currentUser + 1 );
+                  fetchNewFollowers( fancrawl_instagram_id, newUser );
+                } else {
+                  fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                }
+
               } else {
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 console.log("FETCHING - FROM TRIGGER: 1 more then its ID...");
 
-                if ( typeof fancrawl_instagram_id === "string" ) {
-                  var newUser = JSON.parse(fancrawl_instagram_id);
-                  console.log("fetch user id was a string");
-                  fetchNewFollowers( fancrawl_instagram_id, ( newUser + 1 ) );
-
-                } else if ( typeof fancrawl_instagram_id === "number" ) {
-                  console.log("fetch user id was a number");
-                  fetchNewFollowers( fancrawl_instagram_id, ( fancrawl_instagram_id + 1 ) );
-
-                } else {
-                  console.log("fetch user id was neither");
-                  fetchNewFollowers( fancrawl_instagram_id, 1 );
-                }
+                var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
+                fetchNewFollowers( fancrawl_instagram_id, newUser );
               }
 
             });
