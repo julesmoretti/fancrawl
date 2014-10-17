@@ -74,7 +74,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-      sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );
@@ -542,7 +542,7 @@ var crypto                    = require('crypto'),
 
             } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError") {
               // {"meta":{"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
-              sendMail( "571377691", "API Error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
+              sendMail( "571377691", "API Error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id + "of relationships trying to follow: " + new_instagram_following_id );
               callback(fancrawl_instagram_id, new_instagram_following_id, "APINotAllowedError");
 
             // OAUTH TOKEN EXPIRED
@@ -1331,7 +1331,21 @@ var crypto                    = require('crypto'),
 
               // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
               console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: 1");
-              fetchNewFollowers( fancrawl_instagram_id, 1 );
+
+              if ( typeof fancrawl_instagram_id === "string" ) {
+                var newUser = JSON.parse(fancrawl_instagram_id);
+                console.log("fetch user id was a string");
+                fetchNewFollowers( fancrawl_instagram_id, ( newUser + 1 ) );
+
+              } else if ( typeof fancrawl_instagram_id === "number" ) {
+                console.log("fetch user id was a number");
+                fetchNewFollowers( fancrawl_instagram_id, ( fancrawl_instagram_id + 1 ) );
+
+              } else {
+                console.log("fetch user id was neither");
+                fetchNewFollowers( fancrawl_instagram_id, 1 );
+              }
+
             }
 
 
@@ -1930,8 +1944,21 @@ var crypto                    = require('crypto'),
                 fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
               } else {
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                console.log("FETCHING - FROM TRIGGER: 1");
-                fetchNewFollowers( fancrawl_instagram_id, 1 );
+                console.log("FETCHING - FROM TRIGGER: 1 more then its ID...");
+
+                if ( typeof fancrawl_instagram_id === "string" ) {
+                  var newUser = JSON.parse(fancrawl_instagram_id);
+                  console.log("fetch user id was a string");
+                  fetchNewFollowers( fancrawl_instagram_id, ( newUser + 1 ) );
+
+                } else if ( typeof fancrawl_instagram_id === "number" ) {
+                  console.log("fetch user id was a number");
+                  fetchNewFollowers( fancrawl_instagram_id, ( fancrawl_instagram_id + 1 ) );
+
+                } else {
+                  console.log("fetch user id was neither");
+                  fetchNewFollowers( fancrawl_instagram_id, 1 );
+                }
               }
 
             });
