@@ -62,7 +62,7 @@
     <script>
 
     </script>
-    <% if ( errorLogs ){ %>
+    <% if ( JSON.stringify(errorLogs).length > 2 ){ %>
       <div class="warnings">
         <div class="warningsInner">
           <div class="warningBar" onclick="closeWarning();">
