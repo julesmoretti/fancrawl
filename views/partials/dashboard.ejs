@@ -62,16 +62,18 @@
     <script>
 
     </script>
-    <div class="warnings">
-      <div class="warningsInner">
-        <div class="warningBar" onclick="closeWarning();">
-          <div class="warningClose"></div>
-          <% for ( keys in errorLogs ) {%>
-            <span class="warningText"><%= errorLogs[ keys ] %></span>
-          <% } %>
+    <% if ( errorLogs ){ %>
+      <div class="warnings">
+        <div class="warningsInner">
+          <div class="warningBar" onclick="closeWarning();">
+            <div class="warningClose"></div>
+            <% for ( keys in errorLogs ) {%>
+              <span class="warningText"><%= errorLogs[ keys ] %></span>
+            <% } %>
+          </div>
         </div>
       </div>
-    </div>
+    <% } %>
     <div class="banner">
       <div class="bannerInner">
         <span>Dashboard</span>
