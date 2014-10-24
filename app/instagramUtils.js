@@ -108,7 +108,7 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
             timer_post( fancrawl_instagram_id );
-        }, 5000); // (1~1.5 minute delay)
+        }, 5000); // 5 sec
 
       } else if ( state === "post_long" ) {
         setTimeout(
@@ -154,13 +154,25 @@ var crypto                    = require('crypto'),
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
             // normal behavior
-            var count = [];
+            var count = [];  // orders list of FanCrawl id's
+            var followCount = [];  // pulls out the FanCrawl id that has a follow process
+
             for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
               count.push(keys);
+              if ( timer[ fancrawl_instagram_id ].post_queue[ keys ] === "follow" ){
+                followCount.push( timer[ fancrawl_instagram_id ].post_queue[ keys ] );
+              }
             }
+
             if ( count.length === 0 ) {
               // console.log("TIMER POST YYYY - Reached 0 waiting full cycle");
             } else if ( count.length < queueCap ) {
+
+              // ramping start
+              // if more then 1500 unfollows 4 for every 1 followed
+              // if more then 1000 unfollows 3 for every 1 followed
+              // id more then 500 unfollows 2 for every 1 followed
+
               var last_instagram_following_id = count[0];
               var process = timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
 
@@ -531,6 +543,13 @@ var crypto                    = require('crypto'),
           callback(fancrawl_instagram_id, new_instagram_following_id, "error");
 
         } else if ( body ) {
+
+          for ( var i = 0; i < body.length; i++ ) {
+            if ( body[i] === "<" ) {
+              console.log( body );
+            }
+          }
+
           var pbody = JSON.parse(body);
 
           if ( pbody ) {
