@@ -13,6 +13,7 @@ var crypto                    = require('crypto'),
     usersInfo                 = {},
     timer                     = {},
     setTimeouts               = {},
+    timerPostCounter          = 0,
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
     queueCap                  = 2000,
@@ -154,26 +155,52 @@ var crypto                    = require('crypto'),
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
             // normal behavior
-            var count = [];  // orders list of FanCrawl id's
-            var followCount = [];  // pulls out the FanCrawl id that has a follow process
+            var postQueueCount      = Object.keys( timer[ fancrawl_instagram_id ].post_queue ).length,
+                followCount         = [],  // pulls out the FanCrawl id that has a follow process
+                unfollowCount       = [];  // pulls out the FanCrawl id that has a follow process
+
+            console.log("TIMER POST - ", timer[ fancrawl_instagram_id ].post_queue);
 
             for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-              count.push(keys);
               if ( timer[ fancrawl_instagram_id ].post_queue[ keys ] === "follow" ){
-                followCount.push( timer[ fancrawl_instagram_id ].post_queue[ keys ] );
+                followCount.push( keys );
+              } else {
+                unfollowCount.push( keys );
               }
             }
 
-            if ( count.length === 0 ) {
+            if ( postQueueCount === 0 ) {
               // console.log("TIMER POST YYYY - Reached 0 waiting full cycle");
-            } else if ( count.length < queueCap ) {
+            } else if ( postQueueCount < queueCap ) {
 
-              // ramping start
-              // if more then 1500 unfollows 4 for every 1 followed
-              // if more then 1000 unfollows 3 for every 1 followed
-              // id more then 500 unfollows 2 for every 1 followed
+              // ramp cap conditions
+              if ( postQueueCount > 1500 ) {
+                var counterCap = 4;
+              } else if ( postQueueCount > 1000 ) {
+                var counterCap = 3;
+              } else if ( postQueueCount > 500 ) {
+                var counterCap = 2;
+              } else {
+                var counterCap = 1;
+              }
 
-              var last_instagram_following_id = count[0];
+              if ( timerPostCounter === 0 ) {
+                // follow first if followCounter has something
+                if ( followCount[0] ) {
+                  var last_instagram_following_id = followCount[0];
+                } else if ( unfollowCount[0] ){
+                  var last_instagram_following_id = unfollowCount[0];
+                }
+                timerPostCounter = counterCap;
+              } else {
+                if ( unfollowCount[0] ) {
+                  var last_instagram_following_id = unfollowCount[0];
+                } else if ( followCount[0] ) {
+                  var last_instagram_following_id = followCount[0];
+                }
+                timerPostCounter--;
+              }
+
               var process = timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
 
               if ( process === "follow" ) {
@@ -196,7 +223,7 @@ var crypto                    = require('crypto'),
                 console.log("TIMER POST XXXX - No process found... "+process);
               }
             } else {
-              console.log("clockManager is not working properly.... "+count.length+" keys in the post_timer");
+              console.log("clockManager is not working properly.... "+postQueueCount+" keys in the post_timer");
             }
           }
         });
