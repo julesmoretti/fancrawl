@@ -1646,7 +1646,13 @@ var crypto                    = require('crypto'),
       var pbody = JSON.parse(body);
       console.log(pbody);
       if ( error || !pbody || !pbody.user || !pbody.user.id || !pbody.user.username ) {
-        console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + err.body);
+        if ( error ) {
+          console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + error);
+        } else if ( pbody ) {
+          console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + pbody);
+        } else {
+          console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. ");
+        }
         res.redirect('/404/');
         return;
       } else {
