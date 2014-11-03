@@ -16,7 +16,7 @@ var crypto                    = require('crypto'),
     timerPostCounter          = 0,
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
-    queueCap                  = 2000,
+    queueCap                  = 20,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -89,12 +89,14 @@ var crypto                    = require('crypto'),
               callTimer( fancrawl_instagram_id, state );
         }, 1000 * 60 * 1 ); // 1 min wait
     } else {
+      // waits half a second and rechecks timer state
       if ( state === "quick_short" ) {
         setTimeout(
           function(){
               timer_quick( fancrawl_instagram_id );
         }, 500); // 0.5 sec
 
+      // waits half a second and rechecks timer state
       } else if ( state === "quick_long" ) {
         setTimeout(
           function(){
@@ -123,15 +125,43 @@ var crypto                    = require('crypto'),
     }
     };
 
+//  ZERO = manage setTimout of timers ===========================================
+  var timerPostStructure      = function ( fancrawl_instagram_id, state ) {
+    if ( !timer[ fancrawl_instagram_id ] ) {
+      timer[ fancrawl_instagram_id ]                        = {};
+    }
+    if ( !timer[ fancrawl_instagram_id ].post_queue ) {
+      timer[ fancrawl_instagram_id ].post_queue             = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_queue.follow      = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_queue.unfollow    = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_minute            = false; // keep track of a minute has gone by
+    }
+    if ( state === "force" ) {
+      timer[ fancrawl_instagram_id ].post_queue             = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_queue.follow      = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_queue.unfollow    = {}; // handles sequence of people to follow or unfollow
+    }
+    };
+
+//  ZERO = manage setTimout of timers ===========================================
+  var timerQuickStructure     = function ( fancrawl_instagram_id, state ) {
+    if ( !timer[ fancrawl_instagram_id ] ) {
+      timer[ fancrawl_instagram_id ]                        = {};
+    }
+    if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
+      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles sequence of people to verify
+      timer[ fancrawl_instagram_id ].quick_seconds          = false; // keep track of minimum seconds separation
+    }
+    if ( state  === "force" ) {
+      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles sequence of people to verify
+    }
+    };
+
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
-    if ( !timer[ fancrawl_instagram_id ] ) {
-      timer[ fancrawl_instagram_id ]                 = {};
-      timer[ fancrawl_instagram_id ].post_queue      = {}; // handles sequence of people to follow or unfollow
-      timer[ fancrawl_instagram_id ].quick_queue     = {}; // handles sequence of people to verify
-      timer[ fancrawl_instagram_id ].post_minute     = false; // keep track of a minute has gone by
-      timer[ fancrawl_instagram_id ].quick_seconds   = false; // keep track of minimum seconds separation
-    }
+
+    // checks that timer structure exists
+    timerPostStructure( fancrawl_instagram_id );
 
     // IF POST_MINUTE = FALSE
     if ( timer[ fancrawl_instagram_id ].post_minute === false ) {
@@ -146,27 +176,24 @@ var crypto                    = require('crypto'),
 
           // IF STOPPED DELETE QUEUES
           if ( rows[0].state === 'stopped' ) {
-            // RESET post_timer
-            if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].quick_queue ) {
-              timer[ fancrawl_instagram_id ].post_queue = {};
-              timer[ fancrawl_instagram_id ].quick_queue = {};
-            }
+
+            // RESET post_timer & quick_timer
+            timerPostStructure( fancrawl_instagram_id, "force" );
+            timerQuickStructure( fancrawl_instagram_id, "force" );
 
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
             // normal behavior
-            var postQueueCount      = Object.keys( timer[ fancrawl_instagram_id ].post_queue ).length,
+            var postQueueCount      = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length,
                 followCount         = [],  // pulls out the FanCrawl id that has a follow process
                 unfollowCount       = [];  // pulls out the FanCrawl id that has a follow process
 
-            console.log("TIMER POST - ", timer[ fancrawl_instagram_id ].post_queue);
+            for ( keys in timer[ fancrawl_instagram_id ].post_queue.unfollow ) {
+              unfollowCount.push( keys );
+            }
 
-            for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-              if ( timer[ fancrawl_instagram_id ].post_queue[ keys ] === "follow" ){
-                followCount.push( keys );
-              } else {
-                unfollowCount.push( keys );
-              }
+            for ( keys in timer[ fancrawl_instagram_id ].post_queue.follow ) {
+              followCount.push( keys );
             }
 
             if ( postQueueCount === 0 ) {
@@ -188,40 +215,57 @@ var crypto                    = require('crypto'),
                 // follow first if followCounter has something
                 if ( followCount[0] ) {
                   var last_instagram_following_id = followCount[0];
+
+                  GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
+                    delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
+                    console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                  });
                 } else if ( unfollowCount[0] ){
                   var last_instagram_following_id = unfollowCount[0];
+                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+
+                  if ( process === "unfollow" ) {
+                    GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
+                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+                      console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
+                    });
+                  } else if ( process === "unfollow_followedby" ) {
+                    GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
+                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+                    });
+                  } else {
+                    console.log("TIMER POST XXXX - No process found... "+process);
+                  }
                 }
                 timerPostCounter = counterCap;
               } else {
                 if ( unfollowCount[0] ) {
                   var last_instagram_following_id = unfollowCount[0];
+                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+
+                  if ( process === "unfollow" ) {
+                    GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
+                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+                      console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
+                    });
+                  } else if ( process === "unfollow_followedby" ) {
+                    GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
+                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
+                    });
+                  } else {
+                    console.log("TIMER POST XXXX - No process found... "+process);
+                  }
                 } else if ( followCount[0] ) {
                   var last_instagram_following_id = followCount[0];
+
+                  GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
+                    delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
+                    console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                  });
                 }
                 timerPostCounter--;
               }
 
-              var process = timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-
-              if ( process === "follow" ) {
-                GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
-                  delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-                  console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
-                });
-              } else if ( process === "unfollow" ) {
-                // console.log("TIMER_POST: unfollow for "+last_instagram_following_id);
-                GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
-                  delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-                  console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
-                });
-              } else if ( process === "unfollow_followedby" ) {
-                GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
-                  delete timer[ fancrawl_instagram_id ].post_queue[ last_instagram_following_id ];
-                  // console.log("TIMER POST UNFOLLOW_FOLLOWED_BY - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
-                });
-              } else {
-                console.log("TIMER POST XXXX - No process found... "+process);
-              }
             } else {
               console.log("clockManager is not working properly.... "+postQueueCount+" keys in the post_timer");
             }
@@ -237,13 +281,9 @@ var crypto                    = require('crypto'),
 
 //  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function ( fancrawl_instagram_id ) {
-    if ( !timer[ fancrawl_instagram_id ] ) {
-      timer[ fancrawl_instagram_id ]                 = {};
-      timer[ fancrawl_instagram_id ].post_queue      = {}; // handles sequence of people to follow or unfollow
-      timer[ fancrawl_instagram_id ].quick_queue     = {}; // handles sequence of people to verify
-      timer[ fancrawl_instagram_id ].post_minute     = false; // keep track of a minute has gone by
-      timer[ fancrawl_instagram_id ].quick_seconds   = false; // keep track of minimum seconds separation
-    }
+
+    // checks that timer structure exists
+    timerQuickStructure( fancrawl_instagram_id );
 
     // IF POST_MINUTE = FALSE
     if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
@@ -259,10 +299,8 @@ var crypto                    = require('crypto'),
           // IF STOPPED DELETE QUEUES
           if ( rows[0].state === 'stopped' ) {
             // RESET post_timer
-            if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].quick_queue ) {
-              timer[ fancrawl_instagram_id ].post_queue = {};
-              timer[ fancrawl_instagram_id ].quick_queue = {};
-            }
+            timerPostStructure( fancrawl_instagram_id, "force" );
+            timerQuickStructure( fancrawl_instagram_id, "force" );
 
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
@@ -913,19 +951,17 @@ var crypto                    = require('crypto'),
 
 //  ZERO = Clock Manage  ========================================================
   var clockManager            = function ( fancrawl_instagram_id, new_instagram_following_id, process, callback ) {
+    timerPostStructure( fancrawl_instagram_id );
+
+    var post_countFollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
+    var post_countUnfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
 
     // look up relevant clock queue
-    if ( process === "follow" || process === "unfollow" || process === "unfollow_followedby") {
-      // console.log("in clock manager follow... unfollow... ");
+    if ( process === "follow" ) {
+      // console.log("in clock manager follow...");
 
-        // console.log("CLOCK MANAGER POST: ",timer);
-        var post_count = 0;
-        for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-          post_count++;
-        }
-        // if < then 100 = add to queue and run callback
-        if ( post_count < ( queueCap - 2 ) ) {
-          timer[ fancrawl_instagram_id ].post_queue[ new_instagram_following_id ] = process;
+        if ( post_countFollow < ( queueCap - 2 ) ) {
+          timer[ fancrawl_instagram_id ].post_queue.follow[ new_instagram_following_id ] = process;
 
           if ( callback ) {
             callback( fancrawl_instagram_id, new_instagram_following_id );
@@ -940,19 +976,34 @@ var crypto                    = require('crypto'),
             delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
           }, time );
         }
+    } else if ( process === "unfollow" || process === "unfollow_followedby") {
+      // console.log("in clock manager unfollow... ");
 
+        if ( post_countUnfollow < ( queueCap - 2 ) ) {
+          timer[ fancrawl_instagram_id ].post_queue.unfollow[ new_instagram_following_id ] = process;
+
+          if ( callback ) {
+            callback( fancrawl_instagram_id, new_instagram_following_id );
+          }
+
+        // else setTimeout 5 min recursing same stats
+        } else {
+          var time = 1000 * 60 * 5;
+          setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
+            function(){
+            clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
+            delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
+          }, time );
+        }
     // TIMER QUICK CONFIGURATIONS
     } else {
-      // console.log("CLOCK MANAGER QUICK: ",timer);
-      var quick_count = 0;
-      for (keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-        quick_count++;
+
+      if ( timer.post_queue ) {
+        console.log( "CLOCK MANAGER - NEW", timer.post_queue );
       }
 
-      var post_count = 0;
-      for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-        post_count++;
-      }
+      var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+      var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
       // if < then 100 = add to queue and run callback
       if ( quick_count < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
@@ -1059,15 +1110,11 @@ var crypto                    = require('crypto'),
                 fetchNewFollowers( fancrawl_instagram_id, nextUser );
               } else {
 
-                var quick_count = 0;
-                for (keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-                  quick_count++;
-                }
+                var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
 
                 // if < then 100 = add to queue and run callback
                 if ( quick_count < ( queueCap - 4 ) ) {
                   clockManager( fancrawl_instagram_id, new_instagram_following_id, "new", function( fancrawl_instagram_id, new_instagram_following_id ) {
-                    // console.log("CLOCK MANAGER DONE LOADING NEXT USER");
                     var nextUser = JSON.parse( new_instagram_following_id ) + 1;
                     fetchNewFollowers( fancrawl_instagram_id, nextUser );
                   });
@@ -1176,14 +1223,9 @@ var crypto                    = require('crypto'),
     if ( timer[ fancrawl_instagram_id ] ) {
       if ( timer[ fancrawl_instagram_id ].post_queue || timer[ fancrawl_instagram_id ].quick_queue ) {
         // console.log("VERIFY CLEANING FOUND QUEUES");
-        var postCount = 0;
-        for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-          postCount++;
-        }
-        var quickCount = 0;
-        for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-          quickCount++;
-        }
+        var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
+        var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+
         if ( postCount !== 0 || quickCount !== 0 ) {
           // console.log("VERIFY CLEANING - POST COUNT: "+postCount+" for "+fancrawl_instagram_id );
           // console.log("VERIFY CLEANING - QUICK COUNT: "+quickCount+" for "+fancrawl_instagram_id );
@@ -1282,18 +1324,11 @@ var crypto                    = require('crypto'),
               verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
             }
 
-            var quickCount = 0;
-            var postCount = 0;
+            var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
+            var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
 
-            for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-              quickCount++;
-            }
-            var quickCountTime = quickCount * 1000 * 5;
-            for ( keys in timer[ fancrawl_instagram_id ].post_queue ) {
-              postCount++;
-            }
             var postCountTime = postCount * 1000 * 80;
-            var totalCountTime = quickCountTime + postCountTime;
+            var totalCountTime = quickCount + postCountTime;
 
             // console.log("CLEAN DATABASE - ROWS FOUND PRE SET TIMEOUT CALLBACK");
             setTimeout(
@@ -1321,18 +1356,17 @@ var crypto                    = require('crypto'),
   var startIndividual         = function ( fancrawl_instagram_id ) {
 
     // START USER SPECIFIC CLOCK
-    if ( !timer[ fancrawl_instagram_id ] ) {
-      timer_post( fancrawl_instagram_id ); // setup timer structure on start
-      timer_quick( fancrawl_instagram_id ); // setup timer structure on start
-    } else if ( !timer[ fancrawl_instagram_id ].post_queue ) {
-      timer_post( fancrawl_instagram_id ); // setup timer structure on start
-    } else if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
-      timer_quick( fancrawl_instagram_id ); // setup timer structure on start
-    }
+    timerPostStructure( fancrawl_instagram_id );
+    timerQuickStructure( fancrawl_instagram_id );
 
+    // START CLOCK TRACKERS
     if ( !setTimeouts[ fancrawl_instagram_id ] ) {
       setTimeouts[ fancrawl_instagram_id ] = {};
     }
+
+    // START CLOCKS ONLY ONCE!
+    callTimer( fancrawl_instagram_id, "quick_long" );
+    callTimer( fancrawl_instagram_id, "post_long" );
 
     connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
@@ -1392,6 +1426,7 @@ var crypto                    = require('crypto'),
         // IF USER WAS CLEANING
         } else if ( rows[0].state && rows[0].state === "cleaning" ) {
           console.log("CLEANING STATE: ", fancrawl_instagram_id);
+
           var state = rows[0].state;
           // CLEAN DATABASE
           cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
@@ -1610,7 +1645,7 @@ var crypto                    = require('crypto'),
     request(options, function (error, response, body) {
       var pbody = JSON.parse(body);
       console.log(pbody);
-      if (error) {
+      if ( error || !pbody.user.id || !pbody.user.username ) {
         console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + err.body);
         res.redirect('/404/');
         return;
@@ -1629,18 +1664,21 @@ var crypto                    = require('crypto'),
                 if (err) throw err;
 
                 // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
-                if ( !timer[ pbody.user.id ] ) {
-                  timer_post( pbody.user.id ); // setup timer structure on start
-                  timer_quick( pbody.user.id ); // setup timer structure on start
-                } else if ( !timer[ pbody.user.id ].post_queue ) {
-                  timer_post( pbody.user.id ); // setup timer structure on start
-                } else if ( !timer[ pbody.user.id ].quick_queue ) {
-                  timer_quick( pbody.user.id ); // setup timer structure on start
-                }
-
                 if ( !setTimeouts[ pbody.user.id ] ) {
+                  // START CLOCK TRACKERS
                   setTimeouts[ pbody.user.id ] = {};
                 }
+
+                if ( !timer[ pbody.user.id ] ) {
+                  // START USER SPECIFIC CLOCK
+                  timerPostStructure( pbody.user.id );
+                  timerQuickStructure( pbody.user.id );
+
+                  // START CLOCKS ONLY ONCE!
+                  callTimer( pbody.user.id, "quick_long" );
+                  callTimer( pbody.user.id, "post_long" );
+                }
+
                 // check the existence of data in secured s_followed_by database for current user
                 connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
                   if (err) throw err;
@@ -1878,8 +1916,7 @@ var crypto                    = require('crypto'),
                           var data = [];
                           if ( metrics.actualFollowedBy !== "N/A" ){
                             data.push(metrics.actualFollowedBy);
-                            // console.log(metrics.actualFollowedBy);
-                            // console.log(result);
+
                             for ( var i = 1; i < result.length; i++ ) {
                               var temp = data[0] - result[i];
                               var newTemp = [];
@@ -1940,14 +1977,8 @@ var crypto                    = require('crypto'),
 
 
       // START USER SPECIFIC CLOCK
-      if ( !timer[ fancrawl_instagram_id ] ) {
-        timer_post( fancrawl_instagram_id ); // setup timer structure on start
-        timer_quick( fancrawl_instagram_id ); // setup timer structure on start
-      } else if ( !timer[ fancrawl_instagram_id ].post_queue ) {
-        timer_post( fancrawl_instagram_id ); // setup timer structure on start
-      } else if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
-        timer_quick( fancrawl_instagram_id ); // setup timer structure on start
-      }
+      timerPostStructure( fancrawl_instagram_id );
+      timerQuickStructure( fancrawl_instagram_id );
 
       connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
@@ -2011,11 +2042,9 @@ var crypto                    = require('crypto'),
       connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
         // RESET post_timer & quick_timer
+        timerPostStructure( fancrawl_instagram_id, "force" );
+        timerQuickStructure( fancrawl_instagram_id, "force" );
         console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
-        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].quick_queue ) {
-          timer[ fancrawl_instagram_id ].post_queue = {};
-          timer[ fancrawl_instagram_id ].quick_queue = {};
-        }
 
         // cleaning database process
         cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
@@ -2036,11 +2065,9 @@ var crypto                    = require('crypto'),
         if (err) throw err;
 
         // RESET post_timer & quick_timer
+        timerPostStructure( fancrawl_instagram_id, "force" );
+        timerQuickStructure( fancrawl_instagram_id, "force" );
         console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
-        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].quick_queue ) {
-          timer[ fancrawl_instagram_id ].post_queue = {};
-          timer[ fancrawl_instagram_id ].quick_queue = {};
-        }
 
         if ( setTimeouts && setTimeouts[ fancrawl_instagram_id ] ) {
           for ( keys in setTimeouts[ fancrawl_instagram_id ] ) {
