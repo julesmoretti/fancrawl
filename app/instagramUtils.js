@@ -15,7 +15,7 @@ var crypto                    = require('crypto'),
     setTimeouts               = {},
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
-    queueCap                  = 20,
+    queueCap                  = 2000,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
