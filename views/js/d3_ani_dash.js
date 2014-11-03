@@ -16,7 +16,12 @@ var closeWarning = function(){
     .transition()
     .delay(200)
     .duration(500)
-    .style("opacity", 0);
+    .style("opacity", 0)
+    .each("end", function() {
+      d3.selectAll(".warnings")
+        .transition()
+        .style("display", "none");
+      });
 };
 
 // header
