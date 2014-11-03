@@ -13,7 +13,6 @@ var crypto                    = require('crypto'),
     usersInfo                 = {},
     timer                     = {},
     setTimeouts               = {},
-    timerPostCounter          = 0,
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
     queueCap                  = 20,
@@ -82,7 +81,6 @@ var crypto                    = require('crypto'),
 
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
-
     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
         setTimeout(
           function(){
@@ -94,7 +92,7 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
               timer_quick( fancrawl_instagram_id );
-        }, 500); // 0.5 sec
+        }, 500 ); // 0.5 sec
 
       // waits half a second and rechecks timer state
       } else if ( state === "quick_long" ) {
@@ -104,23 +102,24 @@ var crypto                    = require('crypto'),
                 timer[ fancrawl_instagram_id ].quick_seconds = false;
                 timer_quick( fancrawl_instagram_id );
               }
-        }, random_second); // 3.6 ~ 5.6 sec
+        }, random_second ); // 3.6 ~ 5.6 sec
 
       } else if ( state === "post_short" ) {
 
         setTimeout(
           function(){
             timer_post( fancrawl_instagram_id );
-        }, 5000); // 5 sec
+        }, 5000 ); // 5 sec
 
       } else if ( state === "post_long" ) {
         setTimeout(
           function(){
             if ( timer[ fancrawl_instagram_id ] ) {
+              console.log("CALLLLEEDDDDD", fancrawl_instagram_id);
               timer[ fancrawl_instagram_id ].post_minute = false;
               timer_post( fancrawl_instagram_id );
             }
-        }, random_minute); // (1~1.5 minute delay)
+        }, random_minute ); // (1~1.5 minute delay)
       }
     }
     };
@@ -134,6 +133,7 @@ var crypto                    = require('crypto'),
       timer[ fancrawl_instagram_id ].post_queue             = {}; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].post_queue.follow      = {}; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].post_queue.unfollow    = {}; // handles sequence of people to follow or unfollow
+      timer[ fancrawl_instagram_id ].post_counter           = 0; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].post_minute            = false; // keep track of a minute has gone by
     }
     if ( state === "force" ) {
@@ -161,7 +161,7 @@ var crypto                    = require('crypto'),
   var timer_post              = function ( fancrawl_instagram_id ) {
 
     // checks that timer structure exists
-    timerPostStructure( fancrawl_instagram_id );
+    // timerPostStructure( fancrawl_instagram_id );
 
     // IF POST_MINUTE = FALSE
     if ( timer[ fancrawl_instagram_id ].post_minute === false ) {
@@ -196,22 +196,25 @@ var crypto                    = require('crypto'),
               followCount.push( keys );
             }
 
-            if ( postQueueCount === 0 ) {
-              // console.log("TIMER POST YYYY - Reached 0 waiting full cycle");
-            } else if ( postQueueCount < queueCap ) {
-
+            if ( postQueueCount !== 0 ) {
               // ramp cap conditions
               if ( postQueueCount > 1500 ) {
-                var counterCap = 4;
+                timer[ fancrawl_instagram_id ].counterCap = 4;
               } else if ( postQueueCount > 1000 ) {
-                var counterCap = 3;
+                timer[ fancrawl_instagram_id ].counterCap = 3;
               } else if ( postQueueCount > 500 ) {
-                var counterCap = 2;
+                timer[ fancrawl_instagram_id ].counterCap = 2;
               } else {
-                var counterCap = 1;
+                timer[ fancrawl_instagram_id ].counterCap = 1;
               }
+            } else {
+              timer[ fancrawl_instagram_id ].counterCap = 0;
+            }
 
-              if ( timerPostCounter === 0 ) {
+            if ( postQueueCount < queueCap ) {
+              // console.log("THE TIMER!: ", timer);
+
+              if ( timer[ fancrawl_instagram_id ].post_counter === 0 ) {
                 // follow first if followCounter has something
                 if ( followCount[0] ) {
                   var last_instagram_following_id = followCount[0];
@@ -237,7 +240,7 @@ var crypto                    = require('crypto'),
                     console.log("TIMER POST XXXX - No process found... "+process);
                   }
                 }
-                timerPostCounter = counterCap;
+                timer[ fancrawl_instagram_id ].post_counter = timer[ fancrawl_instagram_id ].counterCap;
               } else {
                 if ( unfollowCount[0] ) {
                   var last_instagram_following_id = unfollowCount[0];
@@ -263,7 +266,7 @@ var crypto                    = require('crypto'),
                     console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
                   });
                 }
-                timerPostCounter--;
+                timer[ fancrawl_instagram_id ].post_counter--;
               }
 
             } else {
@@ -283,7 +286,7 @@ var crypto                    = require('crypto'),
   var timer_quick             = function ( fancrawl_instagram_id ) {
 
     // checks that timer structure exists
-    timerQuickStructure( fancrawl_instagram_id );
+    // timerQuickStructure( fancrawl_instagram_id );
 
     // IF POST_MINUTE = FALSE
     if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
