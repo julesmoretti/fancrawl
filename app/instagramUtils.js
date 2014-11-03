@@ -1645,7 +1645,7 @@ var crypto                    = require('crypto'),
     request(options, function (error, response, body) {
       var pbody = JSON.parse(body);
       console.log(pbody);
-      if ( error || !pbody.user.id || !pbody.user.username ) {
+      if ( error || !pbody || !pbody.user || !pbody.user.id || !pbody.user.username ) {
         console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + err.body);
         res.redirect('/404/');
         return;
