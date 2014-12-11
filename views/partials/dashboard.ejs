@@ -170,7 +170,8 @@
                   <li><span>Approximate time remaining:</span></li>
                 <% } else { %>
                 <% } %>
-                <li><span>FanCrawled users so far</span></li>
+                <li><span>FanCrawled users prompted so far</span></li>
+                <li><span>FanCrawled users following back</span></li>
                 <li><span>Do not forget to save...</span></li>
               </ul>
             </div>
@@ -218,6 +219,13 @@
                       <span><%= totalCrawled %></span>
                     <% } else { %>
                       <span>0</span>
+                    <% } %>
+                  </li>
+                  <li>
+                    <% if ( followingFromFanCrawlResult ){ %>
+                      <span><%= followingFromFanCrawlResult %></span>
+                    <% } else { %>
+                      <span>N/A</span>
                     <% } %>
                   </li>
                   <li>

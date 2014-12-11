@@ -36,6 +36,8 @@ var crypto                    = require('crypto'),
 //  UTILITIES CALLED BY MAIN SECTIONS
 //  =============================================================================
 
+// TODO: ADD A FUNCTION THAT CHECKS IF USERS THAT FOLLOW BACK ARE STILL FOLLOWING BACK... DO THIS IN SPARE TIME
+
 //  ZERO = send email notification ==============================================
   var sendMail                = function ( fancrawl_instagram_id, subject, error ) {
 
@@ -1757,6 +1759,9 @@ var crypto                    = require('crypto'),
                     'userName': '',
                     'userPicture': '',
                     'totalCrawled': 0,
+                    'followingFromFanCrawl': 0,
+                    'followingFromFanCrawlPercentage': 0,
+                    'followingFromFanCrawlResult' : 'some text',
                     'followedBy': 0,
                     'following': 0,
                     'latestFollowedBy': 0,
@@ -1830,7 +1835,9 @@ var crypto                    = require('crypto'),
                   // count from mysql all users still processing that is not with a 4 value
                   connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND followed_by_status = 1', function(err, rows, fields) {
                     if (err) throw err;
-                    metrics.latestFollowedBy = JSON.parse(rows[0]['count(*)']) + metrics.followedBy;
+                    metrics.followingFromFanCrawl = JSON.parse(rows[0]['count(*)']);
+                    metrics.latestFollowedBy = metrics.followingFromFanCrawl + metrics.followedBy;
+
 
                     // count from mysql all users still processing that is not with a 4 value
                     connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
@@ -1906,6 +1913,10 @@ var crypto                    = require('crypto'),
                       GET_stats( req.query.id, function( follows, followed_by, error ){
                         metrics.actualFollowedBy = followed_by;
                         metrics.actualFollowing = follows;
+
+                        metrics.followingFromFanCrawlPercentage = metrics.followingFromFanCrawl / ( metrics.actualFollowedBy - metrics.followedBy ) * 100;
+
+                        metrics.followingFromFanCrawlResult = metrics.followingFromFanCrawl + " (" + Math.floor( metrics.followingFromFanCrawlPercentage ) + "%)";
 
                         metrics.actualFollowedByPercentage = Math.floor( ( ( metrics.actualFollowedBy / metrics.followedBy ) * 100 ) - 100);
                         metrics.actualFollowingPercentage = Math.floor( ( ( metrics.actualFollowing / metrics.following ) * 100 ) - 100);
