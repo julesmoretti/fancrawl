@@ -159,83 +159,83 @@
             </div>
           </div>
         </div>
-        <div class="mainControllers">
-          <span>Actions</span>
-          <div class="controllerList">
-            <div class="controllerDescription">
-              <ul>
-                <li><span>FanCrawl</span></li>
-                <li><span>Clean up?</span></li>
-                <% if ( status === "statusCleaning" ){ %>
-                  <li><span>Approximate time remaining:</span></li>
-                <% } else { %>
-                <% } %>
-                <li><span>FanCrawled users prompted so far</span></li>
-                <li><span>FanCrawled users following back</span></li>
-                <li><span>Do not forget to save...</span></li>
-              </ul>
-            </div>
-            <div class="controllerStatus">
-              <form name="input" action="/trigger" method="post">
-                <ul>
-                  <li>
-                    <div class="switchDiv">
-                      <% if ( status === "statusStopped" ){ %>
-                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()"/>
-                        <label id="switch1label" for="switch1">&nbsp;</label>
-                      <% } else if ( status === "statusStarted" ){ %>
-                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()" checked="checked"/>
-                        <label id="switch1label" for="switch1">&nbsp;</label>
-                      <% } else if ( status === "statusCleaning" ){ %>
-                        <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
-                        <label id="switch1label" for="switch1" class="muted">&nbsp;</label>
-                      <% } %>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="switchDiv">
-                      <% if ( status === "statusStopped" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2();"/>
-                        <label id="switch2label" for="switch2">&nbsp;</label>
-                      <% } else if ( status === "statusStarted" ){ %>
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
-                        <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
-                      <% } else if ( status === "statusCleaning" ){ %>
-                        <!-- <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="$('#hidden').removeClass('show');" disabled="disabled"/> -->
-                        <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="toggleAttributes3()"/>
-                        <label id="switch2label" for="switch2">&nbsp;</label>
-                        <!-- <label id="switch2label" for="switch2" class="muted">&nbsp;</label> -->
-                      <% } %>
-                    </div>
-                  </li>
 
+        <form name="input" action="/trigger" method="post">
+          <div class="mainControllers">
+            <span>Actions</span>
+            <div class="controllerList">
+              <div class="controllerDescription">
+                <ul>
+                  <li><span>FanCrawl</span></li>
+                  <li><span>Clean up?</span></li>
                   <% if ( status === "statusCleaning" ){ %>
-                    <li><span><%= cleaningTime %></span></li>
+                    <li><span>Approximate time remaining:</span></li>
                   <% } else { %>
                   <% } %>
-
-                  <li>
-                    <% if ( totalCrawled ){ %>
-                      <span><%= totalCrawled %></span>
-                    <% } else { %>
-                      <span>0</span>
-                    <% } %>
-                  </li>
-                  <li>
-                    <% if ( followingFromFanCrawlResult ){ %>
-                      <span><%= followingFromFanCrawlResult %></span>
-                    <% } else { %>
-                      <span>N/A</span>
-                    <% } %>
-                  </li>
-                  <li>
-                    <button id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" onclick="$('#hidden').removeClass('show');" disabled>SAVE</button>
-                  </li>
+                  <li><span>FanCrawled users prompted so far</span></li>
+                  <li><span>FanCrawled users following back</span></li>
                 </ul>
-              </form>
+              </div>
+              <div class="controllerStatus">
+                  <ul>
+                    <li>
+                      <div class="switchDiv">
+                        <% if ( status === "statusStopped" ){ %>
+                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()"/>
+                          <label id="switch1label" for="switch1">&nbsp;</label>
+                        <% } else if ( status === "statusStarted" ){ %>
+                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()" checked="checked"/>
+                          <label id="switch1label" for="switch1">&nbsp;</label>
+                        <% } else if ( status === "statusCleaning" ){ %>
+                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
+                          <label id="switch1label" for="switch1" class="muted">&nbsp;</label>
+                        <% } %>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="switchDiv">
+                        <% if ( status === "statusStopped" ){ %>
+                          <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2();"/>
+                          <label id="switch2label" for="switch2">&nbsp;</label>
+                        <% } else if ( status === "statusStarted" ){ %>
+                          <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
+                          <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
+                        <% } else if ( status === "statusCleaning" ){ %>
+                          <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="toggleAttributes3()"/>
+                          <label id="switch2label" for="switch2">&nbsp;</label>
+                        <% } %>
+                      </div>
+                    </li>
+
+                    <% if ( status === "statusCleaning" ){ %>
+                      <li><span><%= cleaningTime %></span></li>
+                    <% } else { %>
+                    <% } %>
+
+                    <li>
+                      <% if ( totalCrawled ){ %>
+                        <span><%= totalCrawled %></span>
+                      <% } else { %>
+                        <span>0</span>
+                      <% } %>
+                    </li>
+                    <li>
+                      <% if ( followingFromFanCrawlResult ){ %>
+                        <span><%= followingFromFanCrawlResult %></span>
+                      <% } else { %>
+                        <span>N/A</span>
+                      <% } %>
+                    </li>
+                  </ul>
+              </div>
             </div>
           </div>
-        </div>
+
+          <div class="mainControllers updateSettings">
+            <!-- <span>UPDATE SETTINGS</span> -->
+            <button id="submitButton" type="submit" value="SAVE" class="saveButton disabledButton" onclick="$('#hidden').removeClass('show');" disabled>UPDATE SETTINGS</button>
+          </div>
+        </form>
       </div>
     </div>
 

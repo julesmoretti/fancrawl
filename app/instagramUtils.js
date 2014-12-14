@@ -1665,7 +1665,7 @@ var crypto                    = require('crypto'),
           if (err) throw err;
 
           if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
-            console.log("User "+pbody.user.id+" granted");
+            console.log("User "+pbody.user.id+" already existed and so granted");
 
             if ( usersInfo[ pbody.user.id ] ) {
               delete usersInfo[ pbody.user.id ];
@@ -1731,10 +1731,10 @@ var crypto                    = require('crypto'),
                         } else {
                           // goes to get following instagram and inserts them into the s_following table
                           GET_follows( pbody.user.id, "" , true, function(users){
-                              // console.log("GOT_follows and users are: ", users );
+                            // console.log("GOT_follows and users are: ", users );
 
-                              // redirect to the dashboard
-                              res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                            // redirect to the dashboard
+                            res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
                           });
                         }
                       });
@@ -1744,9 +1744,85 @@ var crypto                    = require('crypto'),
               });
             return;
           } else {
-            console.log("User not granted");
-            res.redirect('/404/');
+            console.log("User "+pbody.user.id+" creation");
+
+            if ( usersInfo[ pbody.user.id ] ) {
+              delete usersInfo[ pbody.user.id ];
+            }
+
+              connection.query('INSERT INTO access_right set fancrawl_full_name = "'+pbody.user.full_name+'", fancrawl_username = "'+pbody.user.username+'", fancrawl_instagram_id = "'+pbody.user.id+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
+                if (err) throw err;
+
+                // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
+                if ( !setTimeouts[ pbody.user.id ] ) {
+                  // START CLOCK TRACKERS
+                  setTimeouts[ pbody.user.id ] = {};
+                }
+
+                if ( !timer[ pbody.user.id ] ) {
+                  // START USER SPECIFIC CLOCK
+                  timerPostStructure( pbody.user.id );
+                  timerQuickStructure( pbody.user.id );
+
+                  // START CLOCKS ONLY ONCE!
+                  callTimer( pbody.user.id, "quick_long" );
+                  callTimer( pbody.user.id, "post_long" );
+                }
+
+                // check the existence of data in secured s_followed_by database for current user
+                connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+
+                  // if any users are found listed then proceed to check for s_following
+                  if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
+
+                    // check the existence of data in secured s_following database for current user
+                    connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
+
+                        // redirect to the dashboard
+                        res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                      } else {
+                        // goes to get following instagram and inserts them into the s_following table
+                        GET_follows( pbody.user.id, "" , true, function(users){
+                            // console.log("GOT_follows and users are: ", users );
+
+                            // redirect to the dashboard
+                            res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                        });
+                      }
+                    });
+
+                  // otherwise go GET_followed_by for current user and then check for s_following database
+                  } else {
+                    // goes to get followed_by instagram and inserts them into the s_followed_by table
+                    GET_followed_by( pbody.user.id, "" , true, function(users){
+                      // console.log("GOT_followed_by and users are: ", users );
+
+                      // check the existence of data in secured s_following database for current user
+                      connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
+
+                          // redirect to the dashboard
+                          res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                        } else {
+                          // goes to get following instagram and inserts them into the s_following table
+                          GET_follows( pbody.user.id, "" , true, function(users){
+                            // console.log("GOT_follows and users are: ", users );
+
+                            // redirect to the dashboard
+                            res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
+              });
             return;
+
           }
         });
       }
