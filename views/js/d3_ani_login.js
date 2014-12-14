@@ -3,7 +3,7 @@ d3.selectAll(".lens span")
     .style("opacity", 0)
     .transition()
     .duration(1000)
-    .delay(2500)
+    .delay(500)
     .style("opacity", 0.5);
 
 // footer

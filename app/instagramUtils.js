@@ -927,14 +927,16 @@ var crypto                    = require('crypto'),
               callback("N/A", "N/A" );
 
             } else if( pbody.data ){
-              if ( pbody.data.counts && pbody.data.counts.follows ) {
-                if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
-                  delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
+              if ( pbody.data.counts ) {
+                if ( pbody.data.counts.follows || pbody.data.counts.follows === 0 ) {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
+                    delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException ) {
+                    delete usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException;
+                  }
+                  callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
                 }
-                if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException ) {
-                  delete usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException;
-                }
-                callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
               }
             } else {
               console.log("GO_follow - did not complete properly...");
@@ -1752,7 +1754,7 @@ var crypto                    = require('crypto'),
 
               connection.query('INSERT INTO access_right set fancrawl_full_name = "'+pbody.user.full_name+'", fancrawl_username = "'+pbody.user.username+'", fancrawl_instagram_id = "'+pbody.user.id+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'"', function(err, rows, fields) {
                 if (err) throw err;
-
+                console.log("passed it");
                 // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
                 if ( !setTimeouts[ pbody.user.id ] ) {
                   // START CLOCK TRACKERS
