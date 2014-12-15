@@ -30,6 +30,7 @@ CREATE TABLE `access_right` (
   `code` VARCHAR(255),
   `token` VARCHAR(255),
   `fancrawl_profile_picture` VARCHAR(255),
+  `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original access_right list';
 

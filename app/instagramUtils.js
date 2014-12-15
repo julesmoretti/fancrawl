@@ -1747,7 +1747,7 @@ var crypto                    = require('crypto'),
             return;
           } else {
             console.log("User "+pbody.user.id+" creation");
-            sendMail( 571377691, 'NEW USER', pbody.user.full_name+'signed as '+pbody.user.username+' ('+pbody.user.id+'), just signed on to FanCrawl for the first time! WOOP WOOP!' );
+            sendMail( 571377691, 'NEW USER', pbody.user.full_name+' signed as '+pbody.user.username+' ('+pbody.user.id+'), just signed on to FanCrawl for the first time! WOOP WOOP!' );
 
             if ( usersInfo[ pbody.user.id ] ) {
               delete usersInfo[ pbody.user.id ];
