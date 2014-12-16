@@ -31,6 +31,9 @@ CREATE TABLE `access_right` (
   `token` VARCHAR(255),
   `fancrawl_profile_picture` VARCHAR(255),
   `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `or_followed_by` INT(20) DEFAULT 0,
+  `or_following` INT(20) DEFAULT 0,
+  `id` INT(20) AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original access_right list';
 

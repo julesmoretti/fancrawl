@@ -87,7 +87,7 @@
             <div class="followedBy">
               <span>Followed by</span>
               <!-- check ejs for secure followed by data -->
-              <% if ( followedBy ){ %>
+              <% if ( followedBy || followedBy === 0 ){ %>
                 <span><%= followedBy %></span>
               <% } else { %>
                 <span>N/A</span>
@@ -96,10 +96,10 @@
             <div class="following">
               <span>Following</span>
               <!-- check ejs for secure following data -->
-              <% if ( following ){ %>
+              <% if ( following || following === 0 ){ %>
                 <span><%= following %></span>
               <% } else { %>
-                <span></span>
+                <span>N/A</span>
               <% } %>
             </div>
           </div>
@@ -114,7 +114,7 @@
               <% if ( actualFollowedBy ){ %>
                 <span><%= actualFollowedBy %></span>
               <% } else { %>
-                <span>N/A</span>
+                <span>?</span>
               <% } %>
 
               <!-- computed percentage increase -->
@@ -131,7 +131,7 @@
               <% if ( actualFollowing ){ %>
                 <span><%= actualFollowing %></span>
               <% } else { %>
-                <span>N/A</span>
+                <span>?</span>
               <% } %>
 
               <!-- computed percentage increase -->
