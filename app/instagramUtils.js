@@ -614,13 +614,14 @@ var crypto                    = require('crypto'),
 
         } else if ( body ) {
 
-          for ( var i = 0; i < body.length; i++ ) {
-            if ( body[i] === "<" ) {
-              console.log( body );
-            }
+          if ( typeof body === "string" ) {
+            var pbody = JSON.parse(body);
+          } else if ( typeof body === "object" ) {
+            var pbody = body;
+          } else {
+            console.log( "NOT A STRING NOR OBJECT: ", body );
+            var pbody = body;
           }
-
-          var pbody = JSON.parse(body);
 
           if ( pbody ) {
             // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
