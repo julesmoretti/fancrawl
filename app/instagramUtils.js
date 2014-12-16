@@ -1682,9 +1682,16 @@ var crypto                    = require('crypto'),
         return;
       } else {
         console.log("before selecting username", pbody.user.id );
+
+
+        connection.query('SELECT * FROM access_right', function(err, rows, fields) {
+          if (err) throw err;
+          console.log("rows from select * :", rows );
+        });
+
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
-          console.log("rows", rows );
+          console.log("rows from username", rows );
 
           // already signed in
           if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
