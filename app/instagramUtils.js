@@ -1681,7 +1681,7 @@ var crypto                    = require('crypto'),
         res.redirect('/404/');
         return;
       } else {
-        console.log("before selecting username");
+        console.log("before selecting username", pbody.user.id );
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
           console.log("rows", rows );
