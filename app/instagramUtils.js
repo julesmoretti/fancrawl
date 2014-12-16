@@ -1658,9 +1658,11 @@ var crypto                    = require('crypto'),
 
       if ( typeof body === "string" ) {
         var pbody = JSON.parse( body );
+        console.log("HANDLEN AUTH - it was a string");
         console.log(pbody);
       } else if ( typeof body === "object" ) {
         var pbody = body;
+        console.log("HANDLEN AUTH - it was an object");
         console.log(pbody);
       } else {
         var pbody = body;
@@ -1679,6 +1681,7 @@ var crypto                    = require('crypto'),
         res.redirect('/404/');
         return;
       } else {
+        console.log("before selecting username");
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
           console.log("rows", rows );
@@ -1715,6 +1718,7 @@ var crypto                    = require('crypto'),
                 }
 
                 // redirect to the dashboard
+                console.log("Redirecting to dashboard");
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
 
               });
