@@ -117,7 +117,6 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
             if ( timer[ fancrawl_instagram_id ] ) {
-              console.log("CALLLLEEDDDDD", fancrawl_instagram_id);
               timer[ fancrawl_instagram_id ].post_minute = false;
               timer_post( fancrawl_instagram_id );
             }
@@ -302,13 +301,13 @@ var crypto                    = require('crypto'),
           if (err) throw err;
 
           // IF STOPPED DELETE QUEUES
-          if ( rows[0].state === 'stopped' ) {
+          if ( rows && rows[0] && rows[0].state && rows[0].state === 'stopped' ) {
             // RESET post_timer
             timerPostStructure( fancrawl_instagram_id, "force" );
             timerQuickStructure( fancrawl_instagram_id, "force" );
 
           // PROCESS STARTED OR CLEANING SO CARRY ON
-          } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
+          } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
             var count = [];
             for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
@@ -544,6 +543,8 @@ var crypto                    = require('crypto'),
             } else {
               console.log("TIMER QUICK XXXX - clockManager is not working properly.... "+count.length+" keys in the post_timer");
             }
+          } else {
+            console.log( "state undefined from timer_quick" )
           }
         });
       /////////////////////////////////////////////////////////////////////
@@ -1680,6 +1681,7 @@ var crypto                    = require('crypto'),
       } else {
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
+          console.log("rows", rows );
 
           // already signed in
           if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
@@ -1715,57 +1717,6 @@ var crypto                    = require('crypto'),
                 // redirect to the dashboard
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
 
-                // check the existence of data in secured s_followed_by database for current user
-                  // connection.query('SELECT count(*) from s_followed_by where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
-                  //   if (err) throw err;
-
-                  //   // if any users are found listed then proceed to check for s_following
-                  //   if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
-
-                  //     // check the existence of data in secured s_following database for current user
-                  //     connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
-                  //       if (err) throw err;
-                  //       if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
-
-                  //         // redirect to the dashboard
-                  //         res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
-                  //       } else {
-                  //         // goes to get following instagram and inserts them into the s_following table
-                  //         GET_follows( pbody.user.id, "" , true, function(users){
-                  //             // console.log("GOT_follows and users are: ", users );
-
-                  //             // redirect to the dashboard
-                  //             res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
-                  //         });
-                  //       }
-                  //     });
-
-                  //   // otherwise go GET_followed_by for current user and then check for s_following database
-                  //   } else {
-                  //     // goes to get followed_by instagram and inserts them into the s_followed_by table
-                  //     GET_followed_by( pbody.user.id, "" , true, function(users){
-                  //       // console.log("GOT_followed_by and users are: ", users );
-
-                  //       // check the existence of data in secured s_following database for current user
-                  //       connection.query('SELECT count(*) from s_following where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
-                  //         if (err) throw err;
-                  //         if ( JSON.parse(rows[0]['count(*)']) && JSON.parse(rows[0]['count(*)']) > 0 ) {
-
-                  //           // redirect to the dashboard
-                  //           res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
-                  //         } else {
-                  //           // goes to get following instagram and inserts them into the s_following table
-                  //           GET_follows( pbody.user.id, "" , true, function(users){
-                  //             // console.log("GOT_follows and users are: ", users );
-
-                  //             // redirect to the dashboard
-                  //             res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
-                  //           });
-                  //         }
-                  //       });
-                  //     });
-                  //   }
-                  // });
               });
             return;
 
@@ -1868,7 +1819,7 @@ var crypto                    = require('crypto'),
       // console.log("has valid structure");
 
       // check access rights from database.
-      connection.query('SELECT fancrawl_full_name, fancrawl_username, fancrawl_profile_picture FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
+      connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
         if (err) throw err;
 
         if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
@@ -1881,166 +1832,160 @@ var crypto                    = require('crypto'),
           metrics.userName = rows[0].fancrawl_full_name;
           metrics.userPicture = rows[0].fancrawl_profile_picture;
 
-          // check state for particular fancrawl_instagram_id
-          connection.query('SELECT state, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
+          // console.log(rows[0].state);
+          if ( rows[0].state === "stopped" ){
+            metrics.status = 'statusStopped';
+          } else if ( rows[0].state === "cleaning" ) {
+            metrics.status = 'statusCleaning';
+          } else if ( rows[0].state === "started" ) {
+            metrics.status = 'statusStarted';
+          } else {
+          }
+
+          metrics.followedBy = rows[0].or_followed_by ;
+          metrics.following = rows[0].or_following ;
+
+          // count from MySQL all users attempted so far
+          connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
             if (err) throw err;
+            metrics.totalCrawled = JSON.parse(rows[0]['count(*)']);
 
-            // console.log(rows[0].state);
-            if ( rows[0].state === "stopped" ){
-              metrics.status = 'statusStopped';
-            } else if ( rows[0].state === "cleaning" ) {
-              metrics.status = 'statusCleaning';
-            } else if ( rows[0].state === "started" ) {
-              metrics.status = 'statusStarted';
-            } else {
-            }
-
-            metrics.followedBy = rows[0].or_followed_by ;
-            metrics.following = rows[0].or_following ;
-
-            // count from mysql all users attempted so far
-            connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
+            // count from mysql all users still processing that is not with a 4 value
+            connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND followed_by_status = 1', function(err, rows, fields) {
               if (err) throw err;
-              metrics.totalCrawled = JSON.parse(rows[0]['count(*)']);
+              metrics.followingFromFanCrawl = JSON.parse(rows[0]['count(*)']);
+              metrics.latestFollowedBy = metrics.followingFromFanCrawl + metrics.followedBy;
+
 
               // count from mysql all users still processing that is not with a 4 value
-              connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND followed_by_status = 1', function(err, rows, fields) {
+              connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
                 if (err) throw err;
-                metrics.followingFromFanCrawl = JSON.parse(rows[0]['count(*)']);
-                metrics.latestFollowedBy = metrics.followingFromFanCrawl + metrics.followedBy;
+                var quickCount = 0;
+                var postCount = 0;
 
+                for ( keys in timer[ req.query.id ].quick_queue ) {
+                  quickCount++;
+                }
+                var quickCountTime = quickCount * 1000 * 5;
+                for ( keys in timer[ req.query.id ].post_queue ) {
+                  postCount++;
+                }
+                var postCountTime = postCount * 1000 * 80;
+                var totalCountTime = quickCountTime + postCountTime;
 
-                // count from mysql all users still processing that is not with a 4 value
-                connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
-                  if (err) throw err;
-                  var quickCount = 0;
-                  var postCount = 0;
+                metrics.latestFollowing = JSON.parse(rows[0]['count(*)'])  + metrics.following;
 
-                  for ( keys in timer[ req.query.id ].quick_queue ) {
-                    quickCount++;
-                  }
-                  var quickCountTime = quickCount * 1000 * 5;
-                  for ( keys in timer[ req.query.id ].post_queue ) {
-                    postCount++;
-                  }
-                  var postCountTime = postCount * 1000 * 80;
-                  var totalCountTime = quickCountTime + postCountTime;
+                metrics.latestFollowedByPercentage = Math.floor( ( ( metrics.latestFollowedBy / metrics.followedBy ) * 100 ) - 100);
+                metrics.latestFollowingPercentage = Math.floor( ( ( metrics.latestFollowing / metrics.following ) * 100 ) - 100);
 
-                  metrics.latestFollowing = JSON.parse(rows[0]['count(*)'])  + metrics.following;
+                if ( metrics.latestFollowedByPercentage >= 0 ) {
+                  metrics.lfbpClass = 'up';
+                } else {
+                  metrics.lfbpClass = 'down';
+                }
 
-                  metrics.latestFollowedByPercentage = Math.floor( ( ( metrics.latestFollowedBy / metrics.followedBy ) * 100 ) - 100);
-                  metrics.latestFollowingPercentage = Math.floor( ( ( metrics.latestFollowing / metrics.following ) * 100 ) - 100);
+                if ( metrics.latestFollowingPercentage >= 0 ) {
+                  metrics.lfpClass = 'up';
+                } else {
+                  metrics.lfpClass = 'down';
+                }
+                // console.log('Done with s_following list');
 
-                  if ( metrics.latestFollowedByPercentage >= 0 ) {
-                    metrics.lfbpClass = 'up';
-                  } else {
-                    metrics.lfbpClass = 'down';
-                  }
+                // var number = metrics.latestFollowing - metrics.following,
+                var milliseconds    = totalCountTime,
+                    seconds         = milliseconds / 1000,
+                    minutes         = seconds / 60,
+                    hours           = minutes / 60,
+                    days            = hours / 24,
+                    totalDays       = Math.floor( days ),
+                    totalHours      = Math.floor( ( days % 1 ) * 24 ),
+                    totalMinutes    = Math.floor( ( ( ( ( days % 1 ) * 24) % 1 ) * 60 ) );
+                    totalSeconds    = Math.floor( ( ( ( ( ( days % 1 ) * 24) % 1 ) * 60 ) % 1 ) * 60 );
 
-                  if ( metrics.latestFollowingPercentage >= 0 ) {
-                    metrics.lfpClass = 'up';
-                  } else {
-                    metrics.lfpClass = 'down';
-                  }
-                  // console.log('Done with s_following list');
-
-                  // var number = metrics.latestFollowing - metrics.following,
-                  var milliseconds    = totalCountTime,
-                      seconds         = milliseconds / 1000,
-                      minutes         = seconds / 60,
-                      hours           = minutes / 60,
-                      days            = hours / 24,
-                      totalDays       = Math.floor( days ),
-                      totalHours      = Math.floor( ( days % 1 ) * 24 ),
-                      totalMinutes    = Math.floor( ( ( ( ( days % 1 ) * 24) % 1 ) * 60 ) );
-                      totalSeconds    = Math.floor( ( ( ( ( ( days % 1 ) * 24) % 1 ) * 60 ) % 1 ) * 60 );
-
-                      if ( totalDays !== 0 ) {
-                        if ( totalHours !== 0 && totalMinutes !== 0 ) {
-                          var timeLeft = totalDays+"d "+totalHours+"h & "+totalMinutes+"m left...";
-                        } else if ( totalHours === 0 ) {
-                          var timeLeft = totalDays+"d & "+totalMinutes+"m left...";
-                        } else if ( totalMinutes === 0 ) {
-                          var timeLeft = totalDays+"d "+totalHours+"h left...";
-                        }
-                      } else if ( totalHours !== 0 ) {
-                        if ( totalMinutes === 0 ) {
-                          var timeLeft = totalHours+"hours left...";
-                        } else {
-                          var timeLeft = totalHours+"h & "+totalMinutes+"m left...";
-                        }
-                      } else if ( totalMinutes !== 0 ){
-                        if ( totalSeconds === 0 ) {
-                          var timeLeft = totalMinutes+"min left...";
-                        } else {
-                          var timeLeft = totalMinutes+"m & "+totalSeconds+"s left...";
-                        }
-                      } else {
-                        var timeLeft = totalSeconds+"sec left...";
+                    if ( totalDays !== 0 ) {
+                      if ( totalHours !== 0 && totalMinutes !== 0 ) {
+                        var timeLeft = totalDays+"d "+totalHours+"h & "+totalMinutes+"m left...";
+                      } else if ( totalHours === 0 ) {
+                        var timeLeft = totalDays+"d & "+totalMinutes+"m left...";
+                      } else if ( totalMinutes === 0 ) {
+                        var timeLeft = totalDays+"d "+totalHours+"h left...";
                       }
-
-                  metrics.cleaningTime = timeLeft;
-
-                  GET_stats( req.query.id, function( follows, followed_by, error ){
-                    metrics.actualFollowedBy = followed_by;
-                    metrics.actualFollowing = follows;
-
-                    metrics.followingFromFanCrawlPercentage = metrics.followingFromFanCrawl / ( metrics.actualFollowedBy - metrics.followedBy ) * 100;
-
-                    metrics.followingFromFanCrawlResult = metrics.followingFromFanCrawl + " (" + Math.floor( metrics.followingFromFanCrawlPercentage ) + "%)";
-
-                    metrics.actualFollowedByPercentage = Math.floor( ( ( metrics.actualFollowedBy / metrics.followedBy ) * 100 ) - 100);
-                    metrics.actualFollowingPercentage = Math.floor( ( ( metrics.actualFollowing / metrics.following ) * 100 ) - 100);
-
-                    if ( metrics.actualFollowedByPercentage >= 0 ) {
-                      metrics.afbpClass = 'up_by';
+                    } else if ( totalHours !== 0 ) {
+                      if ( totalMinutes === 0 ) {
+                        var timeLeft = totalHours+"hours left...";
+                      } else {
+                        var timeLeft = totalHours+"h & "+totalMinutes+"m left...";
+                      }
+                    } else if ( totalMinutes !== 0 ){
+                      if ( totalSeconds === 0 ) {
+                        var timeLeft = totalMinutes+"min left...";
+                      } else {
+                        var timeLeft = totalMinutes+"m & "+totalSeconds+"s left...";
+                      }
                     } else {
-                      metrics.afbpClass = 'down_by';
+                      var timeLeft = totalSeconds+"sec left...";
                     }
 
-                    if ( metrics.actualFollowingPercentage >= 0 ) {
-                      metrics.afpClass = 'up_ing';
+                metrics.cleaningTime = timeLeft;
+
+                GET_stats( req.query.id, function( follows, followed_by, error ){
+                  metrics.actualFollowedBy = followed_by;
+                  metrics.actualFollowing = follows;
+
+                  metrics.followingFromFanCrawlPercentage = metrics.followingFromFanCrawl / ( metrics.actualFollowedBy - metrics.followedBy ) * 100;
+
+                  metrics.followingFromFanCrawlResult = metrics.followingFromFanCrawl + " (" + Math.floor( metrics.followingFromFanCrawlPercentage ) + "%)";
+
+                  metrics.actualFollowedByPercentage = Math.floor( ( ( metrics.actualFollowedBy / metrics.followedBy ) * 100 ) - 100);
+                  metrics.actualFollowingPercentage = Math.floor( ( ( metrics.actualFollowing / metrics.following ) * 100 ) - 100);
+
+                  if ( metrics.actualFollowedByPercentage >= 0 ) {
+                    metrics.afbpClass = 'up_by';
+                  } else {
+                    metrics.afbpClass = 'down_by';
+                  }
+
+                  if ( metrics.actualFollowingPercentage >= 0 ) {
+                    metrics.afpClass = 'up_ing';
+                  } else {
+                    metrics.afpClass = 'down_ing';
+                  }
+                  lastWeek( req.query.id , function(result){
+                    var data = [];
+                    if ( metrics.actualFollowedBy !== "N/A" ){
+                      data.push(metrics.actualFollowedBy);
+
+                      for ( var i = 1; i < result.length; i++ ) {
+                        var temp = data[0] - result[i];
+                        var newTemp = [];
+                        newTemp.push(temp);
+                        var old = data
+                        var data = newTemp.concat(old);
+                      }
+
+                      // data = data.splice(data.length - 7,7);
+                      if ( data.length > 0 ) {
+                        metrics.data = data;
+                      }
+
                     } else {
-                      metrics.afpClass = 'down_ing';
+                      metrics.data = [0];
                     }
-                    lastWeek( req.query.id , function(result){
-                      var data = [];
-                      if ( metrics.actualFollowedBy !== "N/A" ){
-                        data.push(metrics.actualFollowedBy);
 
-                        for ( var i = 1; i < result.length; i++ ) {
-                          var temp = data[0] - result[i];
-                          var newTemp = [];
-                          newTemp.push(temp);
-                          var old = data
-                          var data = newTemp.concat(old);
-                        }
-
-                        // data = data.splice(data.length - 7,7);
-                        if ( data.length > 0 ) {
-                          metrics.data = data;
-                        }
-
-                      } else {
-                        metrics.data = [0];
-                      }
-
-                      if ( usersInfo[ req.query.id ] ) {
-                        for ( keys in usersInfo[ req.query.id ]) {
-                          if ( !metrics[ keys ] ){
-                            metrics.errorLogs[ keys ] = usersInfo[ req.query.id ][ keys ];
-                          }
+                    if ( usersInfo[ req.query.id ] ) {
+                      for ( keys in usersInfo[ req.query.id ]) {
+                        if ( !metrics[ keys ] ){
+                          metrics.errorLogs[ keys ] = usersInfo[ req.query.id ][ keys ];
                         }
                       }
-                      res.render('./partials/dashboard.ejs',  metrics );
-                    });
+                    }
+                    res.render('./partials/dashboard.ejs',  metrics );
                   });
                 });
               });
             });
           });
         }
-
       });
 
     } else {
