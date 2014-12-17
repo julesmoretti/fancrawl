@@ -1385,72 +1385,83 @@ var crypto                    = require('crypto'),
       if (err) throw err;
       if( rows && rows[0] ) {
 
-        // IF USER WAS STARTED
-        if ( rows[0].state && rows[0].state === "started" ) {
-          console.log("STARTED STATE: ", fancrawl_instagram_id);
-          var state = rows[0].state;
-
-          connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-            if (err) throw err;
-
-            var obj = {};
-
-            if ( rows && rows[0] ) {
-              for ( var i = 0; i < rows.length; i++ ) {
-                if ( rows[i].count !== 5 ) {
-                  verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
-                };
-                var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
-                obj[ pickedOut ] = pickedOut;
-              }
-
-              // var oldestUser = 0;
-              for ( keys in obj ) {
-                var oldestUser = keys;
-              }
-
-              var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
-
-              var currentUser = JSON.parse( fancrawl_instagram_id );
-
-              if ( new_instagram_following_id < currentUser ) {
-                var newUser = ( currentUser + 1 );
-                fetchNewFollowers( fancrawl_instagram_id, newUser );
-                console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
-              } else {
-                fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
-              }
-
-            } else {
-
-              // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
-
-              var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
-              fetchNewFollowers( fancrawl_instagram_id, newUser );
-
-              console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
-
-            }
-
-
-          });
-
-        // IF USER WAS CLEANING
-        } else if ( rows[0].state && rows[0].state === "cleaning" ) {
-          console.log("CLEANING STATE: ", fancrawl_instagram_id);
-
-          var state = rows[0].state;
-          // CLEAN DATABASE
-          cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+        relationship( fancrawl_instagram_id, 571377691, function( fancrawl_instagram_id, new_instagram_following_id, response ){
+          if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
+            // do nothing
             connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
               if (err) throw err;
-              console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE CLEANING: ", fancrawl_instagram_id);
+              console.log("API error or access_token missing or oauth_limit rate reached so stopped account "+fancrawl_instagram_id+" on server restart");
+              console.log("STOPPED STATE: ", fancrawl_instagram_id);
             });
-          });
-        } else {
-          console.log("STOPPED STATE: ", fancrawl_instagram_id);
-        }
+          } else {
+
+            // IF USER WAS STARTED
+            if ( rows[0].state && rows[0].state === "started" ) {
+              console.log("STARTED STATE: ", fancrawl_instagram_id);
+              var state = rows[0].state;
+
+              connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                if (err) throw err;
+
+                var obj = {};
+
+                if ( rows && rows[0] ) {
+                  for ( var i = 0; i < rows.length; i++ ) {
+                    if ( rows[i].count !== 5 ) {
+                      verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                    };
+                    var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
+                    obj[ pickedOut ] = pickedOut;
+                  }
+
+                  // var oldestUser = 0;
+                  for ( keys in obj ) {
+                    var oldestUser = keys;
+                  }
+
+                  var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
+
+                  var currentUser = JSON.parse( fancrawl_instagram_id );
+
+                  if ( new_instagram_following_id < currentUser ) {
+                    var newUser = ( currentUser + 1 );
+                    fetchNewFollowers( fancrawl_instagram_id, newUser );
+                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
+                  } else {
+                    fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
+                  }
+
+                } else {
+
+                  // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
+
+                  var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
+                  fetchNewFollowers( fancrawl_instagram_id, newUser );
+
+                  console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
+
+                }
+
+              });
+
+            // IF USER WAS CLEANING
+            } else if ( rows[0].state && rows[0].state === "cleaning" ) {
+              console.log("CLEANING STATE: ", fancrawl_instagram_id);
+
+              var state = rows[0].state;
+              // CLEAN DATABASE
+              cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+                connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                  console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE CLEANING: ", fancrawl_instagram_id);
+                });
+              });
+            } else {
+              console.log("STOPPED STATE: ", fancrawl_instagram_id);
+            }
+          }
+        });
       }
     });
     };
@@ -1681,17 +1692,9 @@ var crypto                    = require('crypto'),
         res.redirect('/404/');
         return;
       } else {
-        console.log("before selecting username", pbody.user.id );
-
-
-        connection.query('SELECT * FROM access_right', function(err, rows, fields) {
-          if (err) throw err;
-          console.log("rows from select * :", rows );
-        });
 
         connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
           if (err) throw err;
-          console.log("rows from username", rows );
 
           // already signed in
           if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
@@ -1725,7 +1728,6 @@ var crypto                    = require('crypto'),
                 }
 
                 // redirect to the dashboard
-                console.log("Redirecting to dashboard");
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
 
               });
@@ -2025,9 +2027,9 @@ var crypto                    = require('crypto'),
       timerPostStructure( fancrawl_instagram_id );
       timerQuickStructure( fancrawl_instagram_id );
 
-      connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-        if (err) throw err;
-        console.log("cleanDB for: ", fancrawl_instagram_id);
+      // connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        // if (err) throw err;
+        // console.log("cleanDB for: ", fancrawl_instagram_id);
         // cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
@@ -2078,7 +2080,7 @@ var crypto                    = require('crypto'),
           });
         // });
         res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
-      });
+      // });
 
     // CLEANING FANCRAWL
     // dashboard sent a switchClean on so clean database
