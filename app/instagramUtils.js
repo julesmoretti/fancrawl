@@ -15,7 +15,7 @@ var crypto                    = require('crypto'),
     setTimeouts               = {},
     random_second             = Math.floor( ( Math.random() * 5 ) * 1000 ) + 5000,
     random_minute             = Math.floor( ( Math.random() * 60 ) * 1000 ) + 90000,
-    queueCap                  = 20,
+    queueCap                  = 200,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -2033,6 +2033,9 @@ var crypto                    = require('crypto'),
         // cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
+
+            res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
             // start fetching process
             connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
               if (err) throw err;
@@ -2079,7 +2082,6 @@ var crypto                    = require('crypto'),
             });
           });
         // });
-        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
       // });
 
     // CLEANING FANCRAWL
@@ -2088,6 +2090,9 @@ var crypto                    = require('crypto'),
       console.log("switchclean detected");
       connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
+
+        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
         // RESET post_timer & quick_timer
         timerPostStructure( fancrawl_instagram_id, "force" );
         timerQuickStructure( fancrawl_instagram_id, "force" );
@@ -2101,7 +2106,6 @@ var crypto                    = require('crypto'),
             console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", fancrawl_instagram_id );
           });
         });
-        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
       });
 
     // STOPPING FANCRAWL
@@ -2110,6 +2114,8 @@ var crypto                    = require('crypto'),
       // change state to stopped in database for user and redirect back to dashboard
       connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
+
+        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
 
         // RESET post_timer & quick_timer
         timerPostStructure( fancrawl_instagram_id, "force" );
@@ -2122,7 +2128,6 @@ var crypto                    = require('crypto'),
           }
         }
 
-        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
       });
     }
     };
