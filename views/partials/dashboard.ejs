@@ -174,6 +174,8 @@
                   <% } %>
                   <li><span>followers due to FanCrawl</span></li>
                   <li><span>following back</span></li>
+                  <li><span>Email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
+                  </li>
                 </ul>
               </div>
               <div class="controllerStatus">
@@ -225,6 +227,17 @@
                       <% } else { %>
                         <span>N/A</span>
                       <% } %>
+                    </li>
+                    <li>
+                      <div class="switchDiv">
+                        <% if ( eNoti === 1 ){ %>
+                          <input type="checkbox" id="switch3" name="switchMail" class="switch" checked="checked" onclick="toggleAttributes3()"/>
+                          <label id="switch3label" for="switch3">&nbsp;</label>
+                        <% } else { %>
+                          <input type="checkbox" id="switch3" name="switchMail" class="switch" onclick="toggleAttributes3()" />
+                          <label id="switch3label" for="switch3">&nbsp;</label>
+                        <% } %>
+                      </div>
                     </li>
                   </ul>
               </div>

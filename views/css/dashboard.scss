@@ -545,6 +545,21 @@ html {
                     font-style: italic;
                     font-size: 14px;
                     color: #c5c5c5;
+
+                    input {
+                      z-index: 2000;
+                      position: relative;
+                      margin-left: 20px;
+                      margin-top: 6px;
+                      background-color: #808080;
+                      border: none;
+                      border-radius: 5px;
+                      color: #333;
+                      padding: 6px 14px;
+                      width: calc(100% - 68px);
+                      font-family: inst_reg;
+                      font-size: 12px;
+                    }
                   }
                 }
                 li:nth-last-of-type(1) {

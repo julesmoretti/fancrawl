@@ -68,6 +68,8 @@ var crypto                    = require('crypto'),
         transporter.sendMail( mailOptions, function( error, info ) {
           if ( error ) {
             console.log( error );
+            sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
+
           } else {
             console.log( 'Message sent: ' + info.response );
           };
@@ -1819,6 +1821,8 @@ var crypto                    = require('crypto'),
                     'afbpClass': 'down',
                     'afpClass': 'down',
                     'status': '',
+                    'email': '',
+                    'eNoti': 0,
                     'cleaningTime' : 'Some time metric goes here',
                     'errorLogs': {},
                     'data': [230,245,269,274,292,320,368]
@@ -1832,8 +1836,16 @@ var crypto                    = require('crypto'),
       // console.log("has valid structure");
 
       // check access rights from database.
-      connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
+      connection.query('SELECT state, fancrawl_full_name, fancrawl_username, email, eNoti, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
         if (err) throw err;
+
+        if ( rows && rows[0] && rows[0].email ) {
+          metrics.email = rows[0].email;
+        }
+
+        if ( rows && rows[0] && rows[0].eNoti ) {
+          metrics.eNoti = rows[0].eNoti;
+        }
 
         if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
           console.log("User not granted");
@@ -2016,6 +2028,11 @@ var crypto                    = require('crypto'),
         req_query           = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
+        console.log("JJJJJJJJJJJJJJJJJ");
+        console.log(req.body);
+        console.log("JJJJJJJJJJJJJJJJJ");
+
+
 
     // STARTING FANCRAWL
     // dashboard sent a switchFancrawl on so start FanCrawl
@@ -2129,6 +2146,18 @@ var crypto                    = require('crypto'),
         }
 
       });
+    }
+
+
+    // UPDATING EMAIL NOTIFICATIONS
+    if ( req.body.email && req.body.switchMail ) {
+      connection.query('UPDATE access_right set email = "'+ req.body.email +'", eNoti = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+      })
+    } else if ( req.body.email ) {
+      connection.query('UPDATE access_right set email = "'+ req.body.email +'", eNoti = 0 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+      })
     }
     };
 

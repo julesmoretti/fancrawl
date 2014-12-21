@@ -435,6 +435,19 @@ html {
                     font-style: italic;
                     font-size: 14px;
                     color: #c5c5c5; }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li span input {
+                      z-index: 2000;
+                      position: relative;
+                      margin-left: 20px;
+                      margin-top: 6px;
+                      background-color: #808080;
+                      border: none;
+                      border-radius: 5px;
+                      color: #333;
+                      padding: 6px 14px;
+                      width: calc(100% - 68px);
+                      font-family: inst_reg;
+                      font-size: 12px; }
                 html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li:nth-last-of-type(1) {
                   border-bottom: 0px solid #808080; }
             html body .container .containerInner .mainControllers .controllerList .controllerStatus {

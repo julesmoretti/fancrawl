@@ -107,7 +107,7 @@ var toggleAttributes1 = function() {
 
 };
 
-var toggleAttributes2 =  function() {
+var toggleAttributes2 = function() {
 
   $('#hidden').removeClass('show');
 
@@ -135,14 +135,20 @@ var toggleAttributes2 =  function() {
   }
 };
 
-var toggleAttributes3 =  function() {
+var toggleAttributes3 = function() {
 
   $('#hidden').removeClass('show');
 
   // toggles save button
   var submitButton = document.getElementById("submitButton");
   var subDisabled = submitButton.getAttribute("disabled");
-  if ( subDisabled !== null || subDisabled === 'disabled' ) {
+  var eMail = document.getElementById("eMail");
+  var value = eMail.getAttribute("value");
+  var input = eMail.value;
+
+  if ( value !== input ) {
+    // do nothing on change
+  } else if ( subDisabled !== null || subDisabled === 'disabled' ) {
     submitButton.removeAttribute("disabled");
     document.getElementById("submitButton").className = "saveButton ";
   } else {
@@ -150,3 +156,17 @@ var toggleAttributes3 =  function() {
     document.getElementById("submitButton").className = "saveButton disabledButton";
   }
 };
+
+var eMailChangeVerification = function() {
+  var eMail = document.getElementById("eMail");
+  var value = eMail.getAttribute("value");
+  var input = eMail.value;
+
+  if ( value !== input ) {
+    submitButton.removeAttribute("disabled");
+    document.getElementById("submitButton").className = "saveButton ";
+  } else {
+    submitButton.setAttribute("disabled", "disabled");
+    document.getElementById("submitButton").className = "saveButton disabledButton";
+  }
+}
