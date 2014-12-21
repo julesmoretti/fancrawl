@@ -2000,7 +2000,6 @@ var crypto                    = require('crypto'),
                       }
                     }
                     res.render('./partials/dashboard.ejs',  metrics );
-                    console.log( metrics );
                   });
                 });
               });
