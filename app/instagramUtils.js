@@ -2000,7 +2000,7 @@ var crypto                    = require('crypto'),
                       }
                     }
                     res.render('./partials/dashboard.ejs',  metrics );
-                    console.log(metrics)
+                    console.log( metrics );
                   });
                 });
               });
@@ -2024,11 +2024,6 @@ var crypto                    = require('crypto'),
         req_query           = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
-        console.log("JJJJJJJJJJJJJJJJJ");
-        console.log(req.body);
-        console.log("JJJJJJJJJJJJJJJJJ");
-
-
 
     // STARTING FANCRAWL
     // dashboard sent a switchFancrawl on so start FanCrawl
