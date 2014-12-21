@@ -1821,7 +1821,7 @@ var crypto                    = require('crypto'),
                     'afbpClass': 'down',
                     'afpClass': 'down',
                     'status': '',
-                    'email': 'something',
+                    'email': '',
                     'eNoti': 0,
                     'cleaningTime' : 'Some time metric goes here',
                     'errorLogs': {},
@@ -1839,13 +1839,6 @@ var crypto                    = require('crypto'),
       connection.query('SELECT state, fancrawl_full_name, fancrawl_username, email, eNoti, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
         if (err) throw err;
 
-        // if ( rows && rows[0] && rows[0].email ) {
-          // metrics.email = rows[0].email;
-        // }
-
-        if ( rows && rows[0] && rows[0].eNoti ) {
-          metrics.eNoti = rows[0].eNoti;
-        }
 
         if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
           console.log("User not granted");
@@ -1867,6 +1860,8 @@ var crypto                    = require('crypto'),
           } else {
           }
 
+          metrics.email = rows[0].email;
+          metrics.eNoti = rows[0].eNoti;
           metrics.followedBy = rows[0].or_followed_by ;
           metrics.following = rows[0].or_following ;
 
