@@ -215,7 +215,7 @@ var massCounter = 0;
               timer[ fancrawl_instagram_id ].counterCap = 0;
             }
 
-            console.log( "TIMER - ", timer[ fancrawl_instagram_id ].post_queue );
+            console.log( "TIMER - ", timer[ fancrawl_instagram_id ] );
 
             if ( postQueueCount < queueCap ) {
               // console.log("THE TIMER!: ", timer);
