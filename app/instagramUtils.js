@@ -1206,7 +1206,7 @@ var massCounter = 0;
                 fetchNewFollowers( fancrawl_instagram_id, nextUser );
               } else {
 
-                var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+                var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length;
 
                 // if < then 100 = add to queue and run callback
                 if ( quick_count < ( queueCap - 4 ) ) {
