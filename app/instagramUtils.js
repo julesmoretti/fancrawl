@@ -153,11 +153,15 @@ var massCounter = 0;
       timer[ fancrawl_instagram_id ]                        = {};
     }
     if ( !timer[ fancrawl_instagram_id ].quick_queue ) {
-      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles sequence of people to verify
+      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles relationship sequences
+      timer[ fancrawl_instagram_id ].quick_queue.verify     = {}; // handles sequence of people to verify
+      timer[ fancrawl_instagram_id ].quick_queue.new        = {}; // handles sequence of people to add
       timer[ fancrawl_instagram_id ].quick_seconds          = false; // keep track of minimum seconds separation
     }
     if ( state  === "force" ) {
-      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles sequence of people to verify
+      timer[ fancrawl_instagram_id ].quick_queue            = {}; // handles relationship sequences
+      timer[ fancrawl_instagram_id ].quick_queue.verify     = {}; // handles sequence of people to verify
+      timer[ fancrawl_instagram_id ].quick_queue.new        = {}; // handles sequence of people to add
     }
     };
 
@@ -345,240 +349,260 @@ var massCounter = 0;
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
-            var count = [];
-            for ( keys in timer[ fancrawl_instagram_id ].quick_queue ) {
-              count.push(keys);
+            // var count = [];
+            var count_verify = [];
+            var count_new = [];
+
+            for ( keys in timer[ fancrawl_instagram_id ].quick_queue.verify ) {
+              count_verify.push(keys);
             }
 
-            if ( count.length === 0 ) {
+            for ( keys in timer[ fancrawl_instagram_id ].quick_queue.new ) {
+              count_new.push(keys);
+            }
+
+            // if ( count_verify.length === 0 && count_new.length === 0 ) {
               // console.log("TIMER QUICK XXXX - Reached zero waiting cycle");
-            } else if ( count.length < queueCap ) {
+
+
+            // } else if ( count.length < queueCap ) {
               // console.log("TIMER QUICK XXXX - MORE THEN ZERO: ", count);
 
-              var new_instagram_following_id = count[0];
-              var process = timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
 
-              if ( process === "new" ) {
-                // check relationship and unfollow with proper
-                relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
-                  if ( relationship === "not_exist" ) {
-                    // DELETE FROM LIST
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    // console.log("NEW ADDED USER DID NOT EXIST - Deleted from quick list");
+            if ( count_verify.length === 0 && count_new.length === 0 ) {
+              // lists are empty so do nothing
 
-                  } else if ( relationship === "access_token" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
-                    }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
-
-                  } else if ( relationship === "APINotAllowedError" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
-                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    });
-
-                  } else if ( relationship === "oauth_limit" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
-
-                  } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
-                    // console.log("ADDED TO CLOCK MANAGER FOLLOW: ", fancrawl_instagram_id );
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-
-                  } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow");
-                  }
-                });
-
-              } else if ( process === "unfollow_verify" ) {
-                // check relationship and then time difference if needs be
-                relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
-                  // console.log("RELATIONSHIP RESPONSE STATUS FOR USER "+fancrawl_instagram_id+" & "+new_instagram_following_id+" = "+relationship );
-                  if ( relationship === "access_token" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
-                    }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
-
-                  } else if ( relationship === "APINotAllowedError" ) {
-                    // error to deal with...
-
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
-                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    });
-
-                  } else if ( relationship === "oauth_limit" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
-
-                  } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-
-                  // neither or just follow or just requested
-                  } else if ( relationship === "not_exist" ) {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      console.log("USER DELETED THERE ACCOUNT");
-                    });
-
-
-                  } else {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
-                  }
-                });
-
-              } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
-
-                // check relationship and then time difference if needs be
-                relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
-                  if ( relationship === "access_token" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
-                    }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
-
-                  } else if ( relationship === "APINotAllowedError" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
-                      delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    });
-
-                  } else if ( relationship === "oauth_limit" ) {
-                    // error to deal with...
-                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                      usersInfo[ fancrawl_instagram_id ] = {};
-                    }
-                    usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
-
-                  } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-
-                  // neither or just follow or just requested
-                  } else {
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      delete usersInfo[ fancrawl_instagram_id ].access_token;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                      delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                    }
-                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                      delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                    }
-
-                    // delete from queue
-                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
-                    // console.log("TIMER QUICK - deleted "+fancrawl_instagram_id+": "+new_instagram_following_id+" of process "+process);
-                    // check time difference and wait for 48 hours and repeat
-                    verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
-                  }
-                });
-              } else {
-                console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
-              }
-
+            } else if ( count_verify.length === 0 || count_verify.length > ( queueCap / 2) ) {
+              var new_instagram_following_id = count_new[0];
+              var process = timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ];
             } else {
-              console.log("TIMER QUICK XXXX - clockManager is not working properly.... "+count.length+" keys in the post_timer");
+              var new_instagram_following_id = count_verify[0];
+              var process = timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ];
             }
+
+
+            if ( process === "new" ) {
+
+              // check relationship and unfollow with proper
+              relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
+                if ( relationship === "not_exist" ) {
+                  // DELETE FROM LIST
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  // console.log("NEW ADDED USER DID NOT EXIST - Deleted from quick list");
+
+                } else if ( relationship === "access_token" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                  }
+                  usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+
+                } else if ( relationship === "APINotAllowedError" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  });
+
+                } else if ( relationship === "oauth_limit" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+
+                } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                  // console.log("ADDED TO CLOCK MANAGER FOLLOW: ", fancrawl_instagram_id );
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+
+                } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow");
+                }
+              });
+
+            } else if ( process === "unfollow_verify" ) {
+              // check relationship and then time difference if needs be
+              relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
+                // console.log("RELATIONSHIP RESPONSE STATUS FOR USER "+fancrawl_instagram_id+" & "+new_instagram_following_id+" = "+relationship );
+                if ( relationship === "access_token" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                  }
+                  usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
+
+                } else if ( relationship === "APINotAllowedError" ) {
+                  // error to deal with...
+
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  });
+
+                } else if ( relationship === "oauth_limit" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+
+                } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+
+                // neither or just follow or just requested
+                } else if ( relationship === "not_exist" ) {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    console.log("USER DELETED THERE ACCOUNT");
+                  });
+
+
+                } else {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
+                }
+              });
+
+            } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
+
+              // check relationship and then time difference if needs be
+              relationship( fancrawl_instagram_id, new_instagram_following_id, function( fancrawl_instagram_id, new_instagram_following_id, relationship ){
+                if ( relationship === "access_token" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                  }
+                  usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
+
+                } else if ( relationship === "APINotAllowedError" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "There has been a special API Error - Report this issue.";
+                    delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  });
+
+                } else if ( relationship === "oauth_limit" ) {
+                  // error to deal with...
+                  if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                    usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+                  usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+
+                } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+
+                // neither or just follow or just requested
+                } else {
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                    delete usersInfo[ fancrawl_instagram_id ].access_token;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                    delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                  }
+                  if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                    delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                  }
+
+                  // delete from queue
+                  delete timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ];
+                  // console.log("TIMER QUICK - deleted "+fancrawl_instagram_id+": "+new_instagram_following_id+" of process "+process);
+                  // check time difference and wait for 48 hours and repeat
+                  verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
+                }
+              });
+            } else {
+              console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
+            }
+
+            // } else {
+              // console.log("TIMER QUICK XXXX - clockManager is not working properly.... "+count.length+" keys in the post_timer");
+            // }
           } else {
             console.log( "state undefined from timer_quick" )
           }
@@ -998,12 +1022,10 @@ var massCounter = 0;
   var clockManager            = function ( fancrawl_instagram_id, new_instagram_following_id, process, callback ) {
     timerPostStructure( fancrawl_instagram_id );
 
-    var post_countFollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
-    var post_countUnfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
-
     // look up relevant clock queue
     if ( process === "follow" ) {
       // console.log("in clock manager follow...");
+      var post_countFollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
         if ( post_countFollow < ( queueCap - 2 ) ) {
           timer[ fancrawl_instagram_id ].post_queue.follow[ new_instagram_following_id ] = process;
@@ -1021,8 +1043,10 @@ var massCounter = 0;
             delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
           }, time );
         }
+
     } else if ( process === "unfollow" || process === "unfollow_followedby") {
       // console.log("in clock manager unfollow... ");
+      var post_countUnfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
 
         if ( post_countUnfollow < ( queueCap - 2 ) ) {
           timer[ fancrawl_instagram_id ].post_queue.unfollow[ new_instagram_following_id ] = process;
@@ -1041,19 +1065,39 @@ var massCounter = 0;
           }, time );
         }
     // TIMER QUICK CONFIGURATIONS
-    } else {
+    } else if ( process === "new" ) {
 
-      if ( timer.post_queue ) {
-        console.log( "CLOCK MANAGER - NEW", timer.post_queue );
-      }
-
-      var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+      // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+      var quick_count_new = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length;
       var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
       // if < then 100 = add to queue and run callback
-      if ( quick_count < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
-      // console.log("CURRENT USER: ", fancrawl_instagram_id);
-        timer[ fancrawl_instagram_id ].quick_queue[ new_instagram_following_id ] = process;
+      if ( quick_count_new < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+        // console.log("CURRENT USER: ", fancrawl_instagram_id);
+        timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ] = process;
+        if ( callback ) {
+          callback( fancrawl_instagram_id, new_instagram_following_id, process );
+        }
+
+      // else setTimeout 10 seconds recursing same stats
+      } else {
+        var time = 1000 * 10;
+        setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
+          function(){
+          clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
+          delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
+        }, time );
+      }
+    } else {
+
+      // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
+      var quick_count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify ).length;
+      var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
+
+      // if < then 100 = add to queue and run callback
+      if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+        // console.log("CURRENT USER: ", fancrawl_instagram_id);
+        timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ] = process;
         if ( callback ) {
           callback( fancrawl_instagram_id, new_instagram_following_id, process );
         }
