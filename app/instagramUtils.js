@@ -215,6 +215,8 @@ var massCounter = 0;
               timer[ fancrawl_instagram_id ].counterCap = 0;
             }
 
+            console.log( "TIMER - ", timer[ fancrawl_instagram_id ].post_queue );
+
             if ( postQueueCount < queueCap ) {
               // console.log("THE TIMER!: ", timer);
 
@@ -2090,10 +2092,10 @@ var massCounter = 0;
 
                 // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
 
+                var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
+
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 console.log("FETCHING - FROM TRIGGER: ", new_instagram_following_id);
-
-                var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
 
                 var currentUser = JSON.parse( fancrawl_instagram_id );
 
