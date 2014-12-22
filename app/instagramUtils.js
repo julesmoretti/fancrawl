@@ -372,13 +372,24 @@ var massCounter = 0;
             if ( count_verify.length === 0 && count_new.length === 0 ) {
               // lists are empty so do nothing
 
-            } else if ( count_verify.length === 0 || count_verify.length > ( queueCap / 2) ) {
-              var new_instagram_following_id = count_new[0];
-              var process = timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ];
-            } else {
-              var new_instagram_following_id = count_verify[0];
-              var process = timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ];
+            } else if ( count_verify.length === 0 ) {
+              if ( count_new.length ) {
+                // get new
+                var new_instagram_following_id = count_new[0];
+                var process = timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ];
+              }
+            } else if ( count_new.length === 0 ) {
+              if ( count_verify.length ) {
+                // get verify
+                var new_instagram_following_id = count_verify[0];
+                var process = timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ];
+              }
             }
+
+
+
+
+
 
 
             if ( process === "new" ) {
