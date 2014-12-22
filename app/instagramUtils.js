@@ -226,7 +226,7 @@ var massCounter = 0;
                   GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
 
-                    console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                    console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                     massCounter++;
 
                     console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
@@ -239,7 +239,7 @@ var massCounter = 0;
                     GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
 
-                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                       massCounter++;
 
                       console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
@@ -248,7 +248,7 @@ var massCounter = 0;
                     GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
 
-                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                       massCounter++;
 
                     });
@@ -267,7 +267,7 @@ var massCounter = 0;
                     GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
 
-                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                       massCounter++;
 
                       console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_UNFOLLOW");
@@ -276,7 +276,7 @@ var massCounter = 0;
                     GO_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
 
-                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                      console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                       massCounter++;
 
                     });
@@ -289,7 +289,7 @@ var massCounter = 0;
                   GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
 
-                    console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " --- COUNTERS: " + fancrawl_instagram_id );
+                    console.log( massCounter + " : " + timer[ fancrawl_instagram_id ].post_counter + " : " + timer[ fancrawl_instagram_id ].counterCap + " --- COUNTERS: " + fancrawl_instagram_id );
                     massCounter++;
 
                     console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
