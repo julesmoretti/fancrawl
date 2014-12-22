@@ -79,7 +79,7 @@ var massCounter = 0;
     });
     };
 
-  // sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );
@@ -168,7 +168,7 @@ var massCounter = 0;
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
-    console.log("TIMER POST");
+
     // checks that timer structure exists
     // timerPostStructure( fancrawl_instagram_id );
 
@@ -323,13 +323,9 @@ var massCounter = 0;
       callTimer( fancrawl_instagram_id, "post_short" );
     }
     };
-var tempCounter = 0;
+
 //  ZERO = neutral timer function for regular request ===========================
   var timer_quick             = function ( fancrawl_instagram_id ) {
-    console.log("TIMER QUICK " + fancrawl_instagram_id + " : " + tempCounter );
-    tempCounter++;
-    // checks that timer structure exists
-    // timerQuickStructure( fancrawl_instagram_id );
 
     // IF POST_MINUTE = FALSE
     if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
@@ -349,7 +345,6 @@ var tempCounter = 0;
 
           // PROCESS STARTED OR CLEANING SO CARRY ON
           } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
-console.log("TIMER QUICK - STARTED");
 
             // var count = [];
             var count_verify = [];
@@ -362,31 +357,22 @@ console.log("TIMER QUICK - STARTED");
             for ( keys in timer[ fancrawl_instagram_id ].quick_queue.new ) {
               count_new.push(keys);
             }
-console.log("count_verify", count_verify.length);
-console.log("count_new", count_new.length);
-            // if ( count_verify.length === 0 && count_new.length === 0 ) {
-              // console.log("TIMER QUICK XXXX - Reached zero waiting cycle");
-
-
-            // } else if ( count.length < queueCap ) {
-              // console.log("TIMER QUICK XXXX - MORE THEN ZERO: ", count);
-
 
             if ( count_verify.length === 0 && count_new.length === 0 ) {
               // lists are empty so do nothing
-              console.log("both zero");
+
             } else if ( count_verify.length === 0 ) {
-              console.log("verify.length = 0");
+
               if ( count_new.length ) {
-                console.log("new has stuff");
+
                 // get new
                 var new_instagram_following_id = count_new[0];
                 var process = timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ];
               }
             } else if ( count_new.length === 0 ) {
-              console.log("new.length = 0");
+
               if ( count_verify.length ) {
-                console.log("verify has stuff");
+
                 // get verify
                 var new_instagram_following_id = count_verify[0];
                 var process = timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ];
@@ -625,9 +611,6 @@ console.log("count_new", count_new.length);
               }
             }
 
-            // } else {
-              // console.log("TIMER QUICK XXXX - clockManager is not working properly.... "+count.length+" keys in the post_timer");
-            // }
           } else {
             console.log( "state undefined from timer_quick" )
           }
