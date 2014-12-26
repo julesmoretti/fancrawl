@@ -87,3 +87,23 @@ CREATE TABLE `beta_followers` (
   `refresh_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
+
+-- ---
+-- Table 'hash_tags'
+-- Attempted followers
+-- ---
+
+DROP TABLE IF EXISTS `hash_tags`;
+
+CREATE TABLE `hash_tags` (
+  `id` INT AUTO_INCREMENT,
+  `hash_tag` VARCHAR(20),
+  `instagram_photo_id` VARCHAR(20),
+  `instagram_user_id` VARCHAR(20),
+  `created_time` TIMESTAMP,
+  PRIMARY KEY (`id`)
+) COMMENT 'Hash Tags';
+
+-- SELECT instagram_user_id, COUNT(*) AS freq FROM hash_tags WHERE instagram_user_id != 1 AND instagram_user_id != 3 GROUP BY instagram_user_id ORDER BY freq DESC;
+SELECT instagram_user_id, COUNT(*) AS freq FROM hash_tags GROUP BY instagram_user_id ORDER BY freq DESC;
+

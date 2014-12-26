@@ -437,7 +437,7 @@ html {
                     font-size: 14px;
                     color: #c5c5c5; }
                     html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li span input {
-                      z-index: 2000;
+                      z-index: 99;
                       position: relative;
                       margin-left: 20px;
                       margin-top: 6px;
