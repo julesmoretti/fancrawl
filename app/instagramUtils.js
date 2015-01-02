@@ -1255,7 +1255,7 @@ var specialCounter = 0;
 
 //  ZERO = verify time passed before removing ===================================
   var verifyRelationship      = function ( fancrawl_instagram_id, new_instagram_following_id ) {
-    if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
+    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
       console.log("||||||||| +++ verifyRelationship ", new_instagram_following_id );
     }
     connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
