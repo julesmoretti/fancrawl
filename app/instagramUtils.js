@@ -89,41 +89,41 @@ var crypto                    = require('crypto'),
     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
         setTimeout(
           function(){
-              callTimer( fancrawl_instagram_id, state );
-        }, 1000 * 60 * 1 ); // 1 min wait
+              callTimer( arguments[0], arguments[1] );
+        }, 1000 * 60 * 1, fancrawl_instagram_id, state ); // 1 min wait
     } else {
       // waits half a second and rechecks timer state
       if ( state === "quick_short" ) {
         setTimeout(
           function(){
-              timer_quick( fancrawl_instagram_id );
-        }, 500 ); // 0.5 sec
+              timer_quick( arguments[0] );
+        }, 500, fancrawl_instagram_id ); // 0.5 sec
 
       // waits half a second and rechecks timer state
       } else if ( state === "quick_long" ) {
         setTimeout(
           function(){
-              if ( timer[ fancrawl_instagram_id ] ) {
-                timer[ fancrawl_instagram_id ].quick_seconds = false;
-                timer_quick( fancrawl_instagram_id );
+              if ( timer[ arguments[0] ] ) {
+                timer[ arguments[0] ].quick_seconds = false;
+                timer_quick( arguments[0] );
               }
-        }, Math.floor( ( Math.random() * 500 ) + 1000 ) ); // 1 ~ 1.5 sec
+        }, Math.floor( ( Math.random() * 500 ) + 1000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
       } else if ( state === "post_short" ) {
 
         setTimeout(
           function(){
-            timer_post( fancrawl_instagram_id );
-        }, 5000 ); // 5 sec
+            timer_post( arguments[0] );
+        }, 5000, fancrawl_instagram_id ); // 5 sec
 
       } else if ( state === "post_long" ) {
         setTimeout(
           function(){
-            if ( timer[ fancrawl_instagram_id ] ) {
-              timer[ fancrawl_instagram_id ].post_minute = false;
-              timer_post( fancrawl_instagram_id );
+            if ( timer[ arguments[0] ] ) {
+              timer[ arguments[0] ].post_minute = false;
+              timer_post( arguments[0] );
             }
-        }, Math.floor( ( Math.random() * 10000 ) + 60000 ) ); // (1~1.25 minute delay)
+        }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
       }
     }
     };
@@ -1059,9 +1059,9 @@ var specialCounter = 0;
           var time = 1000 * 60 * 5;
           setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
             function(){
-            clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
-            delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-          }, time );
+            clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
+            delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          }, time, fancrawl_instagram_id, new_instagram_following_id, process, callback );
         }
 
     } else if ( process === "unfollow" || process === "unfollow_followedby") {
@@ -1080,9 +1080,9 @@ var specialCounter = 0;
           var time = 1000 * 60 * 5;
           setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
             function(){
-            clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
-            delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-          }, time );
+            clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
+            delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          }, time, fancrawl_instagram_id, new_instagram_following_id, process, callback );
         }
     // TIMER QUICK CONFIGURATIONS
     } else if ( process === "new" ) {
@@ -1104,9 +1104,9 @@ var specialCounter = 0;
         var time = 1000 * 10;
         setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
           function(){
-          clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
-          delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-        }, time );
+          clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
+          delete setTimeouts[ arguments[0] ][ arguments[1] ];
+        }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     } else {
 
@@ -1127,9 +1127,9 @@ var specialCounter = 0;
         var time = 1000 * 10;
         setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
           function(){
-          clockManager( fancrawl_instagram_id , new_instagram_following_id, process, callback);
-          delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-        }, time );
+          clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
+          delete setTimeouts[ arguments[0] ][ arguments[1] ];
+        }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
     };
@@ -1231,9 +1231,9 @@ var specialCounter = 0;
                   var time = 1000 * 30;
                   setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
                     function(){
-                    fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                    delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-                  }, time );
+                    fetchNewFollowers( arguments[0], arguments[1] );
+                    delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                  }, time, fancrawl_instagram_id, new_instagram_following_id );
                 }
 
               }
@@ -1255,7 +1255,6 @@ var specialCounter = 0;
 //  ZERO = verify time passed before removing ===================================
   var verifyRelationship      = function ( fancrawl_instagram_id, new_instagram_following_id ) {
 
-    console.log("CALLED", fancrawl_instagram_id, new_instagram_following_id);
     connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -1278,14 +1277,15 @@ var specialCounter = 0;
           // less then 2 days
           } else if ( code === 3 ) {
               // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
+
             var two_days  = 1000 * 60 * 60 * 48,
                 delay     = two_days - time_diff;
 
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
-                clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
-                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-            }, delay); // time between adding new followers (1 min wait)
+                clockManager( arguments[0], arguments[1], arguments[2] );
+                delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 1 day
           } else if ( code === 2 ) {
@@ -1294,9 +1294,9 @@ var specialCounter = 0;
 
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
-                clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
-                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-            }, delay); // time between adding new followers (1 min wait)
+                clockManager( arguments[0], arguments[1], arguments[2] );
+                delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 1 hour
           } else if ( code === 1 ) {
@@ -1305,9 +1305,9 @@ var specialCounter = 0;
 
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
-                clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
-                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-            }, delay); // time between adding new followers (1 min wait)
+                clockManager( arguments[0], arguments[1], arguments[2] );
+                delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 5 min
           } else if ( code === 0 ) {
@@ -1316,9 +1316,9 @@ var specialCounter = 0;
 
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
-                clockManager( fancrawl_instagram_id, new_instagram_following_id, code );
-                delete setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ];
-            }, delay); // time between adding new followers (1 min wait)
+                clockManager( arguments[0], arguments[1], arguments[2] );
+                delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
           } else {
             console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
           }
@@ -1350,8 +1350,8 @@ var specialCounter = 0;
           // console.log("VERIFY CLEANING - "+fancrawl_instagram_id+": "+JSON.stringify( timer[ fancrawl_instagram_id ] ) );
           setTimeout(
             function(){
-            verifyCleaning( fancrawl_instagram_id, callback );
-          }, totalDelay);
+            verifyCleaning( arguments[0], arguments[1] );
+          }, totalDelay, fancrawl_instagram_id, callback );
 
         } else {
           // no post queue so can keep going
@@ -1445,12 +1445,12 @@ var specialCounter = 0;
             setTimeout(
               function(){
               // console.log("CLEAN DATABASE - ROWS FOUND SET TIMEOUT CALLBACK");
-              verifyCleaning( fancrawl_instagram_id, function( fancrawl_instagram_id ) {
+              verifyCleaning( arguments[0], function( fancrawl_instagram_id ) {
                 // console.log("CALLLLLLLLBACKKKKKK");
                 // console.log(fancrawl_instagram_id);
                 callback( fancrawl_instagram_id );
               });
-            }, totalCountTime + 1000 );
+            }, totalCountTime + 1000, fancrawl_instagram_id );
 
           } else {
             // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
