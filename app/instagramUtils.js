@@ -14,8 +14,8 @@ var crypto                    = require('crypto'),
     usersInfo                 = {},
     timer                     = {},
     setTimeouts               = {},
-    random_second             = Math.floor( ( Math.random() * 500 ) + 1000 ),
-    random_minute             = Math.floor( ( Math.random() * 10000 ) + 60000 ),
+    // random_second             = Math.floor( ( Math.random() * 500 ) + 1000 ),
+    // random_minute             = Math.floor( ( Math.random() * 10000 ) + 60000 ),
     queueCap                  = 200,
     connection                = mysql.createConnection({
                                   host: 'localhost',
@@ -107,7 +107,7 @@ var crypto                    = require('crypto'),
                 timer[ fancrawl_instagram_id ].quick_seconds = false;
                 timer_quick( fancrawl_instagram_id );
               }
-        }, random_second ); // 1 ~ 1.5 sec
+        }, Math.floor( ( Math.random() * 500 ) + 1000 ) ); // 1 ~ 1.5 sec
 
       } else if ( state === "post_short" ) {
 
@@ -123,7 +123,7 @@ var crypto                    = require('crypto'),
               timer[ fancrawl_instagram_id ].post_minute = false;
               timer_post( fancrawl_instagram_id );
             }
-        }, random_minute ); // (1~1.25 minute delay)
+        }, Math.floor( ( Math.random() * 10000 ) + 60000 ) ); // (1~1.25 minute delay)
       }
     }
     };
@@ -165,6 +165,8 @@ var crypto                    = require('crypto'),
       timer[ fancrawl_instagram_id ].quick_queue.new        = {}; // handles sequence of people to add
     }
     };
+
+var specialCounter = 0;
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
@@ -231,7 +233,11 @@ var crypto                    = require('crypto'),
                   GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
 
-                    console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                      console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                      specialCounter++;
+                    }
                   });
                 } else if ( unfollowCount[0] ){
                   var last_instagram_following_id = unfollowCount[0];
@@ -241,12 +247,20 @@ var crypto                    = require('crypto'),
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
 
-                      console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                        console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        specialCounter++;
+                      }
                     });
                   } else if ( process === "unfollow_followedby" ) {
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
-
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                        console.log("TIMER POST UNFOLLOW_FOLLOWEDBY - marked "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        specialCounter++;
+                      }
                     });
                   } else {
                     console.log("TIMER POST XXXX - No process found... "+process);
@@ -262,13 +276,20 @@ var crypto                    = require('crypto'),
                   if ( process === "unfollow" ) {
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
-
-                      console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                        console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        specialCounter++;
+                      }
                     });
                   } else if ( process === "unfollow_followedby" ) {
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, function( fancrawl_instagram_id, last_instagram_following_id ){
                       delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ last_instagram_following_id ];
-
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                        console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        specialCounter++;
+                      }
                     });
                   } else {
                     console.log("TIMER POST XXXX - No process found... "+process);
@@ -278,8 +299,11 @@ var crypto                    = require('crypto'),
 
                   GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
-
-                    console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                      console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
+                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                      specialCounter++;
+                    }
                   });
                 }
                 timer[ fancrawl_instagram_id ].post_counter--;
@@ -1478,11 +1502,18 @@ var crypto                    = require('crypto'),
                 if ( rows && rows[0] ) {
                   for ( var i = 0; i < rows.length; i++ ) {
                     if ( rows[i].count !== 5 ) {
-                      verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                      var time = 100 * i;
+                      setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
+                        function(){
+                        verifyRelationship( arguments[0], arguments[1] );
+                        delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                      }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
                     };
                     var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
                     obj[ pickedOut ] = pickedOut;
                   }
+
+
 
                   // var oldestUser = 0;
                   for ( keys in obj ) {
@@ -2230,8 +2261,14 @@ var crypto                    = require('crypto'),
               if ( rows && rows[0] ) {
                 for ( var i = 0; i < rows.length; i++ ) {
                   if ( rows[i].count !== 5 ) {
-                    verifyRelationship( fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                    var time = 100 * i;
+                    setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout.call(
+                      function(){
+                      verifyRelationship( arguments[0], arguments[1] );
+                      delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                    }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
                   };
+
                   var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
                   obj[ pickedOut ] = pickedOut;
                 }
