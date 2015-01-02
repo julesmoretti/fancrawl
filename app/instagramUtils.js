@@ -1517,7 +1517,7 @@ var specialCounter = 0;
                       if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
                         console.log("||||||||| +++ startIndividual passed validity test and IN + IN + Rows", rows[i] );
                       }
-                      var time = 100 * i;
+                      var time = ( 100 * i ) + 100;
                       setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
                         function(){
 
@@ -1560,7 +1560,7 @@ var specialCounter = 0;
                   var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
                   fetchNewFollowers( fancrawl_instagram_id, newUser );
 
-                  console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
+                  // console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
 
                 }
 
