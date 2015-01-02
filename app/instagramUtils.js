@@ -1255,7 +1255,9 @@ var specialCounter = 0;
 
 //  ZERO = verify time passed before removing ===================================
   var verifyRelationship      = function ( fancrawl_instagram_id, new_instagram_following_id ) {
-
+    if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
+      console.log("||||||||| +++ verifyRelationship ", new_instagram_following_id );
+    }
     connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -1468,9 +1470,7 @@ var specialCounter = 0;
 
 //  ZERO = isolate scopes per users =============================================
   var startIndividual         = function ( fancrawl_instagram_id ) {
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual started" );
-    }
+
     // START USER SPECIFIC CLOCK
     timerPostStructure( fancrawl_instagram_id );
     timerQuickStructure( fancrawl_instagram_id );
@@ -1502,28 +1502,16 @@ var specialCounter = 0;
             });
           } else {
 
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual passed validity test", rows );
-    }
             // IF USER WAS STARTED
             if ( rows[0].state && rows[0].state === "started" ) {
               console.log("STARTED STATE: ", fancrawl_instagram_id);
               var state = rows[0].state;
 
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual passed validity test and IN" );
-    }
               connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                 if (err) throw err;
 
                 var obj = {};
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual passed validity test and IN + IN" );
-    }
                 if ( rows && rows[0] ) {
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual passed validity test and IN + IN + Rows", rows[0] );
-    }
                   for ( var i = 0; i < rows.length; i++ ) {
                     if ( rows[i].count !== 5 ) {
                       if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
@@ -1532,9 +1520,11 @@ var specialCounter = 0;
                       var time = 100 * i;
                       setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
                         function(){
+
                         if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
                           console.log("||||||||| +++ startIndividual started for: ", arguments[1] );
                         }
+
                         verifyRelationship( arguments[0], arguments[1] );
                         delete setTimeouts[ arguments[0] ][ arguments[1] ];
                       }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
