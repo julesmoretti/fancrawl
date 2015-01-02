@@ -1117,7 +1117,6 @@ var specialCounter = 0;
       // if < then 100 = add to queue and run callback
       if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
         // console.log("CURRENT USER: ", fancrawl_instagram_id);
-        console.log("INNNNNNNNNNNNNNNNN");
         timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ] = process;
         if ( callback ) {
           callback( fancrawl_instagram_id, new_instagram_following_id, process );
@@ -1255,9 +1254,6 @@ var specialCounter = 0;
 
 //  ZERO = verify time passed before removing ===================================
   var verifyRelationship      = function ( fancrawl_instagram_id, new_instagram_following_id ) {
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ verifyRelationship ", new_instagram_following_id );
-    }
     connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -1276,9 +1272,7 @@ var specialCounter = 0;
           // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
           if ( code === 4 ) {
             clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_verify" );
-            if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-              console.log("||||||||| +++ verifyRelationship - Code 4");
-            }
+
           // less then 2 days
           } else if ( code === 3 ) {
               // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
@@ -1516,20 +1510,15 @@ var specialCounter = 0;
                   var i = 0;
                   var func = function(){
 
-                    if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
-                      console.log("||||||||| +++ startIndividual started for: ", arguments[1][i] );
-                    }
-
                     verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
-
                     if ( i < rows.length - 1 ) {
                       i++;
                     } else {
-                      clearInterval( startIndividualSetTimeout );
+                      clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
                     }
                   };
 
-                  var startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
+                  setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
 
                   connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                     if (err) throw err;
@@ -2279,39 +2268,84 @@ var specialCounter = 0;
               var obj = {};
 
               if ( rows && rows[0] ) {
-                for ( var i = 0; i < rows.length; i++ ) {
-                  if ( rows[i].count !== 5 ) {
-                    var time = 100 * i;
-                    setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
-                      function(){
-                      verifyRelationship( arguments[0], arguments[1] );
-                      delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                    }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
-                  };
 
-                  var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
-                  obj[ pickedOut ] = pickedOut;
-                }
+                var i = 0;
+                var func = function(){
 
-                for ( keys in obj ) {
-                  var oldestUser = keys;
-                }
+                  verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
+                  if ( i < rows.length - 1 ) {
+                    i++;
+                  } else {
+                    clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
+                  }
+                };
+
+                setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
+
+                connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                  var currentUser = JSON.parse( fancrawl_instagram_id );
+
+                  if ( rows && rows[0] ) {
+                    var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id );
+
+                    if ( new_instagram_following_id < currentUser ) {
+                      var newUser = ( currentUser + 1 );
+                      fetchNewFollowers( fancrawl_instagram_id, newUser );
+                      console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
+                    } else {
+                      fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                      console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
+                    }
+                  } else {
+                    var new_instagram_following_id = ( currentUser + 1 );
+                  }
+
+                });
+
+
+
+
+
+
+
+
+
+
+
+                // for ( var i = 0; i < rows.length; i++ ) {
+                //   if ( rows[i].count !== 5 ) {
+                //     var time = 100 * i;
+                //     setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
+                //       function(){
+                //       verifyRelationship( arguments[0], arguments[1] );
+                //       delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                //     }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
+                //   };
+
+                //   var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
+                //   obj[ pickedOut ] = pickedOut;
+                // }
+
+                // for ( keys in obj ) {
+                //   var oldestUser = keys;
+                // }
 
                 // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
 
-                var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
+                // var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
 
-                console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                console.log("FETCHING - FROM TRIGGER: ", new_instagram_following_id);
+                // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                // console.log("FETCHING - FROM TRIGGER: ", new_instagram_following_id);
 
-                var currentUser = JSON.parse( fancrawl_instagram_id );
+                // var currentUser = JSON.parse( fancrawl_instagram_id );
 
-                if ( new_instagram_following_id < currentUser ) {
-                  var newUser = ( currentUser + 1 );
-                  fetchNewFollowers( fancrawl_instagram_id, newUser );
-                } else {
-                  fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                }
+                // if ( new_instagram_following_id < currentUser ) {
+                //   var newUser = ( currentUser + 1 );
+                //   fetchNewFollowers( fancrawl_instagram_id, newUser );
+                // } else {
+                //   fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                // }
 
               } else {
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
