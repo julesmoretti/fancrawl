@@ -1117,6 +1117,7 @@ var specialCounter = 0;
       // if < then 100 = add to queue and run callback
       if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
         // console.log("CURRENT USER: ", fancrawl_instagram_id);
+        console.log("INNNNNNNNNNNNNNNNN");
         timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ] = process;
         if ( callback ) {
           callback( fancrawl_instagram_id, new_instagram_following_id, process );
@@ -1273,7 +1274,9 @@ var specialCounter = 0;
           // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
           if ( code === 4 ) {
             clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_verify" );
-
+            if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+              console.log("||||||||| +++ verifyRelationship - Code 4");
+            }
           // less then 2 days
           } else if ( code === 3 ) {
               // console.log("VERIFY RELATIONSHIP: "+new_instagram_following_id+" code is "+code);
@@ -1513,6 +1516,9 @@ var specialCounter = 0;
                       var time = 100 * i;
                       setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
                         function(){
+                        if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
+                          console.log("||||||||| +++ startIndividual started for: ", arguments[1] );
+                        }
                         verifyRelationship( arguments[0], arguments[1] );
                         delete setTimeouts[ arguments[0] ][ arguments[1] ];
                       }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
