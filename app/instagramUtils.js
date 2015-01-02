@@ -1507,51 +1507,51 @@ var specialCounter = 0;
               console.log("STARTED STATE: ", fancrawl_instagram_id);
               var state = rows[0].state;
 
-              connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+              connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
                 if (err) throw err;
 
                 var obj = {};
                 if ( rows && rows[0] ) {
-                  for ( var i = 0; i < rows.length; i++ ) {
-                    if ( rows[i].count !== 5 ) {
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("||||||||| +++ startIndividual passed validity test and IN + IN + Rows", rows[i] );
+
+                  var i = 0;
+                  var func = function(){
+
+                    if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
+                      console.log("||||||||| +++ startIndividual started for: ", arguments[1][i] );
+                    }
+
+                    verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
+
+                    if ( i < rows.length - 1 ) {
+                      i++;
+                    } else {
+                      clearInterval( startIndividualSetTimeout );
+                    }
+                  };
+
+                  var startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
+
+                  connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    var currentUser = JSON.parse( fancrawl_instagram_id );
+
+                    if ( rows && rows[0] ) {
+                      var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id );
+
+                      if ( new_instagram_following_id < currentUser ) {
+                        var newUser = ( currentUser + 1 );
+                        fetchNewFollowers( fancrawl_instagram_id, newUser );
+                        console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
+                      } else {
+                        fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
+                        console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
                       }
-                      var time = ( 100 * i ) + 100;
-                      setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
-                        function(){
+                    } else {
+                      var new_instagram_following_id = ( currentUser + 1 );
+                    }
 
-                        if ( arguments[0] === 571377691 || arguments[0] === "571377691" ) {
-                          console.log("||||||||| +++ startIndividual started for: ", arguments[1] );
-                        }
+                  });
 
-                        verifyRelationship( arguments[0], arguments[1] );
-                        delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                      }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
-                    };
-                    var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
-                    obj[ pickedOut ] = pickedOut;
-                  }
-
-
-
-                  // var oldestUser = 0;
-                  for ( keys in obj ) {
-                    var oldestUser = keys;
-                  }
-
-                  var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
-
-                  var currentUser = JSON.parse( fancrawl_instagram_id );
-
-                  if ( new_instagram_following_id < currentUser ) {
-                    var newUser = ( currentUser + 1 );
-                    fetchNewFollowers( fancrawl_instagram_id, newUser );
-                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
-                  } else {
-                    fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                    console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", new_instagram_following_id );
-                  }
 
                 } else {
 
