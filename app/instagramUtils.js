@@ -1500,13 +1500,10 @@ var specialCounter = 0;
               console.log("API error or access_token missing or oauth_limit rate reached so stopped account "+fancrawl_instagram_id+" on server restart");
               console.log("STOPPED STATE: ", fancrawl_instagram_id);
             });
-    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual failed validity test" );
-    }
           } else {
 
     if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-      console.log("||||||||| +++ startIndividual passed validity test" );
+      console.log("||||||||| +++ startIndividual passed validity test", rows );
     }
             // IF USER WAS STARTED
             if ( rows[0].state && rows[0].state === "started" ) {
