@@ -1468,7 +1468,9 @@ var specialCounter = 0;
 
 //  ZERO = isolate scopes per users =============================================
   var startIndividual         = function ( fancrawl_instagram_id ) {
-
+    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+      console.log("||||||||| +++ startIndividual started" );
+    }
     // START USER SPECIFIC CLOCK
     timerPostStructure( fancrawl_instagram_id );
     timerQuickStructure( fancrawl_instagram_id );
