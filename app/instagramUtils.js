@@ -1526,6 +1526,9 @@ var specialCounter = 0;
     }
                   for ( var i = 0; i < rows.length; i++ ) {
                     if ( rows[i].count !== 5 ) {
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("||||||||| +++ startIndividual passed validity test and IN + IN + Rows", rows[i] );
+                      }
                       var time = 100 * i;
                       setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
                         function(){
