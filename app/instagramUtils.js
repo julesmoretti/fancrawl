@@ -1254,6 +1254,8 @@ var specialCounter = 0;
 
 //  ZERO = verify time passed before removing ===================================
   var verifyRelationship      = function ( fancrawl_instagram_id, new_instagram_following_id ) {
+
+    console.log("CALLED", fancrawl_instagram_id, new_instagram_following_id);
     connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] ) {
@@ -2268,7 +2270,7 @@ var specialCounter = 0;
                 for ( var i = 0; i < rows.length; i++ ) {
                   if ( rows[i].count !== 5 ) {
                     var time = 100 * i;
-                    setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout.call(
+                    setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
                       function(){
                       verifyRelationship( arguments[0], arguments[1] );
                       delete setTimeouts[ arguments[0] ][ arguments[1] ];
