@@ -55,6 +55,7 @@
             <% if ( admin && userName && userID){ %>
               <li><a href="/users?user=<%= userName %>&id=<%= userID %>" target="_self">Users</a></li>
             <% } %>
+            <li><a href="http://instagram.com/<%= userName %>" target="_blank">Instagram Profile</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
             <li><a onclick="logOut();">SIGN OUT</a></li>
