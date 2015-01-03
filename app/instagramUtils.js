@@ -2012,24 +2012,13 @@ var crypto                    = require('crypto'),
     });
     };
 
-//  ZERO = load list of users from FanCrawl =====================================
-  exports.dash_admin          = function ( req, res ) {
-    var original_url          = req.headers.referer,
-        url_split             = original_url.split("?"),
-        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-        console.log(req_query);
-        if ( req_query.user === "jules_moretti" && req_query.id === "571377691" ) {
-          // redirect to the user_list
-          res.redirect('/dashboard?user='+req_query.user+'&id='+req_query.id);
-        } else {
-          res.redirect('/404/');
-        }
-    };
-
 //  FOURTH = go grab instagram follower/ed data and show it =====================
   exports.dashboard           = function ( req, res ) {
     var metrics = {
+                    'admin': false,
+                    'fullName': '',
                     'userName': '',
+                    'userID': '',
                     'userPicture': '',
                     'totalCrawled': 0,
                     'followingFromFanCrawl': 0,
@@ -2076,7 +2065,14 @@ var crypto                    = require('crypto'),
 
         } else {
           console.log("User "+req.query.id+" granted");
-          metrics.userName = rows[0].fancrawl_full_name;
+
+          if ( req.query.user === "jules_moretti" ) {
+            metrics.admin = true;
+          }
+
+          metrics.fullName = rows[0].fancrawl_full_name;
+          metrics.userName = rows[0].fancrawl_username;
+          metrics.userID = req.query.id;
           metrics.userPicture = rows[0].fancrawl_profile_picture;
 
           // console.log(rows[0].state);
@@ -2248,22 +2244,47 @@ var crypto                    = require('crypto'),
 //  ZERO = load list of users from FanCrawl =====================================
   exports.users          = function ( req, res ) {
     var metrics               = {
+                                'admin': false,
                                 'users': {},
-                                'userPicture': 'https://instagramimages-a.akamaihd.net/profiles/profile_571377691_75sq_1390450015.jpg',
-                                'userName': "Jules Moretti",
-                                'userID': "571377691"
+                                'fullName': '',
+                                'userName': '',
+                                'userID': '',
+                                'userPicture': ''
                                 };
 
-              connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture from access_right', function(err, rows, fields) {
-                if (err) throw err;
-                if ( rows && rows[0] ){
-                  for ( var i = 0; i < rows.length; i++ ) {
-                    metrics.users[ rows[i].fancrawl_instagram_id ] = rows[i];
-                  }
-                }
-                res.render('./partials/users.ejs',  metrics );
-              });
 
+    if (JSON.stringify(req.query).length !== 2 && req.query.user !== undefined && req.query.id !== undefined) {
+      // console.log("has valid structure");
+
+      // check access rights from database.
+      connection.query('SELECT fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
+        if (err) throw err;
+
+        if (rows[0] === undefined || rows[0].fancrawl_username === undefined || rows[0].fancrawl_username !== req.query.user){
+          console.log("User not granted");
+          res.redirect('/404/');
+          return;
+        } else {
+          metrics.admin           = true;
+          metrics.fullName        = rows[0].fancrawl_full_name;
+          metrics.userName        = rows[0].fancrawl_username;
+          metrics.userID          = rows[0].fancrawl_instagram_id;
+          metrics.userPicture     = rows[0].fancrawl_profile_picture;
+
+          connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture from access_right', function(err, rows, fields) {
+            if (err) throw err;
+            if ( rows && rows[0] ){
+              for ( var i = 0; i < rows.length; i++ ) {
+                metrics.users[ rows[i].fancrawl_instagram_id ] = rows[i];
+              }
+            }
+            res.render('./partials/users.ejs',  metrics );
+          });
+        }
+      });
+    } else {
+      res.redirect('/404/');
+    }
     };
 
 //  ZERO = trigger FanCrawl =====================================================

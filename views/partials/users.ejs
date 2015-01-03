@@ -41,10 +41,10 @@
           <% } %>
 
           <!-- check ejs for instagram user name data -->
-          <% if ( userName ){ %>
-            <span><%= userName %></span>
+          <% if ( fullName ){ %>
+            <span><%= fullName %></span>
           <% } else { %>
-            <span>John Smith</span>
+            <span>...</span>
           <% } %>
 
           <div></div>
@@ -52,8 +52,8 @@
         <div></div>
         <div id="hidden" class="userMenu">
           <ul>
-            <% if ( userName === "Jules Moretti" ){ %>
-              <li><a href="/dashboard?user=jules_moretti&id=571377691" target="_self">Dashboard</a></li>
+            <% if ( admin && userName && userID ){ %>
+              <li><a href="/dashboard?user=<%= userName %>&id=<%= userID %>" target="_self">Dashboard</a></li>
             <% } %>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
