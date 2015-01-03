@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+  <head>
+    <title>FanCrawl - Users</title>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-53564857-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/views/img/instagram_logo.svg">
+    <link rel="alternate icon" type="image/svg+xml" href="/views/img/instagram_logo.png">
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width = 320,
+       initial-scale = 1, user-scalable = no, minimal-ui">
+    <link rel="stylesheet" type="text/css" href="/views/css/users.css" media="all">
+    <script src="/app/jquery-2.1.1.min.js"></script>
+    <script src="/app/d3.min.js" charset="utf-8"></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="headerInner">
+        <!-- main logo -->
+        <span>FanCrawl</span>
+
+        <!-- toggle submenu -->
+        <div class="user" onclick="$('#hidden').toggleClass('show');">
+
+          <!-- check ejs for instagram user data -->
+          <% if ( userPicture ){ %>
+            <img src="<%= userPicture %>"/>
+          <% } else { %>
+            <img src="/views/img/profile_blank_gray.jpg"/>
+          <% } %>
+
+          <!-- check ejs for instagram user name data -->
+          <% if ( userName ){ %>
+            <span><%= userName %></span>
+          <% } else { %>
+            <span>John Smith</span>
+          <% } %>
+
+          <div></div>
+        </div>
+        <div></div>
+        <div id="hidden" class="userMenu">
+          <ul>
+            <li><a href="/dash_admin" target="_self">Dashboard</a></li>
+            <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
+            <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
+            <li><a onclick="logOut();">SIGN OUT</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="bannerInner">
+        <span>Users</span>
+      </div>
+    </div>
+    <div class="container">
+      <div class="containerInner">
+          <div class="mainControllers">
+            <div class="controllerList">
+              <div class="controllerDescription">
+                <ul>
+                  <% if ( users && JSON.stringify(users).length > 2 ){ %>
+                    <% for ( keys in users ) {%>
+                      <li><a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>" style="height: 50px; width: 50px; border-radius: 50px; margin-top: 18px; margin-left: 18px;"></img><span><%= users[ keys ].fancrawl_full_name %></span></a></li>
+                    <% } %>
+                  <% } else { %>
+                      <li><span>N/A</span></li>
+                  <% } %>
+                </ul>
+              </div>
+              <div class="controllerStatus">
+                <ul>
+                  <% if ( users && JSON.stringify(users).length > 2 ){ %>
+                    <% for ( keys in users ) {%>
+                      <li><span class="<%= users[ keys ].state %>"><%= users[ keys ].state %></span></li>
+                    <% } %>
+                  <% } else { %>
+                      <li><span>N/A</span></li>
+                  <% } %>
+                </ul>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="status_bar">
+      <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
+    </div>
+    <div id="menuHide" onclick="$('#hidden').removeClass('show');"></div>
+
+
+    <script src="/views/js/d3_chart.js" charset="utf-8"></script>
+    <script src="/views/js/d3_ani_dash.js" charset="utf-8"></script>
+    <script src="/views/js/toggles.js" charset="utf-8"></script>
+  </body>
+
+</html>

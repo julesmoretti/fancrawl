@@ -14,8 +14,7 @@ var crypto                    = require('crypto'),
     usersInfo                 = {},
     timer                     = {},
     setTimeouts               = {},
-    // random_second             = Math.floor( ( Math.random() * 500 ) + 1000 ),
-    // random_minute             = Math.floor( ( Math.random() * 10000 ) + 60000 ),
+    specialCounter            = 0,
     queueCap                  = 200,
     connection                = mysql.createConnection({
                                   host: 'localhost',
@@ -165,8 +164,6 @@ var crypto                    = require('crypto'),
       timer[ fancrawl_instagram_id ].quick_queue.new        = {}; // handles sequence of people to add
     }
     };
-
-var specialCounter = 0;
 
 //  ZERO = neutral timer function for post requests =============================
   var timer_post              = function ( fancrawl_instagram_id ) {
@@ -675,14 +672,14 @@ var specialCounter = 0;
           headers: headers
           }
 
-      request(options, function (error, response, body) {
+      request( options, function ( error, response, body ) {
 
         // if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
         //   console.log("relationship "+new_instagram_following_id+" : ", body);
         // }
 
         // CHECK FOR BODY
-        if (error) {
+        if ( error ) {
           console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error "+new_instagram_following_id+" - ", error);
           sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
           callback(fancrawl_instagram_id, new_instagram_following_id, "error");
@@ -2015,6 +2012,20 @@ var specialCounter = 0;
     });
     };
 
+//  ZERO = load list of users from FanCrawl =====================================
+  exports.dash_admin          = function ( req, res ) {
+    var original_url          = req.headers.referer,
+        url_split             = original_url.split("?"),
+        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        console.log(req_query);
+        if ( req_query.user === "jules_moretti" && req_query.id === "571377691" ) {
+          // redirect to the user_list
+          res.redirect('/dashboard?user='+req_query.user+'&id='+req_query.id);
+        } else {
+          res.redirect('/404/');
+        }
+    };
+
 //  FOURTH = go grab instagram follower/ed data and show it =====================
   exports.dashboard           = function ( req, res ) {
     var metrics = {
@@ -2234,11 +2245,50 @@ var specialCounter = 0;
     return;
     };
 
+
+//  ZERO = load list of users from FanCrawl =====================================
+  exports.users               = function ( req, res ) {
+    var original_url          = req.headers.referer,
+        url_split             = original_url.split("?"),
+        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        console.log(req_query);
+        if ( req_query.user === "jules_moretti" && req_query.id === "571377691" ) {
+          // redirect to the user_list
+          res.redirect('/users_list?user='+req_query.user+'&id='+req_query.id);
+        } else {
+          res.redirect('/404/');
+        }
+    };
+
+//  ZERO = load list of users from FanCrawl =====================================
+  exports.users_list          = function ( req, res ) {
+    var original_url          = req.headers.referer,
+        url_split             = original_url.split("?"),
+        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    var metrics               = {
+                                'users': {},
+                                'userPicture': 'https://instagramimages-a.akamaihd.net/profiles/profile_571377691_75sq_1390450015.jpg',
+                                'userName': "Jules Moretti",
+                                'userID': req_query.id
+                                };
+
+              connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture from access_right', function(err, rows, fields) {
+                if (err) throw err;
+                if ( rows && rows[0] ){
+                  for ( var i = 0; i < rows.length; i++ ) {
+                    metrics.users[ rows[i].fancrawl_instagram_id ] = rows[i];
+                  }
+                }
+                res.render('./partials/users.ejs',  metrics );
+              });
+
+    };
+
 //  ZERO = trigger FanCrawl =====================================================
   exports.trigger             = function ( req, res ) {
-    var original_url        = req.headers.referer,
-        url_split           = original_url.split("?"),
-        req_query           = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
+    var original_url          = req.headers.referer,
+        url_split             = original_url.split("?"),
+        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
 
