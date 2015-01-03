@@ -2262,14 +2262,11 @@ var crypto                    = require('crypto'),
 
 //  ZERO = load list of users from FanCrawl =====================================
   exports.users_list          = function ( req, res ) {
-    var original_url          = req.headers.referer,
-        url_split             = original_url.split("?"),
-        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
     var metrics               = {
                                 'users': {},
                                 'userPicture': 'https://instagramimages-a.akamaihd.net/profiles/profile_571377691_75sq_1390450015.jpg',
                                 'userName': "Jules Moretti",
-                                'userID': req_query.id
+                                'userID': "571377691"
                                 };
 
               connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture from access_right', function(err, rows, fields) {
