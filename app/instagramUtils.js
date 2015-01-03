@@ -1515,7 +1515,7 @@ var crypto                    = require('crypto'),
                     }
                   };
 
-                  setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
+                  setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
 
                   connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                     if (err) throw err;
@@ -2327,7 +2327,7 @@ var crypto                    = require('crypto'),
                   }
                 };
 
-                setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 100, fancrawl_instagram_id, rows );
+                setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
 
                 connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
