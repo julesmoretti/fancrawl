@@ -234,7 +234,7 @@ html {
                   display: table;
                   width: 100%; }
                   html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a {
-                    z-index: 100;
+                    z-index: 75;
                     position: absolute; }
                     html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a span {
                       display: inline;
