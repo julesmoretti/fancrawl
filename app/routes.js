@@ -35,14 +35,7 @@ var instagramUtils = require('./instagramUtils.js');
     app.get('/dashboard', instagramUtils.dashboard);
 
     // main dashboard page
-    app.get('/dash_admin', instagramUtils.dash_admin);
-
-    // main dashboard page
     app.get('/users', instagramUtils.users);
-
-    // main dashboard page
-    app.get('/users_list', instagramUtils.users_list);
-
 
     // 404 not found error page
     app.get('/404/', function(req, res){

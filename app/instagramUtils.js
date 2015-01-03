@@ -2245,23 +2245,8 @@ var crypto                    = require('crypto'),
     return;
     };
 
-
 //  ZERO = load list of users from FanCrawl =====================================
-  exports.users               = function ( req, res ) {
-    var original_url          = req.headers.referer,
-        url_split             = original_url.split("?"),
-        req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-        console.log(req_query);
-        if ( req_query.user === "jules_moretti" && req_query.id === "571377691" ) {
-          // redirect to the user_list
-          res.redirect('/users_list?user='+req_query.user+'&id='+req_query.id);
-        } else {
-          res.redirect('/404/');
-        }
-    };
-
-//  ZERO = load list of users from FanCrawl =====================================
-  exports.users_list          = function ( req, res ) {
+  exports.users          = function ( req, res ) {
     var metrics               = {
                                 'users': {},
                                 'userPicture': 'https://instagramimages-a.akamaihd.net/profiles/profile_571377691_75sq_1390450015.jpg',
