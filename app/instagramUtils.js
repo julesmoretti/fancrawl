@@ -207,13 +207,13 @@ var crypto                    = require('crypto'),
             if ( postQueueCount !== 0 ) {
               // ramp cap conditions
               if ( postQueueCount > 1500 ) {
-                timer[ fancrawl_instagram_id ].counterCap = 4;
+                timer[ fancrawl_instagram_id ].counterCap = 5;
               } else if ( postQueueCount > 1000 ) {
-                timer[ fancrawl_instagram_id ].counterCap = 3;
+                timer[ fancrawl_instagram_id ].counterCap = 4;
               } else if ( postQueueCount > 500 ) {
-                timer[ fancrawl_instagram_id ].counterCap = 2;
+                timer[ fancrawl_instagram_id ].counterCap = 3;
               } else {
-                timer[ fancrawl_instagram_id ].counterCap = 1;
+                timer[ fancrawl_instagram_id ].counterCap = 2;
               }
             } else {
               timer[ fancrawl_instagram_id ].counterCap = 0;
@@ -1086,10 +1086,11 @@ var crypto                    = require('crypto'),
 
       // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
       var quick_count_new = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length;
-      var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
+      // var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
       // if < then 100 = add to queue and run callback
-      if ( quick_count_new < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+      // if ( quick_count_new < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+      if ( quick_count_new < ( queueCap - 2 ) ) {
         // console.log("CURRENT USER: ", fancrawl_instagram_id);
         timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ] = process;
         if ( callback ) {
@@ -1106,13 +1107,15 @@ var crypto                    = require('crypto'),
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     } else {
+      // if process = "unfollow_verify" or 3,2,1,0
 
       // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
       var quick_count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify ).length;
-      var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
+      // var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
       // if < then 100 = add to queue and run callback
-      if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+      // if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
+      if ( quick_count_verify < ( queueCap - 2 ) ) {
         // console.log("CURRENT USER: ", fancrawl_instagram_id);
         timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ] = process;
         if ( callback ) {
