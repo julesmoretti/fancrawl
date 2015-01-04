@@ -206,11 +206,11 @@ var crypto                    = require('crypto'),
 
             if ( postQueueCount !== 0 ) {
               // ramp cap conditions
-              if ( postQueueCount > 1500 ) {
+              if ( postQueueCount > queueCap ) {
                 timer[ fancrawl_instagram_id ].counterCap = 5;
-              } else if ( postQueueCount > 1000 ) {
+              } else if ( postQueueCount > ( queueCap * 0.75 ) ) {
                 timer[ fancrawl_instagram_id ].counterCap = 4;
-              } else if ( postQueueCount > 500 ) {
+              } else if ( postQueueCount > ( queueCap * 0.5 ) ) {
                 timer[ fancrawl_instagram_id ].counterCap = 3;
               } else {
                 timer[ fancrawl_instagram_id ].counterCap = 2;
