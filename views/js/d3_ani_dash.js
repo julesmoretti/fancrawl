@@ -1,5 +1,16 @@
 // DASHBOARD
 
+// mask
+d3.selectAll("#mask")
+    .style("opacity", 1)
+    .transition()
+    .delay(100)
+    .duration(500)
+    .style("opacity", 0)
+    .transition()
+    .delay(1000)
+    .style("display", "none");
+
 // warning errors
   d3.selectAll('.warnings')
     .style("top", -300+"px")

@@ -78,7 +78,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-  sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  // sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );

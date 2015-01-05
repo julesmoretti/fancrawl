@@ -25,13 +25,14 @@
   </head>
 
   <body>
+    <div id="mask"></div>
     <div class="header">
       <div class="headerInner">
         <!-- main logo -->
         <span>FanCrawl</span>
 
         <!-- toggle submenu -->
-        <div class="user" onclick="$('#hidden').toggleClass('show');">
+        <div class="user" onclick="$('#hidden').toggleClass('show'); $('.user div').toggleClass('rotate');">
 
           <!-- check ejs for instagram user data -->
           <% if ( userPicture ){ %>
@@ -58,7 +59,7 @@
             <li><a href="http://instagram.com/<%= userName %>" target="_blank">Instagram Profile</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
-            <li><a onclick="logOut();">SIGN OUT</a></li>
+            <li><a onclick="logOut();" style="cursor: pointer;">SIGN OUT</a></li>
           </ul>
         </div>
       </div>

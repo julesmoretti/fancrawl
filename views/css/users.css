@@ -50,6 +50,12 @@ html {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none; }
+    html body #mask {
+      background-color: #222;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 1000; }
     html body a {
       color: #aaa;
       text-decoration: none; }
@@ -108,7 +114,12 @@ html {
             top: 10px;
             right: 12px;
             color: #727272;
-            font-size: 12px; }
+            font-size: 12px;
+            transform: rotate(90deg);
+            -webkit-transition: all 0.2s linear;
+            -moz-transition: all 0.2s linear; }
+            html body .header .headerInner .user div.rotate {
+              transform: rotate(0deg); }
             html body .header .headerInner .user div:before {
               content: "\f104"; }
         html body .header .headerInner div:nth-of-type(2) {
@@ -130,10 +141,12 @@ html {
           opacity: 0;
           z-index: -10;
           -webkit-transition: all 0.2s linear;
-          -moz-transition: all 0.2s linear; }
+          -moz-transition: all 0.2s linear;
+          pointer-events: none; }
           html body .header .headerInner .userMenu.show {
             opacity: 1;
-            top: 44px; }
+            top: 44px;
+            pointer-events: all; }
           html body .header .headerInner .userMenu ul {
             font-family: "inst_reg";
             font-size: 12px;
@@ -216,7 +229,7 @@ html {
             margin-top: 16px;
             font-family: "inst_semibold"; }
             html body .container .containerInner .mainControllers .controllerList .controllerDescription {
-              width: 67%;
+              width: 100%;
               display: inline-block;
               /*border-right: 1px solid #595959;*/
               background-color: #666666; }
@@ -231,111 +244,49 @@ html {
                 html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li {
                   height: 88px;
                   border-bottom: 1px solid #808080;
-                  display: table;
-                  width: 100%; }
+                  position: relative; }
                   html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a {
                     z-index: 75;
                     position: absolute; }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a img {
+                      height: 50px;
+                      width: 50px;
+                      border-radius: 50px;
+                      margin-top: 18px;
+                      margin-left: 18px; }
                     html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a span {
-                      display: inline;
                       vertical-align: middle;
-                      padding-left: 16px;
-                      padding-right: 16px;
                       font-style: italic;
                       font-size: 14px;
                       color: #c5c5c5;
                       top: -21px; }
-                      html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a span input {
-                        z-index: 99;
-                        position: relative;
-                        margin-left: 20px;
-                        margin-top: 6px;
-                        background-color: #808080;
-                        border: none;
-                        border-radius: 5px;
-                        color: #333;
-                        padding: 6px 14px;
-                        width: calc(100% - 68px);
-                        font-family: inst_reg;
-                        font-size: 12px; }
-                html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li:nth-last-of-type(1) {
-                  border-bottom: 0px solid #808080; }
-            html body .container .containerInner .mainControllers .controllerList .controllerStatus {
-              width: 33%;
-              display: inline-block;
-              position: absolute;
-              right: 0px;
-              /*border-left: 1px solid #595959;*/
-              background-color: #595959; }
-              html body .container .containerInner .mainControllers .controllerList .controllerStatus ul {
-                font-family: "inst_reg";
-                font-size: 12px;
-                list-style-type: none;
-                -webkit-padding-start: 0px;
-                -webkit-margin-before: 0em;
-                -webkit-margin-after: 0em;
-                color: #b2b2b2; }
-                html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li {
-                  height: 88px;
-                  border-bottom: 1px solid #444444;
-                  display: table;
-                  width: 100%; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li span {
-                    display: table-cell;
-                    vertical-align: middle;
-                    padding-left: 16px;
-                    padding-right: 16px;
-                    font-size: 16px;
-                    color: #999;
-                    text-align: center; }
-                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li span.stopped {
-                      background-color: #e43;
-                      color: #ececec; }
-                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li span.started {
-                      background-color: #6d7;
-                      color: #ececec; }
-                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li span.cleaning {
-                      background-color: #fd3;
-                      color: #ececec; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .disabledButton {
-                    color: #444 !important;
-                    border-right: 0px !important;
-                    border-left: 0px !important; }
-                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .disabledButton:hover {
-                      background-color: #595959 !important;
-                      cursor: default !important; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .saveButton {
-                    background-color: #595959;
-                    -webkit-border-radius: 0px;
-                    -moz-border-radius: 0px;
-                    border-radius: 0px;
-                    text-indent: 0px;
-                    border-left: 1px solid #595959;
-                    border-right: 1px solid #595959;
-                    border-top: 0px;
-                    border-bottom: 0px;
-                    display: inline-block;
-                    color: #999;
-                    font-family: "inst_semibold";
-                    font-size: 24px;
-                    font-weight: bold;
-                    font-style: normal;
-                    height: inherit;
-                    line-height: inherit;
-                    width: 100%;
-                    text-decoration: none;
-                    text-align: center;
+                  html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div {
+                    margin-left: 67%;
+                    width: 33%;
                     position: absolute;
-                    left: 0px; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .saveButton:hover {
-                    background-color: #444;
-                    cursor: pointer;
-                    border-left: 1px solid #444;
-                    border-right: 1px solid #444; }
-                  html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .saveButton:active {
-                    position: relative;
-                    top: 1px; }
-                html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li:nth-last-of-type(1) {
+                    text-align: center;
+                    height: 100%; }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div.started {
+                      background-color: rgba(100, 221, 124, 0.5); }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div.cleaning {
+                      background-color: rgba(253, 217, 47, 0.5); }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div.stopped {
+                      background-color: rgba(241, 61, 50, 0.5); }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div span {
+                      padding-left: 0px;
+                      display: block;
+                      top: calc( 50% - 6px); }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div #user_details {
+                      background-color: red;
+                      height: 100px;
+                      width: 98%;
+                      /* display: table-row-group; */
+                      /* position: absolute; */
+                      margin-left: 0;
+                      top: 88px;
+                      left: 1%;
+                      display: none; }
+                html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li:nth-last-of-type(1) {
                   border-bottom: 0px solid #808080; }
           html body .container .containerInner .mainControllers.updateSettings {
             height: 55px;

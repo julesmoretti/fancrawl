@@ -25,13 +25,14 @@
   </head>
 
   <body>
+    <div id="mask"></div>
     <div class="header">
       <div class="headerInner">
         <!-- main logo -->
         <span>FanCrawl</span>
 
         <!-- toggle submenu -->
-        <div class="user" onclick="$('#hidden').toggleClass('show');">
+        <div class="user" onclick="$('#hidden').toggleClass('show'); $('.user div').toggleClass('rotate');">
 
           <!-- check ejs for instagram user data -->
           <% if ( userPicture ){ %>
@@ -58,7 +59,7 @@
             <li><a href="http://instagram.com/<%= userName %>" target="_blank">Instagram Profile</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/" target="_blank" onclick="$('#hidden').removeClass('show');">About FanCrawl</a></li>
             <li><a href="http://github.com/julesmoretti/fancrawl/issues" target="_blank" onclick="$('#hidden').removeClass('show');">Report Issues</a></li>
-            <li><a onclick="logOut();">SIGN OUT</a></li>
+            <li><a onclick="logOut();" style="cursor: pointer;">SIGN OUT</a></li>
           </ul>
         </div>
       </div>
@@ -77,18 +78,11 @@
                 <ul>
                   <% if ( users && JSON.stringify(users).length > 2 ){ %>
                     <% for ( keys in users ) {%>
-                      <li><a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>" style="height: 50px; width: 50px; border-radius: 50px; margin-top: 18px; margin-left: 18px;"></img><span><%= users[ keys ].fancrawl_full_name %></span></a></li>
-                    <% } %>
-                  <% } else { %>
-                      <li><span>N/A</span></li>
-                  <% } %>
-                </ul>
-              </div>
-              <div class="controllerStatus">
-                <ul>
-                  <% if ( users && JSON.stringify(users).length > 2 ){ %>
-                    <% for ( keys in users ) {%>
-                      <li><span class="<%= users[ keys ].state %>"><%= users[ keys ].state %></span></li>
+                      <li>
+                        <a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>"></img><span><%= users[ keys ].fancrawl_full_name %></span></a>
+                        <div class="<%= users[ keys ].state %>"><span><%= users[ keys ].state %></span></div>
+                        <div id="user_details"></div>
+                      </li>
                     <% } %>
                   <% } else { %>
                       <li><span>N/A</span></li>
