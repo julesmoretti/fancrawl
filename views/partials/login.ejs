@@ -13,7 +13,8 @@
        initial-scale = 0.5, user-scalable = no,  minimal-ui">
     <link rel="stylesheet" type="text/css" href="/views/css/logIn.css" media="all">
     <script src="/app/d3.min.js" charset="utf-8"></script>
-
+    <!-- Bootstrap -->
+    <link href="/views/css/bootstrap.min.css" rel="stylesheet">
   </head>
 
   <body>
@@ -144,7 +145,100 @@
       </svg>
     </div>
 
-    <div class="description">FanCrawl lets you follow the entire Instagram population!</div>
+    <!-- <div class="description">FanCrawl lets you follow the entire Instagram population!</div> -->
+
+    <!-- Description information for FanCrawl -->
+    <div class="container">
+
+      <!-- Columns are always 50% wide, on mobile and desktop -->
+      <div class="row" style="margin-bottom: 20px;">
+        <div class="col-xs-12">
+          <blockquote>
+            <p class="lead">Rack up tons of followers without breaking a sweat!</p>
+          </blockquote>
+          <dl class="dl-horizontal">
+            <dt>In a nut shell</dt>
+            <dd>Follows a new random Instagram user every minute and after 48 hours un-follows it.</dd>
+            <dt>Why using it?</dt>
+            <dd>This system is basically is door to door digital marketing. You like what you see? Then follow me back. This system gets you real users without harassing them.</dd>
+            <dt>Safety</dt>
+            <dd>FanCrawl saves your original followers list and make sure not to temper with those ever!</dd>
+            <dt>Cost</dt>
+            <dd>Free!</dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- flipped distribution - first goes to the right -->
+      <div class="row"style="margin-bottom: 20px;">
+        <div class="col-md-6 col-md-push-6" style="margin-bottom: 20px;">
+          <h4 class="text-uppercase">Follow me if you dare</h4>
+          <p>By automatically marrying users to a belly of other random IG users, the user is still in control of what they like or do not like within their feed.</p>
+          <p>Ultimately, the choice to follow back or interact with the IG user is left completely to them.</p>
+          <img src="/views/img/inst_crawl_diag.svg" style="max-height: 400px;" />
+        </div>
+
+
+        <div class="col-md-6 col-md-pull-6">
+          <img src="/views/img/iphone_compatibility.png" style="max-height: 400px; max-width: 100%;" />
+          <h4 class="text-uppercase">smartphone friendly</h4>
+          <p>FanCrawl is coded in such a way that you access it directly from the palm of your hand. See precisely how many new followers you gain instantly.</p>
+          <p>Not only that, but should you wish to FanCrawl can send you notifications by email related to performance information.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <h4 class="text-uppercase">Some benchmark data</h4>
+          <p class="lead">3.5 times increase in followers in 1/10th of the time <ins>effortlessly</ins></p>
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>Days</th>
+                <th>Status</th>
+                <th>Followers</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">0</th>
+                <td>Registered with Instagram</td>
+                <td>0</td>
+                <td>23 sep 2013</td>
+              </tr>
+              <tr>
+                <th scope="row">318</th>
+                <td>Start FanCrawl</td>
+                <td>141</td>
+                <td>06 aug 2014</td>
+              </tr>
+              <tr>
+                <th scope="row">44</th>
+                <td>Sampled FanCrawl</td>
+                <td>650</td>
+                <td>18 sep 2014</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 20px;">
+        <div class="col-xs-12">
+          <h4 class="text-uppercase">Looking for more information</h4>
+          <a class="btn btn-danger btn-xs" href="http://github.com/julesmoretti/fancrawl/wiki/" target="_blank" role="button">GitHub</a>
+          <a class="btn btn-danger btn-xs" href="http://github.com/julesmoretti/fancrawl/issues/" target="_blank" role="button">Report Issues</a>
+          <a class="btn btn-danger btn-xs" href="http://linkedin.com/in/julesmoretti/" target="_blank" role="button">Contact Me</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/views/js/bootstrap.min.js"></script>
 
     <script src="/views/js/d3_ani_login.js" charset="utf-8"></script>
     <script>

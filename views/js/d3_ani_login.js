@@ -20,11 +20,16 @@ d3.selectAll("circle")
       var width = Math.floor(((Math.random() * 4) + 2) * 100) / 100;
       return width;
     })
+    .style("stroke", "rgb(25,21,10)")
+    .style("fill", "rgb(25,21,10)")
   .transition()
     .duration(function(){
       var duration = ( Math.floor(Math.random() * 1000) * 3 ) + 500;
       return duration;
     })
+    .delay(1000)
+    .style("stroke", "rgb(225,221,210)" )
+    .style("fill", "rgb(225,221,210)" )
     .delay(function(){
       var delay = ( Math.floor(Math.random() * 1000) * 3 ) + 0;
       return delay;

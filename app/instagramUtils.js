@@ -227,12 +227,12 @@ var crypto                    = require('crypto'),
                 if ( followCount[0] ) {
                   var last_instagram_following_id = followCount[0];
 
-                  GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
+                  POST_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
 
                     if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
                       console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
-                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
                       console.log( timer[ fancrawl_instagram_id ] );
                       specialCounter++;
                     }
@@ -299,11 +299,11 @@ var crypto                    = require('crypto'),
                 } else if ( followCount[0] ) {
                   var last_instagram_following_id = followCount[0];
 
-                  GO_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
+                  POST_follow( fancrawl_instagram_id, last_instagram_following_id, function( fancrawl_instagram_id, last_instagram_following_id ){
                     delete timer[ fancrawl_instagram_id ].post_queue.follow[ last_instagram_following_id ];
                     if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
                       console.log("Special counter = " + specialCounter + " and counterCap = " + timer[ fancrawl_instagram_id ].counterCap );
-                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process GO_FOLLOW");
+                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
                       console.log( timer[ fancrawl_instagram_id ] );
                       specialCounter++;
                     }
@@ -696,7 +696,7 @@ var crypto                    = require('crypto'),
           }
 
           if ( pbody ) {
-            // DOES NOT EXIST - GO_FOLLOW THE NEXT USER
+            // DOES NOT EXIST - POST_FOLLOW THE NEXT USER
             if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
               // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
@@ -892,7 +892,7 @@ var crypto                    = require('crypto'),
 
 // 60/hour limit
 //  ZERO = follow function ======================================================
-  var GO_follow               = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
+  var POST_follow               = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
     // console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
@@ -923,7 +923,7 @@ var crypto                    = require('crypto'),
           var pbody = JSON.parse(body);
           if( pbody ) {
             if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-              console.log("GO_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
+              console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
               // check for rate limit reach... if so keep on looping
               // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
               if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -947,18 +947,18 @@ var crypto                    = require('crypto'),
                   verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
                   // console.log( "FOLLOWED SUCCESSFULLY: ", new_instagram_following_id );
                   if ( callback ) {
-                    // console.log( "CALL BACK FROM GO_FOLLOW FOR: ", new_instagram_following_id );
+                    // console.log( "CALL BACK FROM POST_FOLLOW FOR: ", new_instagram_following_id );
                     callback( fancrawl_instagram_id, new_instagram_following_id );
                   }
                 });
               }
             } else {
-              console.log("GO_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
+              console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
             }
           }
         } else if (error) {
-          console.log('GO_follow error ('+new_instagram_following_id+'): ', error);
-          sendMail( 571377691, 'go follow error', 'The function GO_follow got the following error: ' + error );
+          console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
+          sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
         }
       });
     });
@@ -995,7 +995,7 @@ var crypto                    = require('crypto'),
           var pbody = JSON.parse(body);
           if( pbody ) {
             if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-              console.log("GO_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
+              console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
               // check for rate limit reach... if so keep on looping
               // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
               if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -1017,11 +1017,11 @@ var crypto                    = require('crypto'),
                 }
               }
             } else {
-              console.log("GO_follow - did not complete properly...");
+              console.log("POST_follow - did not complete properly...");
             }
           }
         } else if (error) {
-          console.log('GO_follow error: ', error);
+          console.log('POST_follow error: ', error);
           sendMail( 571377691, 'get stats error', 'The function GET_stats got the following error: ' + error );
           callback( "N/A" , "N/A" );
         } else {
@@ -1493,6 +1493,7 @@ var crypto                    = require('crypto'),
               if (err) throw err;
               console.log("API error or access_token missing or oauth_limit rate reached so stopped account "+fancrawl_instagram_id+" on server restart");
               console.log("STOPPED STATE: ", fancrawl_instagram_id);
+              sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
             });
           } else {
 
