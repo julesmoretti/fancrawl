@@ -79,7 +79,7 @@
                   <% if ( users && JSON.stringify(users).length > 2 ){ %>
                     <% for ( keys in users ) {%>
                       <li>
-                        <a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>"></img><span><%= users[ keys ].fancrawl_full_name %></span><span>created on <%= users[ keys ].creation_date %></span></a>
+                        <a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>"></img><span><%= users[ keys ].fancrawl_full_name %></span><span>( <%= users[ keys ].creation_date %> )</span></a>
                         <div class="<%= users[ keys ].state %>"><span><%= users[ keys ].state %></span></div>
                         <div id="user_details"></div>
                       </li>
