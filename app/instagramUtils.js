@@ -2253,7 +2253,8 @@ var crypto                    = require('crypto'),
                                 'fullName': '',
                                 'userName': '',
                                 'userID': '',
-                                'userPicture': ''
+                                'userPicture': '',
+                                'creation_date': ''
                                 };
 
 
@@ -2275,7 +2276,7 @@ var crypto                    = require('crypto'),
           metrics.userID          = rows[0].fancrawl_instagram_id;
           metrics.userPicture     = rows[0].fancrawl_profile_picture;
 
-          connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture from access_right', function(err, rows, fields) {
+          connection.query('SELECT state, fancrawl_full_name, fancrawl_username, fancrawl_instagram_id, fancrawl_profile_picture, creation_date from access_right', function(err, rows, fields) {
             if (err) throw err;
             if ( rows && rows[0] ){
               for ( var i = 0; i < rows.length; i++ ) {

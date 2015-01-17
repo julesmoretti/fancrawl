@@ -283,7 +283,7 @@ html {
           margin-right: 16px;
           span {
             position: relative;
-            padding-left: 16px;
+            /*padding-left: 16px;*/
             font-family: "inst_semibold";
             color: #e6e6e6;
           }
@@ -316,8 +316,7 @@ html {
                       height: 50px;
                       width: 50px;
                       border-radius: 50px;
-                      margin-top: 18px;
-                      margin-left: 18px;
+                      margin: 18px 18px 0 18px;
                     }
                     span {
                       vertical-align: middle;
@@ -325,6 +324,13 @@ html {
                       font-size: 14px;
                       color: #c5c5c5;
                       top: -21px;
+                      padding-right: 10px;
+                    }
+                    span:nth-last-of-type(1) {
+                      font-family: inst_reg;
+                      font-size: 12px;
+                      padding-right: 10px;
+                      opacity: 0.5;
                     }
                   }
                   div {

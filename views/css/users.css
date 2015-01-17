@@ -220,7 +220,7 @@ html {
           margin-right: 16px; }
           html body .container .containerInner .mainControllers span {
             position: relative;
-            padding-left: 16px;
+            /*padding-left: 16px;*/
             font-family: "inst_semibold";
             color: #e6e6e6; }
           html body .container .containerInner .mainControllers .controllerList {
@@ -252,14 +252,19 @@ html {
                       height: 50px;
                       width: 50px;
                       border-radius: 50px;
-                      margin-top: 18px;
-                      margin-left: 18px; }
+                      margin: 18px 18px 0 18px; }
                     html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a span {
                       vertical-align: middle;
                       font-style: italic;
                       font-size: 14px;
                       color: #c5c5c5;
-                      top: -21px; }
+                      top: -21px;
+                      padding-right: 10px; }
+                    html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li a span:nth-last-of-type(1) {
+                      font-family: inst_reg;
+                      font-size: 12px;
+                      padding-right: 10px;
+                      opacity: 0.5; }
                   html body .container .containerInner .mainControllers .controllerList .controllerDescription ul li div {
                     margin-left: 67%;
                     width: 33%;
