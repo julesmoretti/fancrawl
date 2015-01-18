@@ -709,15 +709,10 @@ var crypto                    = require('crypto'),
         // }
 
         // CHECK FOR BODY
-        if ( error ) {
-          console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error "+new_instagram_following_id+" - ", error);
-          sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
-          callback(fancrawl_instagram_id, new_instagram_following_id, "error");
-
-        } else if ( body ) {
+        if (!error && response.statusCode == 200) {
 
           if ( typeof body === "string" ) {
-            var pbody = JSON.parse(body);
+            var pbody = JSON.parse( body );
           } else if ( typeof body === "object" ) {
             var pbody = body;
           } else {
@@ -811,7 +806,14 @@ var crypto                    = require('crypto'),
             console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error from pbody "+new_instagram_following_id+" - ", pbody );
             callback(fancrawl_instagram_id, new_instagram_following_id, "error");
           }
+        } else {
+          console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error "+new_instagram_following_id+" - ", error);
+          sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
+          callback(fancrawl_instagram_id, new_instagram_following_id, "error");
         }
+
+
+
       });
     });
     };
