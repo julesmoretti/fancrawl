@@ -281,17 +281,53 @@ html {
           padding-bottom: 16px;
           margin-bottom: 50px;
           margin-right: 16px;
+          text-align: right;
           span {
             position: relative;
             /*padding-left: 16px;*/
             font-family: "inst_semibold";
             color: #e6e6e6;
           }
+          .sorting {
+            font-size: 11px;
+            margin-right: 10px;
+            float: right;
+            margin-top: -6px;
+            span {
+              color: silver;
+            }
+            a {
+              &:hover {
+                span {
+                  font-family: inst_bold;
+                  font-style: normal;
+                  color: white;
+                }
+              }
+              &.curOrder {
+                pointer-events: none;
+                cursor: default;
+
+                span {
+                font-family: inst_bold;
+                font-style: normal;
+                }
+              }
+              span {
+                font-family: inst_reg;
+                color: lightgrey;
+                z-index: 90;
+                font-style: italic;
+                padding-right: 2px;
+              }
+            }
+          }
           .controllerList {
             width: 100%;
             position: relative;
             margin-top: 16px;
             font-family: "inst_semibold";
+            text-align: left;
             .controllerDescription {
               width: 100%;
               display: inline-block;

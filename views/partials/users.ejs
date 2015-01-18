@@ -73,17 +73,65 @@
     <div class="container">
       <div class="containerInner">
           <div class="mainControllers">
+            <div class="sorting">
+
+              <% if ( sort && sort === 'id' ){ %>
+                <span>sort: </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } else if ( sort && sort === 'date') { %>
+                <span>sort: </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } else if ( sort && sort === 'alpha') { %>
+                <span>sort: </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } %>
+
+
+            </div>
             <div class="controllerList">
               <div class="controllerDescription">
+
                 <ul>
                   <% if ( users && JSON.stringify(users).length > 2 ){ %>
-                    <% for ( keys in users ) {%>
-                      <li>
-                        <a href="/dashboard?user=<%= users[ keys ].fancrawl_username %>&id=<%= users[ keys ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ keys ].fancrawl_profile_picture %>"></img><span><%= users[ keys ].fancrawl_full_name %></span><span>( <%= users[ keys ].creation_date %> )</span></a>
-                        <div class="<%= users[ keys ].state %>"><span><%= users[ keys ].state %></span></div>
-                        <div id="user_details"></div>
-                      </li>
+                    <% if ( sort && sort === "id" ){ %>
+                      <% for ( var i = 0; i < orders.sortId.length; i++ ) {%>
+                        <li>
+                          <a href="/dashboard?user=<%= users[ orders.sortId[ i ] ].fancrawl_username %>&id=<%= users[ orders.sortId[ i ] ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ orders.sortId[ i ] ].fancrawl_profile_picture %>"></img><span><%= users[ orders.sortId[ i ] ].fancrawl_full_name %></span><span>( <%= users[ orders.sortId[ i ] ].creation_date %> )</span></a>
+                          <div class="<%= users[ orders.sortId[ i ] ].state %>"><span><%= users[ orders.sortId[ i ] ].state %></span></div>
+                          <div id="user_details"></div>
+                        </li>
+                      <% } %>
+                    <% } else if ( sort === "alpha" ){ %>
+                      <% for ( var i = 0; i < orders.sortAlpha.length; i++ ) {%>
+                        <li>
+                          <a href="/dashboard?user=<%= users[ orders.sortAlpha[ i ] ].fancrawl_username %>&id=<%= users[ orders.sortAlpha[ i ] ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ orders.sortAlpha[ i ] ].fancrawl_profile_picture %>"></img><span><%= users[ orders.sortAlpha[ i ] ].fancrawl_full_name %></span><span>( <%= users[ orders.sortAlpha[ i ] ].creation_date %> )</span></a>
+                          <div class="<%= users[ orders.sortAlpha[ i ] ].state %>"><span><%= users[ orders.sortAlpha[ i ] ].state %></span></div>
+                          <div id="user_details"></div>
+                        </li>
+                      <% } %>
+                    <% } else if ( sort === "date" ){ %>
+                      <% for ( var i = 0; i < orders.sortDate.length; i++ ) {%>
+                        <li>
+                          <a href="/dashboard?user=<%= users[ orders.sortDate[ i ] ].fancrawl_username %>&id=<%= users[ orders.sortDate[ i ] ].fancrawl_instagram_id %>" target="_self"><img src="<%= users[ orders.sortDate[ i ] ].fancrawl_profile_picture %>"></img><span><%= users[ orders.sortDate[ i ] ].fancrawl_full_name %></span><span>( <%= users[ orders.sortDate[ i ] ].creation_date %> )</span></a>
+                          <div class="<%= users[ orders.sortDate[ i ] ].state %>"><span><%= users[ orders.sortDate[ i ] ].state %></span></div>
+                          <div id="user_details"></div>
+                        </li>
+                      <% } %>
                     <% } %>
+
+
                   <% } else { %>
                       <li><span>N/A</span></li>
                   <% } %>
@@ -98,7 +146,13 @@
       <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
     </div>
     <div id="menuHide" onclick="$('#hidden').removeClass('show');"></div>
-
+    <% if (users) { %>
+      <script>
+        var sorting = <%- sort %>;
+        var listOfUsers = <%- parsedUsers %>;
+        var userOrder = <%- parsedOrders %>;
+      </script>
+    <% } %>
 
     <script src="/views/js/d3_chart.js" charset="utf-8"></script>
     <script src="/views/js/d3_ani_dash.js" charset="utf-8"></script>

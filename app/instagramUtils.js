@@ -2250,11 +2250,13 @@ var crypto                    = require('crypto'),
     var metrics               = {
                                 'admin': false,
                                 'users': {},
+                                'orders': {},
                                 'fullName': '',
                                 'userName': '',
                                 'userID': '',
                                 'userPicture': '',
-                                'creation_date': ''
+                                'creation_date': '',
+                                'sort': ''
                                 };
 
 
@@ -2283,6 +2285,76 @@ var crypto                    = require('crypto'),
                 metrics.users[ rows[i].fancrawl_instagram_id ] = rows[i];
               }
             }
+
+            if ( !req.query.sort ) {
+              metrics.sort = "alpha";
+            } else if ( req.query.sort === "id" ) {
+              // return in id sequence
+              metrics.sort = "id";
+            } else if ( req.query.sort === "alpha" ) {
+              // return in alphabetical order
+              metrics.sort = "alpha";
+            } else if ( req.query.sort === "date" ) {
+              // return by date order
+              console.log("ITS A DATE")
+              metrics.sort = "date";
+            }
+
+            metrics.orders.sortId = [];
+            //sort by id
+            for ( keys in metrics.users ) {
+              metrics.orders.sortId.push( keys );
+            }
+
+            var sortDate = {};
+            // sort by time
+            for ( keys in metrics.users ) {
+              if ( sortDate[ metrics.users[ keys ].unix_ts ] ) {
+                sortDate[ metrics.users[ keys ].unix_ts ].push( keys );
+              } else {
+                sortDate[ metrics.users[ keys ].unix_ts ] = [];
+                sortDate[ metrics.users[ keys ].unix_ts ].push( keys ) ;
+              }
+            }
+
+            metrics.orders.sortDate = [];
+            for ( keys in sortDate ) {
+              if ( sortDate[ keys ].length === 0 ) {
+                metrics.orders.sortDate.push( sortDate[ keys ][0] );
+              } else {
+                for ( var i = 0; i < sortDate[ keys ].length; i++ ) {
+                  metrics.orders.sortDate.push( sortDate[ keys ][i] );
+                }
+              }
+            }
+
+            var sortAlpha = {};
+
+            // sort by alpha
+            for ( keys in metrics.users ) {
+              // return parsed letter
+              if ( sortAlpha[ parseInt( metrics.users[ keys ].fancrawl_full_name[0], 36 ) ] ) {
+                sortAlpha[ parseInt( metrics.users[ keys ].fancrawl_full_name[0], 36 ) ].push( keys );
+              } else {
+                sortAlpha[ parseInt( metrics.users[ keys ].fancrawl_full_name[0], 36 ) ] = [ keys ];
+              }
+            };
+
+            metrics.orders.sortAlpha = [];
+
+            for ( keys in sortAlpha ) {
+              if ( sortAlpha[ keys ].length === 0 ) {
+                metrics.orders.sortAlpha.push( sortAlpha[ keys ][0] );
+              } else {
+                for (var i = 0; i < sortAlpha[ keys ].length; i++) {
+                  metrics.orders.sortAlpha.push( sortAlpha[ keys ][i] );
+                };
+              }
+            }
+
+            metrics.parsedOrders = JSON.stringify( metrics.orders );
+            metrics.parsedUsers = JSON.stringify( metrics.users );
+
             res.render('./partials/users.ejs',  metrics );
           });
         }
