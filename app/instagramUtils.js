@@ -78,10 +78,37 @@ var crypto                    = require('crypto'),
     });
     };
 
-  // sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );
+
+//  ZERO = shuts down clock process
+  var STOP                    = function ( fancrawl_instagram_id, blockNotification, callback ) {
+
+    connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+      if (err) throw err;
+    });
+
+    // RESET post_timer & quick_timer
+    timerPostStructure( fancrawl_instagram_id, "force" );
+    timerQuickStructure( fancrawl_instagram_id, "force" );
+    console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
+
+    if ( setTimeouts && setTimeouts[ fancrawl_instagram_id ] ) {
+      for ( keys in setTimeouts[ fancrawl_instagram_id ] ) {
+        clearTimeout( setTimeouts[ fancrawl_instagram_id ][ keys ] );
+      }
+    }
+
+    if ( blockNotification ) {
+      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+    }
+
+    if ( callback ) {
+      callback;
+    }
+    };
 
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
@@ -406,7 +433,7 @@ var crypto                    = require('crypto'),
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
                     if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                      STOP( fancrawl_instagram_id, true );
                     }
                     usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
@@ -427,6 +454,9 @@ var crypto                    = require('crypto'),
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
                     usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+
+                    sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
+
 
                   } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
                     // console.log("ADDED TO CLOCK MANAGER FOLLOW: ", fancrawl_instagram_id );
@@ -470,9 +500,9 @@ var crypto                    = require('crypto'),
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
                     if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                      STOP( fancrawl_instagram_id, true );
                     }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
+                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -552,9 +582,9 @@ var crypto                    = require('crypto'),
                       usersInfo[ fancrawl_instagram_id ] = {};
                     }
                     if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                      sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
+                      STOP( fancrawl_instagram_id, true );
                     }
-                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock";
+                    usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
                   } else if ( relationship === "APINotAllowedError" ) {
                     // error to deal with...
@@ -717,7 +747,6 @@ var crypto                    = require('crypto'),
             } else if( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
               // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
               console.log("RELATIONSHIP: LIMIT REACH FOR: "+fancrawl_instagram_id+" - ", body);
-              sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
               callback(fancrawl_instagram_id, new_instagram_following_id, "oauth_limit");
 
             } else if ( pbody.data ) {
@@ -857,7 +886,7 @@ var crypto                    = require('crypto'),
 
                       sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
 
-                      usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "The maximum number of IG requests per hour has been exceeded.";
+                      usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
 
                       clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
 
@@ -922,6 +951,7 @@ var crypto                    = require('crypto'),
         if (!error && response.statusCode == 200) {
           var pbody = JSON.parse(body);
           if( pbody ) {
+
             if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
               console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
               // check for rate limit reach... if so keep on looping
@@ -2379,13 +2409,24 @@ var crypto                    = require('crypto'),
 
 
       // START USER SPECIFIC CLOCK
-      timerPostStructure( fancrawl_instagram_id );
-      timerQuickStructure( fancrawl_instagram_id );
+      timerPostStructure( fancrawl_instagram_id, "force" );
+      timerQuickStructure( fancrawl_instagram_id, "force" );
 
-      // connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-        // if (err) throw err;
-        // console.log("cleanDB for: ", fancrawl_instagram_id);
-        // cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+      GET_relationship( fancrawl_instagram_id, 571377691, function( fancrawl_instagram_id, new_instagram_following_id, response ){
+        if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
+          // do nothing
+
+          if ( !usersInfo[ fancrawl_instagram_id ] ) {
+            usersInfo[ fancrawl_instagram_id ] = {};
+          }
+          if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+            STOP( fancrawl_instagram_id, true );
+          }
+          usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+
+          res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
+        } else {
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
 
@@ -2432,51 +2473,6 @@ var crypto                    = require('crypto'),
                   }
 
                 });
-
-
-
-
-
-
-
-
-
-
-
-                // for ( var i = 0; i < rows.length; i++ ) {
-                //   if ( rows[i].count !== 5 ) {
-                //     var time = 100 * i;
-                //     setTimeouts[ fancrawl_instagram_id ][ rows[i].added_follower_instagram_id ] = setTimeout(
-                //       function(){
-                //       verifyRelationship( arguments[0], arguments[1] );
-                //       delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                //     }, time, fancrawl_instagram_id, rows[i].added_follower_instagram_id );
-                //   };
-
-                //   var pickedOut = JSON.parse( rows[i].added_follower_instagram_id );
-                //   obj[ pickedOut ] = pickedOut;
-                // }
-
-                // for ( keys in obj ) {
-                //   var oldestUser = keys;
-                // }
-
-                // var new_instagram_following_id = JSON.parse(rows[0]['MAX(beta_followers.added_follower_instagram_id)']) + 1;
-
-                // var new_instagram_following_id = JSON.parse( oldestUser ) + 1;
-
-                // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-                // console.log("FETCHING - FROM TRIGGER: ", new_instagram_following_id);
-
-                // var currentUser = JSON.parse( fancrawl_instagram_id );
-
-                // if ( new_instagram_following_id < currentUser ) {
-                //   var newUser = ( currentUser + 1 );
-                //   fetchNewFollowers( fancrawl_instagram_id, newUser );
-                // } else {
-                //   fetchNewFollowers( fancrawl_instagram_id, new_instagram_following_id );
-                // }
-
               } else {
                 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 console.log("FETCHING - FROM TRIGGER: 1 more then its ID...");
@@ -2487,8 +2483,8 @@ var crypto                    = require('crypto'),
 
             });
           });
-        // });
-      // });
+        }
+      });
 
     // CLEANING FANCRAWL
     // dashboard sent a switchClean on so clean database
@@ -2523,16 +2519,7 @@ var crypto                    = require('crypto'),
 
         res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
 
-        // RESET post_timer & quick_timer
-        timerPostStructure( fancrawl_instagram_id, "force" );
-        timerQuickStructure( fancrawl_instagram_id, "force" );
-        console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
-
-        if ( setTimeouts && setTimeouts[ fancrawl_instagram_id ] ) {
-          for ( keys in setTimeouts[ fancrawl_instagram_id ] ) {
-            clearTimeout( setTimeouts[ fancrawl_instagram_id ][ keys ] );
-          }
-        }
+        STOP( fancrawl_instagram_id, false );
 
       });
     }
