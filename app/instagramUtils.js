@@ -782,7 +782,7 @@ var crypto                    = require('crypto'),
           }
 
         } else if ( response.statusCode !== 200 ) {
-
+          console.log( 'response from line 785:', response );
           if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
           } else if ( typeof body === "object" ) {
