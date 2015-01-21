@@ -782,7 +782,11 @@ var crypto                    = require('crypto'),
           }
 
         } else if ( response.statusCode !== 200 ) {
-          console.log( 'response from line 785:', response );
+          // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
+
+          if ( response.statusCode !== 400 ) {
+            console.log( 'response from line 785:', response );
+          }
           if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
           } else if ( typeof body === "object" ) {
