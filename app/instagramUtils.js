@@ -698,7 +698,7 @@ var crypto                    = require('crypto'),
         // }
 
         // CHECK FOR BODY
-        if (!error && response.statusCode === 200) {
+        if ( !error && response.statusCode === 200 ) {
 
           if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
@@ -770,7 +770,7 @@ var crypto                    = require('crypto'),
             callback(fancrawl_instagram_id, new_instagram_following_id, "error");
           }
 
-        } else if ( response.statusCode !== 200 ) {
+        } else if ( !error && response.statusCode !== 200 ) {
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
           if ( response.statusCode !== 400 ) {
