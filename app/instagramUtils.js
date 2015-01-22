@@ -779,7 +779,11 @@ var crypto                    = require('crypto'),
           if ( response.statusCode !== 400 ) {
             console.log( 'response from line 785:', response );
           }
-          if ( typeof body === "string" ) {
+          if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
+            // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
+            sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body );
+            GET_relationship( fancrawl_instagram_id, new_instagram_following_id, callback );
+          } else if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
           } else if ( typeof body === "object" ) {
             var pbody = body;
@@ -2072,6 +2076,8 @@ var crypto                    = require('crypto'),
                     'followingFromFanCrawlResult' : 'some text',
                     'followedBy': 0,
                     'following': 0,
+                    'sHash': '',
+                    'hash': '',
                     'latestFollowedBy': 0,
                     'latestFollowing': 0,
                     'latestFollowedByPercentage': '',
@@ -2421,14 +2427,7 @@ var crypto                    = require('crypto'),
 
     var fancrawl_instagram_id = req_query.id;
 
-    // if ( req.body.switchReboot ) {
-    //   res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
-
-    //   var crash = function(){
-    //     server.restart = "forced";
-    //   };
-    //   crash();
-    // }
+    console.log( req.body );
 
     if ( req.body.admin && req.body.switchMasterNotification ) {
       connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
