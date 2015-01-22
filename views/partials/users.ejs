@@ -142,6 +142,38 @@
       </div>
     </div>
 
+    <div class="container">
+      <div class="containerInner">
+          <div class="mainControllers">
+            <div class="sorting">
+
+              <% if ( sort && sort === 'id' ){ %>
+                <span>sort: </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } else if ( sort && sort === 'date') { %>
+                <span>sort: </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } else if ( sort && sort === 'alpha') { %>
+                <span>sort: </span>
+                <a class="curOrder" href="/users?user=<%= userName %>&id=<%= userID %>&sort=alpha"><span>alphabetinally</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=id"><span>inst id</span></a>
+                <span> - </span>
+                <a href="/users?user=<%= userName %>&id=<%= userID %>&sort=date"><span>cration date</span></a>
+              <% } %>
+            </div>
+          </div>
+      </div>
+    </div>
+
     <div class="status_bar">
       <span>Copyright © <a href="http://linkedin.com/in/julesmoretti" target="_blank">Jules Moretti</a>. All rights reserved.</span>
     </div>

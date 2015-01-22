@@ -78,7 +78,7 @@ var crypto                    = require('crypto'),
     });
     };
 
-  sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  // sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );
@@ -2082,6 +2082,7 @@ var crypto                    = require('crypto'),
                     'afbpClass': 'down',
                     'afpClass': 'down',
                     'status': '',
+                    'mNoti': 0,
                     'email': '',
                     'eNoti': 0,
                     'cleaningTime' : 'Some time metric goes here',
@@ -2267,7 +2268,13 @@ var crypto                    = require('crypto'),
                         }
                       }
                     }
-                    res.render('./partials/dashboard.ejs',  metrics );
+
+                    connection.query('SELECT mNoti FROM settings', function(err, rows, fields) {
+                      if (err) throw err;
+                      // console.log(rows[].mNoti);
+                      metrics.mNoti = rows[0].mNoti;
+                      res.render('./partials/dashboard.ejs',  metrics );
+                    });
                   });
                 });
               });
@@ -2410,6 +2417,16 @@ var crypto                    = require('crypto'),
         req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
+    console.log( req.body );
+    if ( req.body.admin && req.body.switchMasterNotification ) {
+      connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    } else if ( req.body.admin ) {
+      connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    }
 
     // STARTING FANCRAWL
     // dashboard sent a switchFancrawl on so start FanCrawl

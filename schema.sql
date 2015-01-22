@@ -33,9 +33,21 @@ CREATE TABLE `access_right` (
   `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `or_followed_by` INT(20) DEFAULT 0,
   `or_following` INT(20) DEFAULT 0,
-  `id` INT(20) AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original access_right list';
+
+-- ---
+-- Table 'settings'
+-- Original settings list
+-- ---
+
+DROP TABLE IF EXISTS `settings`;
+
+CREATE TABLE `settings` (
+  `id` INT(20) AUTO_INCREMENT,
+  `mNoti` INT(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
+) COMMENT 'Original settings list';
 
 -- ---
 -- Table 's_followed_by'

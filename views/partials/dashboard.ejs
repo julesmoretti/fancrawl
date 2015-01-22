@@ -181,6 +181,9 @@
                   <li><span>following back</span></li>
                   <li><span>Email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
                   </li>
+                  <% if ( admin ){ %>
+                    <li><span>Master notifications</span></li>
+                  <% } %>
                 </ul>
               </div>
               <div class="controllerStatus">
@@ -243,6 +246,20 @@
                           <label id="switch3label" for="switch3">&nbsp;</label>
                         <% } %>
                       </div>
+                      <% if ( admin ){ %>
+                        <li>
+                          <input type="hidden" name="admin" value="true">
+                          <div class="switchDiv">
+                            <% if ( mNoti ){ %>
+                            <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributes4()" checked="checked"/>
+                              <label id="switch4label" for="switch4">&nbsp;</label>
+                            <% } else { %>
+                              <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributes4()"/>
+                              <label id="switch4label" for="switch4">&nbsp;</label>
+                            <% } %>
+                          </div>
+                        </li>
+                      <% } %>
                     </li>
                   </ul>
               </div>
