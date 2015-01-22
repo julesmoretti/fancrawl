@@ -2424,6 +2424,11 @@ var crypto                    = require('crypto'),
         req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
+
+    if ( req.body.switchReboot ) {
+      throw restart;
+    }
+
     if ( req.body.admin && req.body.switchMasterNotification ) {
       connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
         if (err) throw err;
