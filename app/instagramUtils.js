@@ -50,35 +50,42 @@ var crypto                    = require('crypto'),
         }
     });
 
-    connection.query('SELECT fancrawl_username, email, eNoti from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+    connection.query('SELECT mNoti from settings', function(err, rows, fields) {
       if (err) throw err;
-      if ( rows && rows[0] && ( rows[0].eNoti !== 0 ) && ( rows[0].email !== null ) ) {
 
-        // setup e-mail data with unicode symbols
-        var mailOptions = {
-            from: 'Jules Moretti <'+process.env.FANCRAWLEMAIL+'>', // sender address
-            to: rows[0].email , // list of receivers
-            subject: 'FanCrawl.io - ' + subject +": "+rows[0].fancrawl_username, // Subject line
-            text: error, // plaintext body
-            html: error // html body
-            // html: '<b>Hello world</b></br><div class="width:100px; height: 200px; background-color: red;">YOLLO</div>' // html body
-        };
+      if ( rows[0].mNoti ) {
+        connection.query('SELECT fancrawl_username, email, eNoti from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+          if (err) throw err;
+          if ( rows && rows[0] && ( rows[0].eNoti !== 0 ) && ( rows[0].email !== null ) ) {
 
-        // send mail with defined transport object
-        transporter.sendMail( mailOptions, function( error, info ) {
-          if ( error ) {
-            console.log( error );
-            sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
+            // setup e-mail data with unicode symbols
+            var mailOptions = {
+                from: 'Jules Moretti <'+process.env.FANCRAWLEMAIL+'>', // sender address
+                to: rows[0].email , // list of receivers
+                subject: 'FanCrawl.io - ' + subject +": "+rows[0].fancrawl_username, // Subject line
+                text: error, // plaintext body
+                html: error // html body
+                // html: '<b>Hello world</b></br><div class="width:100px; height: 200px; background-color: red;">YOLLO</div>' // html body
+            };
 
-          } else {
-            console.log( 'Message sent: ' + info.response );
-          };
+            // send mail with defined transport object
+            transporter.sendMail( mailOptions, function( error, info ) {
+              if ( error ) {
+                console.log( error );
+                sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
+
+              } else {
+                console.log( 'Message sent: ' + info.response );
+              };
+            });
+          }
         });
       }
     });
+
     };
 
-  // sendMail( 571377691, 'server was restarted', 'Rebooted' );
+  sendMail( 571377691, 'server was restarted', 'Rebooted' );
 
   // var htmlBody = '<b>Hello world</b></br><div style="width:100px; height: 200px; background-color: red;">YOLLO</div>'
       // sendMail( 571377691, 'server was restarted', htmlBody );
@@ -2417,7 +2424,6 @@ var crypto                    = require('crypto'),
         req_query             = JSON.parse('{"' + decodeURI(url_split[1].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}'); // req_query = { user: 'ig_user_name', id: 'ig_id_number' };
 
     var fancrawl_instagram_id = req_query.id;
-    console.log( req.body );
     if ( req.body.admin && req.body.switchMasterNotification ) {
       connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
         if (err) throw err;
