@@ -2425,14 +2425,14 @@ var crypto                    = require('crypto'),
 
     var fancrawl_instagram_id = req_query.id;
 
-    if ( req.body.switchReboot ) {
-      res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+    // if ( req.body.switchReboot ) {
+    //   res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
 
-      var crash = function(){
-        server.restart = "forced";
-      };
-      crash();
-    }
+    //   var crash = function(){
+    //     server.restart = "forced";
+    //   };
+    //   crash();
+    // }
 
     if ( req.body.admin && req.body.switchMasterNotification ) {
       connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
