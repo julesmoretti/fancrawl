@@ -2429,8 +2429,7 @@ var crypto                    = require('crypto'),
       res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
 
       var crash = function(){
-        if (
-        else
+        server.restart = "forced";
       };
       crash();
     }
