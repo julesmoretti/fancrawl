@@ -2426,7 +2426,8 @@ var crypto                    = require('crypto'),
     var fancrawl_instagram_id = req_query.id;
 
     if ( req.body.switchReboot ) {
-      throw restart;
+      res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+      throw "Server restart";
     }
 
     if ( req.body.admin && req.body.switchMasterNotification ) {
