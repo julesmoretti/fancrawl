@@ -1178,12 +1178,12 @@ var crypto                    = require('crypto'),
 
       // else setTimeout 10 seconds recursing same stats
       } else {
+        // TODO - LARGE ACCUMULATION OF SETTIMOUTS>>>> NOT SURE WHY, NEED TO LIMIT IT TO JUST ONE
         var time = 1000 * 10;
         setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
-          console.log("SETTIMOUT 9 WORKS!!!!");
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
