@@ -120,7 +120,7 @@ var crypto                    = require('crypto'),
 //  ZERO = manage setTimout of timers ===========================================
   var callTimer               = function ( fancrawl_instagram_id, state) {
     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
           function(){
               callTimer( arguments[0], arguments[1] );
               console.log("SETTIMOUT 1 WORKS!!!!");
@@ -128,7 +128,7 @@ var crypto                    = require('crypto'),
     } else {
       // waits half a second and rechecks timer state
       if ( state === "quick_short" ) {
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
           function(){
               timer_quick( arguments[0] );
               console.log("SETTIMOUT 2 WORKS!!!!");
@@ -136,29 +136,31 @@ var crypto                    = require('crypto'),
 
       // waits half a second and rechecks timer state
       } else if ( state === "quick_long" ) {
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
           function(){
               if ( timer[ arguments[0] ] ) {
                 timer[ arguments[0] ].quick_seconds = false;
                 timer_quick( arguments[0] );
               }
+              console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
         }, Math.floor( ( Math.random() * 500 ) + 1000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
       } else if ( state === "post_short" ) {
 
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
           function(){
             timer_post( arguments[0] );
             console.log("SETTIMOUT 4 WORKS!!!!");
         }, 5000, fancrawl_instagram_id ); // 5 sec
 
       } else if ( state === "post_long" ) {
-        setTimeout(
+        setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
           function(){
             if ( timer[ arguments[0] ] ) {
               timer[ arguments[0] ].post_minute = false;
               timer_post( arguments[0] );
             }
+            console.log("SETTIMOUT 5 WORKS!!!!", fancrawl_instagram_id);
         }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
       }
     }
@@ -1185,6 +1187,7 @@ var crypto                    = require('crypto'),
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          console.log("SETTIMOUT 9 WORKS!!!!");
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
@@ -1537,10 +1540,6 @@ var crypto                    = require('crypto'),
       setTimeouts[ fancrawl_instagram_id ] = {};
     }
 
-    // START CLOCKS ONLY ONCE! (RIGHT AWAY)
-    timer_post( fancrawl_instagram_id );
-    timer_quick( fancrawl_instagram_id );
-
     // START CLOCKS ONLY ONCE! (WITH DELAY)
     // callTimer( fancrawl_instagram_id, "quick_long" );
     // callTimer( fancrawl_instagram_id, "post_long" );
@@ -1556,7 +1555,6 @@ var crypto                    = require('crypto'),
               if (err) throw err;
               console.log("API error or access_token missing or oauth_limit rate reached so stopped account "+fancrawl_instagram_id+" on server restart");
               console.log("STOPPED STATE: ", fancrawl_instagram_id);
-              sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
             });
           } else {
 
@@ -1564,6 +1562,10 @@ var crypto                    = require('crypto'),
             if ( rows[0].state && rows[0].state === "started" ) {
               console.log("STARTED STATE: ", fancrawl_instagram_id);
               var state = rows[0].state;
+
+              // START CLOCKS
+              timer_post( fancrawl_instagram_id );
+              timer_quick( fancrawl_instagram_id );
 
               connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
                 if (err) throw err;
@@ -1623,13 +1625,15 @@ var crypto                    = require('crypto'),
             } else if ( rows[0].state && rows[0].state === "cleaning" ) {
               console.log("CLEANING STATE: ", fancrawl_instagram_id);
 
+              // START CLOCKS
+              timer_post( fancrawl_instagram_id );
+              timer_quick( fancrawl_instagram_id );
+
               var state = rows[0].state;
               // CLEAN DATABASE
               cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-                connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-                  if (err) throw err;
-                  console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE CLEANING: ", fancrawl_instagram_id);
-                });
+                STOP( fancrawl_instagram_id, true );
+                console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE CLEANING: ", fancrawl_instagram_id);
               });
             } else {
               console.log("STOPPED STATE: ", fancrawl_instagram_id);
@@ -2466,6 +2470,10 @@ var crypto                    = require('crypto'),
       timerPostStructure( fancrawl_instagram_id, "force" );
       timerQuickStructure( fancrawl_instagram_id, "force" );
 
+      // START CLOCKS
+      timer_post( fancrawl_instagram_id );
+      timer_quick( fancrawl_instagram_id );
+
       GET_relationship( fancrawl_instagram_id, 571377691, function( fancrawl_instagram_id, new_instagram_following_id, response ){
         if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
           // do nothing
@@ -2477,8 +2485,12 @@ var crypto                    = require('crypto'),
             STOP( fancrawl_instagram_id, true );
           }
           usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+          connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
 
-          res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+            res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
+          });
 
         } else {
           connection.query('UPDATE access_right set state = "started" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -2544,29 +2556,57 @@ var crypto                    = require('crypto'),
     // dashboard sent a switchClean on so clean database
     } else if ( req.body.switchclean && req.body.switchclean === "on") {
       console.log("switchclean detected");
-      connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-        if (err) throw err;
 
-        res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+      // START USER SPECIFIC CLOCK
+      timerPostStructure( fancrawl_instagram_id, "force" );
+      timerQuickStructure( fancrawl_instagram_id, "force" );
 
-        // RESET post_timer & quick_timer
-        timerPostStructure( fancrawl_instagram_id, "force" );
-        timerQuickStructure( fancrawl_instagram_id, "force" );
-        console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
+      // START CLOCKS
+      timer_post( fancrawl_instagram_id );
+      timer_quick( fancrawl_instagram_id );
 
-        // cleaning database process
-        cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-          //done cleaning so set to stopped
+      GET_relationship( fancrawl_instagram_id, 571377691, function( fancrawl_instagram_id, new_instagram_following_id, response ){
+        if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
+          // do nothing
+
+          if ( !usersInfo[ fancrawl_instagram_id ] ) {
+            usersInfo[ fancrawl_instagram_id ] = {};
+          }
+          if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+            STOP( fancrawl_instagram_id, true );
+          }
+          usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
           connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
-            console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", fancrawl_instagram_id );
+
+            res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
           });
-        });
+
+        } else {
+
+          connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+
+            res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
+
+            console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id);
+
+            // cleaning database process
+            cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+              //done cleaning so set to stopped
+              STOP( fancrawl_instagram_id, true );
+              console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", fancrawl_instagram_id );
+            });
+          });
+        }
       });
+
 
     // STOPPING FANCRAWL
     } else {
       console.log("no switch on so turn off fancrawl");
+
       // change state to stopped in database for user and redirect back to dashboard
       connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
