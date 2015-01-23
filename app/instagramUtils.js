@@ -142,7 +142,6 @@ var crypto                    = require('crypto'),
                 timer[ arguments[0] ].quick_seconds = false;
                 timer_quick( arguments[0] );
               }
-              console.log("SETTIMOUT 3 WORKS!!!!");
         }, Math.floor( ( Math.random() * 500 ) + 1000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
       } else if ( state === "post_short" ) {
@@ -160,7 +159,6 @@ var crypto                    = require('crypto'),
               timer[ arguments[0] ].post_minute = false;
               timer_post( arguments[0] );
             }
-            console.log("SETTIMOUT 5 WORKS!!!!");
         }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
       }
     }
@@ -1187,7 +1185,6 @@ var crypto                    = require('crypto'),
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
-          console.log("SETTIMOUT 9 WORKS!!!!");
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
