@@ -123,6 +123,7 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
               callTimer( arguments[0], arguments[1] );
+              console.log("SETTIMOUT 1 WORKS!!!!");
         }, 1000 * 60 * 1, fancrawl_instagram_id, state ); // 1 min wait
     } else {
       // waits half a second and rechecks timer state
@@ -130,6 +131,7 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
               timer_quick( arguments[0] );
+              console.log("SETTIMOUT 2 WORKS!!!!");
         }, 500, fancrawl_instagram_id ); // 0.5 sec
 
       // waits half a second and rechecks timer state
@@ -140,6 +142,7 @@ var crypto                    = require('crypto'),
                 timer[ arguments[0] ].quick_seconds = false;
                 timer_quick( arguments[0] );
               }
+              console.log("SETTIMOUT 3 WORKS!!!!");
         }, Math.floor( ( Math.random() * 500 ) + 1000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
       } else if ( state === "post_short" ) {
@@ -147,6 +150,7 @@ var crypto                    = require('crypto'),
         setTimeout(
           function(){
             timer_post( arguments[0] );
+            console.log("SETTIMOUT 4 WORKS!!!!");
         }, 5000, fancrawl_instagram_id ); // 5 sec
 
       } else if ( state === "post_long" ) {
@@ -156,6 +160,7 @@ var crypto                    = require('crypto'),
               timer[ arguments[0] ].post_minute = false;
               timer_post( arguments[0] );
             }
+            console.log("SETTIMOUT 5 WORKS!!!!");
         }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
       }
     }
@@ -779,10 +784,14 @@ var crypto                    = require('crypto'),
           if ( response.statusCode !== 400 ) {
             console.log( 'response from line 785:', response );
           }
+          if ( response.statusCode !== 400 ) {
+            console.log( 'response from line 785:', response );
+          }
           if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
             // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
             sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body );
             GET_relationship( fancrawl_instagram_id, new_instagram_following_id, callback );
+            return;
           } else if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
           } else if ( typeof body === "object" ) {
@@ -1104,6 +1113,7 @@ var crypto                    = require('crypto'),
             function(){
             clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
             delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            console.log("SETTIMOUT 6 WORKS!!!!");
           }, time, fancrawl_instagram_id, new_instagram_following_id, process, callback );
         }
 
@@ -1125,6 +1135,7 @@ var crypto                    = require('crypto'),
             function(){
             clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
             delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            console.log("SETTIMOUT 7 WORKS!!!!");
           }, time, fancrawl_instagram_id, new_instagram_following_id, process, callback );
         }
     // TIMER QUICK CONFIGURATIONS
@@ -1150,6 +1161,7 @@ var crypto                    = require('crypto'),
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          console.log("SETTIMOUT 8 WORKS!!!!");
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     } else {
@@ -1175,6 +1187,7 @@ var crypto                    = require('crypto'),
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          console.log("SETTIMOUT 9 WORKS!!!!");
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
@@ -1279,6 +1292,7 @@ var crypto                    = require('crypto'),
                     function(){
                     fetchNewFollowers( arguments[0], arguments[1] );
                     delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                    console.log("SETTIMOUT 10 WORKS!!!!");
                   }, time, fancrawl_instagram_id, new_instagram_following_id );
                 }
 
@@ -1330,6 +1344,7 @@ var crypto                    = require('crypto'),
               function(){
                 clockManager( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                console.log("SETTIMOUT 11 WORKS!!!!");
             }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 1 day
@@ -1341,6 +1356,7 @@ var crypto                    = require('crypto'),
               function(){
                 clockManager( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                console.log("SETTIMOUT 12 WORKS!!!!");
             }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 1 hour
@@ -1352,6 +1368,7 @@ var crypto                    = require('crypto'),
               function(){
                 clockManager( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                console.log("SETTIMOUT 13 WORKS!!!!");
             }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 5 min
@@ -1363,6 +1380,7 @@ var crypto                    = require('crypto'),
               function(){
                 clockManager( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                console.log("SETTIMOUT 14 WORKS!!!!");
             }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
           } else {
             console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
@@ -1396,6 +1414,7 @@ var crypto                    = require('crypto'),
           setTimeout(
             function(){
             verifyCleaning( arguments[0], arguments[1] );
+            console.log("SETTIMOUT 15 WORKS!!!!");
           }, totalDelay, fancrawl_instagram_id, callback );
 
         } else {
@@ -1495,6 +1514,7 @@ var crypto                    = require('crypto'),
                 // console.log(fancrawl_instagram_id);
                 callback( fancrawl_instagram_id );
               });
+              console.log("SETTIMOUT 16 WORKS!!!!");
             }, totalCountTime + 1000, fancrawl_instagram_id );
 
           } else {
