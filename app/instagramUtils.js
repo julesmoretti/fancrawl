@@ -15,7 +15,7 @@ var crypto                    = require('crypto'),
     timer                     = {},
     setTimeouts               = {},
     specialCounter            = 0,
-    queueCap                  = 200,
+    queueCap                  = 10,
     connection                = mysql.createConnection({
                                   host: 'localhost',
                                   user: 'root',
@@ -23,14 +23,14 @@ var crypto                    = require('crypto'),
                                   database: 'fancrawl'
                                 });
 
-    connection.connect(function(err) {
-                                      if (err) {
-                                        console.error('error connecting: ' + err.stack);
-                                        return;
-                                      }
+    // connection.connect(function(err) {
+    //                                   if (err) {
+    //                                     console.error('error connecting: ' + err.stack);
+    //                                     return;
+    //                                   }
 
-                                      console.log('connected as id ' + connection.threadId);
-                                     });
+    //                                   console.log('connected as id ' + connection.threadId);
+    //                                  });
 
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
@@ -213,6 +213,9 @@ var crypto                    = require('crypto'),
       // SETTIMEOUT LONG
       callTimer( fancrawl_instagram_id, "post_long" );
 
+      console.log( timer[ fancrawl_instagram_id ] );
+
+      // RUN SOME STUFF HERE //////////////////////////////////////////////
         // CHECK STATE OF USER
         connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
           if (err) throw err;
@@ -1178,12 +1181,13 @@ var crypto                    = require('crypto'),
 
       // else setTimeout 10 seconds recursing same stats
       } else {
-        // TODO - LARGE ACCUMULATION OF SETTIMOUTS>>>> NOT SURE WHY, NEED TO LIMIT IT TO JUST ONE
+        // TODO - LARGE ACCUMULATION OF SETTIMOUTS>>>> NOT SURE WHY, NEED TO LIMIT IT TO
         var time = 1000 * 10;
         setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
           function(){
           clockManager( arguments[0] , arguments[1], arguments[2], arguments[3] );
           delete setTimeouts[ arguments[0] ][ arguments[1] ];
+          console.log("SETTIMOUT 9 WORKS!!!!", arguments[1] );
         }, time, fancrawl_instagram_id , new_instagram_following_id, process, callback );
       }
     }
@@ -1363,7 +1367,6 @@ var crypto                    = require('crypto'),
               function(){
                 clockManager( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                console.log("SETTIMOUT 13 WORKS!!!!");
             }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
           // less then 5 min
@@ -1534,10 +1537,6 @@ var crypto                    = require('crypto'),
       setTimeouts[ fancrawl_instagram_id ] = {};
     }
 
-    // START CLOCKS ONLY ONCE! (WITH DELAY)
-    // callTimer( fancrawl_instagram_id, "quick_long" );
-    // callTimer( fancrawl_instagram_id, "post_long" );
-
     connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if( rows && rows[0] ) {
@@ -1561,24 +1560,25 @@ var crypto                    = require('crypto'),
               timer_post( fancrawl_instagram_id );
               timer_quick( fancrawl_instagram_id );
 
-              connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
+              connection.query('select added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
                 if (err) throw err;
 
                 var obj = {};
                 if ( rows && rows[0] ) {
+                  setTimeouts[ fancrawl_instagram_id ].previousData = rows;
+                  console.log( setTimeouts[ fancrawl_instagram_id ].previousData );
+                  // var i = 0;
+                  // var func = function(){
 
-                  var i = 0;
-                  var func = function(){
+                    // verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
+                    // if ( i < rows.length - 1 ) {
+                      // i++;
+                    // } else {
+                      // clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
+                    // }
+                  // };
 
-                    verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
-                    if ( i < rows.length - 1 ) {
-                      i++;
-                    } else {
-                      clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
-                    }
-                  };
-
-                  setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
+                  // setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
 
                   connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                     if (err) throw err;
