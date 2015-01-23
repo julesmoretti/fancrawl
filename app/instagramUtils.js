@@ -123,7 +123,7 @@ var crypto                    = require('crypto'),
         setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
           function(){
               callTimer( arguments[0], arguments[1] );
-              console.log("SETTIMOUT 1 WORKS!!!!");
+              console.log("SETTIMOUT 1 WORKS!!!!", fancrawl_instagram_id);
         }, 1000 * 60 * 1, fancrawl_instagram_id, state ); // 1 min wait
     } else {
       // waits half a second and rechecks timer state
@@ -131,7 +131,6 @@ var crypto                    = require('crypto'),
         setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
           function(){
               timer_quick( arguments[0] );
-              console.log("SETTIMOUT 2 WORKS!!!!");
         }, 500, fancrawl_instagram_id ); // 0.5 sec
 
       // waits half a second and rechecks timer state
@@ -149,7 +148,6 @@ var crypto                    = require('crypto'),
         setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
           function(){
             timer_post( arguments[0] );
-            console.log("SETTIMOUT 4 WORKS!!!!");
         }, 5000, fancrawl_instagram_id ); // 5 sec
 
       } else if ( state === "post_long" ) {
