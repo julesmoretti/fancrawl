@@ -78,20 +78,20 @@ var logOut = function(){
     });
 }
 
-var toggleAttributes1 = function() {
+var toggleAttributesFanCrawl = function() {
 
   $('#hidden').removeClass('show');
 
   // tobbles other tab
-  var switch2 = document.getElementById("switch2");
-  var disabled = switch2.getAttribute("disabled");
+  var switchClean = document.getElementById("switchClean");
+  var disabled = switchClean.getAttribute("disabled");
 
   if ( disabled === 'disabled' ) {
-    switch2.removeAttribute("disabled");
-    document.getElementById("switch2label").removeAttribute("class");
+    switchClean.removeAttribute("disabled");
+    document.getElementById("switchCleanlabel").removeAttribute("class");
   } else {
-    switch2.setAttribute("disabled", "disabled");
-    document.getElementById("switch2label").setAttribute("class", "muted");
+    switchClean.setAttribute("disabled", "disabled");
+    document.getElementById("switchCleanlabel").setAttribute("class", "muted");
   }
 
   // toggles save button
@@ -107,35 +107,36 @@ var toggleAttributes1 = function() {
 
 };
 
-var toggleAttributes2 = function() {
+var toggleAttributesClean = function() {
 
   $('#hidden').removeClass('show');
 
   // tobbles other tab
-  var switch1 = document.getElementById("switch1");
-  var disabled = switch1.getAttribute("disabled");
+  var switchFanCrawl = document.getElementById("switchFanCrawl");
+  var disabled = switchFanCrawl.getAttribute("disabled");
 
   if ( disabled === 'disabled' ) {
-    switch1.removeAttribute("disabled");
-    document.getElementById("switch1label").removeAttribute("class");
+    switchFanCrawl.removeAttribute("disabled");
+    document.getElementById("switchFanCrawllabel").removeAttribute("class");
   } else {
-    switch1.setAttribute("disabled", "disabled");
-    document.getElementById("switch1label").setAttribute("class", "muted");
+    switchFanCrawl.setAttribute("disabled", "disabled");
+    document.getElementById("switchFanCrawllabel").setAttribute("class", "muted");
   }
 
   // toggles save button
   var submitButton = document.getElementById("submitButton");
   var subDisabled = submitButton.getAttribute("disabled");
+
   if ( subDisabled !== null || subDisabled === 'disabled' ) {
     submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
+    document.getElementById("submitButton").className = "saveButton";
   } else {
     submitButton.setAttribute("disabled", "disabled");
     document.getElementById("submitButton").className = "saveButton disabledButton";
   }
 };
 
-var toggleAttributes3 = function() {
+var toggleAttributesEmailNoti = function() {
 
   $('#hidden').removeClass('show');
 
@@ -157,7 +158,7 @@ var toggleAttributes3 = function() {
   }
 };
 
-var toggleAttributes4 = function() {
+var toggleAttributesMasterNoti = function() {
 
   $('#hidden').removeClass('show');
 
@@ -166,6 +167,28 @@ var toggleAttributes4 = function() {
   var subDisabled = submitButton.getAttribute("disabled");
 
   if ( subDisabled !== null || subDisabled === 'disabled' ) {
+    submitButton.removeAttribute("disabled");
+    document.getElementById("submitButton").className = "saveButton ";
+  } else {
+    submitButton.setAttribute("disabled", "disabled");
+    document.getElementById("submitButton").className = "saveButton disabledButton";
+  }
+};
+
+var toggleAttributesHash = function() {
+
+  $('#hidden').removeClass('show');
+
+  // toggles save button
+  var submitButton = document.getElementById("submitButton");
+  var subDisabled = submitButton.getAttribute("disabled");
+  var hash = document.getElementById("hash");
+  var value = hash.getAttribute("value");
+  var input = hash.value;
+
+  if ( value !== input ) {
+    // do nothing on change
+  } else if ( subDisabled !== null || subDisabled === 'disabled' ) {
     submitButton.removeAttribute("disabled");
     document.getElementById("submitButton").className = "saveButton ";
   } else {
@@ -187,4 +210,58 @@ var eMailChangeVerification = function() {
     submitButton.setAttribute("disabled", "disabled");
     document.getElementById("submitButton").className = "saveButton disabledButton";
   }
+}
+
+var hashChangeVerification  = function() {
+  var submitButton          = document.getElementById("submitButton");
+
+  var hash                  = document.getElementById("hash");
+  var original              = hash.getAttribute("class");            // either empty, selected or deselected
+  var value                 = hash.getAttribute("value");            // original saved hash
+  var input                 = hash.value;                            // user input field
+
+  var switchHashLabel       = document.getElementById("switchHashlabel");
+
+  var switchHash            = document.getElementById("switchHash");
+  var disabled              = switchHash.getAttribute("disabled");
+  var checkbox              = switchHash.getAttribute("checkd");
+
+  console.log( switchHash );
+  console.log( switchHashlabel );
+
+  if ( disabled === 'disabled' && value !== input ) {
+    switchHash.removeAttribute("disabled");
+    document.getElementById("switchHashlabel").removeAttribute("class");
+
+    submitButton.removeAttribute("disabled");
+    document.getElementById("submitButton").className = "saveButton ";
+
+  } else if ( value === input ) {
+    switchHash.setAttribute("disabled", "disabled");
+    document.getElementById("switchHashlabel").setAttribute("class", "muted");
+
+    submitButton.setAttribute("disabled", "disabled");
+    document.getElementById("submitButton").className = "saveButton disabledButton";
+
+    if ( checkbox === "checked" ) {
+      // switchHash.setAttribute("checked", "empty");
+      document.getElementById("switchHashlabel").setAttribute("class", "switchDivClosed");
+    }
+
+  }
+
+
+  // // when nothing in the input field
+  // if ( original === "empty" && input.length === 0  ) {
+  //   // make sure that check box is grayed out and disabled...
+
+  // // when something new entered the input field from before
+  // } else if ( value !== input && original === "something" ) {
+  //   //
+  //   submitButton.removeAttribute("disabled");
+  //   document.getElementById("submitButton").className = "saveButton ";
+  // } else {
+  //   submitButton.setAttribute("disabled", "disabled");
+  //   document.getElementById("submitButton").className = "saveButton disabledButton";
+  // }
 }

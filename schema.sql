@@ -25,6 +25,7 @@ CREATE TABLE `access_right` (
   `fancrawl_username` VARCHAR(255),
   `fancrawl_instagram_id` VARCHAR(20),
   `email` VARCHAR(255),
+  `sHash` INT(1) DEFAULT 0,
   `eNoti` INT(1) DEFAULT 0,
   `pNoti` INT(1) DEFAULT 0,
   `code` VARCHAR(255),
@@ -48,6 +49,7 @@ CREATE TABLE `settings` (
   `mNoti` INT(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original settings list';
+
 
 -- ---
 -- Table 's_followed_by'
@@ -99,6 +101,22 @@ CREATE TABLE `beta_followers` (
   `refresh_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
+
+
+-- ---
+-- Table 'users_hash_tags'
+-- Original users_hash_tags list
+-- ---
+
+DROP TABLE IF EXISTS `users_hash_tags`;
+
+CREATE TABLE `users_hash_tags` (
+  `id` INT(20) AUTO_INCREMENT,
+  `fancrawl_instagram_id` VARCHAR(20),
+  `hash_tag` VARCHAR(20),
+  PRIMARY KEY (`id`)
+) COMMENT 'Original users_hash_tags list';
+
 
 -- ---
 -- Table 'hash_tags'

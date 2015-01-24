@@ -495,7 +495,7 @@ html {
                     height: 100%; }
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv label.muted::after {
                       background-color: grey !important; }
-                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input#switch2:checked ~ label:after {
+                    html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input#switchClean:checked ~ label:after {
                       background-color: #fdd900; }
                     html body .container .containerInner .mainControllers .controllerList .controllerStatus ul li .switchDiv input.switch:empty {
                       margin-left: -9999px; }

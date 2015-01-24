@@ -179,10 +179,13 @@
                   <% } %>
                   <li><span>crawled users since start</span></li>
                   <li><span>following back</span></li>
-                  <li><span>Email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
+                  <li><span>email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
                   </li>
                   <% if ( admin ){ %>
-                    <li><span>Master notifications</span></li>
+                  <li>
+                    <span>hash tag<input id="hash" value="<%= hash %>" type="text" name="hash" oninput="hashChangeVerification()" class="empty"></span>
+                  </li>
+                    <li><span>master notifications</span></li>
                     <!-- <li><span>Reboot Server</span></li> -->
                   <% } %>
                 </ul>
@@ -192,28 +195,28 @@
                     <li>
                       <div class="switchDiv">
                         <% if ( status === "statusStopped" ){ %>
-                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()"/>
-                          <label id="switch1label" for="switch1">&nbsp;</label>
+                          <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="toggleAttributesFanCrawl()"/>
+                          <label id="switchFanCrawllabel" for="switchFanCrawl">&nbsp;</label>
                         <% } else if ( status === "statusStarted" ){ %>
-                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="toggleAttributes1()" checked="checked"/>
-                          <label id="switch1label" for="switch1">&nbsp;</label>
+                          <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="toggleAttributesFanCrawl()" checked="checked"/>
+                          <label id="switchFanCrawllabel" for="switchFanCrawl">&nbsp;</label>
                         <% } else if ( status === "statusCleaning" ){ %>
-                          <input type="checkbox" id="switch1" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
-                          <label id="switch1label" for="switch1" class="muted">&nbsp;</label>
+                          <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
+                          <label id="switchFanCrawllabel" for="switchFanCrawl" class="muted">&nbsp;</label>
                         <% } %>
                       </div>
                     </li>
                     <li>
                       <div class="switchDiv">
                         <% if ( status === "statusStopped" ){ %>
-                          <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="toggleAttributes2();"/>
-                          <label id="switch2label" for="switch2">&nbsp;</label>
+                          <input type="checkbox" id="switchClean" name="switchclean" class="switch" onclick="toggleAttributesClean();"/>
+                          <label id="switchCleanlabel" for="switchClean">&nbsp;</label>
                         <% } else if ( status === "statusStarted" ){ %>
-                          <input type="checkbox" id="switch2" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
-                          <label id="switch2label" for="switch2" class="muted">&nbsp;</label>
+                          <input type="checkbox" id="switchClean" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
+                          <label id="switchCleanlabel" for="switchClean" class="muted">&nbsp;</label>
                         <% } else if ( status === "statusCleaning" ){ %>
-                          <input type="checkbox" id="switch2" name="switchclean" class="switch" checked="checked" onclick="toggleAttributes3()"/>
-                          <label id="switch2label" for="switch2">&nbsp;</label>
+                          <input type="checkbox" id="switchClean" name="switchclean" class="switch" checked="checked" onclick="toggleAttributesClean()"/>
+                          <label id="switchCleanlabel" for="switchClean">&nbsp;</label>
                         <% } %>
                       </div>
                     </li>
@@ -240,35 +243,53 @@
                     <li>
                       <div class="switchDiv">
                         <% if ( eNoti === 1 ){ %>
-                          <input type="checkbox" id="switch3" name="switchMail" class="switch" checked="checked" onclick="toggleAttributes3()"/>
-                          <label id="switch3label" for="switch3">&nbsp;</label>
+                          <input type="checkbox" id="switchEmailNoti" name="switchMail" class="switch" checked="checked" onclick="toggleAttributesEmailNoti()"/>
+                          <label id="switchEmailNotilabel" for="switchEmailNoti">&nbsp;</label>
                         <% } else { %>
-                          <input type="checkbox" id="switch3" name="switchMail" class="switch" onclick="toggleAttributes3()" />
-                          <label id="switch3label" for="switch3">&nbsp;</label>
+                          <input type="checkbox" id="switchEmailNoti" name="switchMail" class="switch" onclick="toggleAttributesEmailNoti()" />
+                          <label id="switchEmailNotilabel" for="switchEmailNoti">&nbsp;</label>
                         <% } %>
                       </div>
-                      <% if ( admin ){ %>
-                        <input type="hidden" name="admin" value="true">
-
-                        <li>
-                          <div class="switchDiv">
-                            <% if ( mNoti ){ %>
-                            <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributes4()" checked="checked"/>
-                              <label id="switch4label" for="switch4">&nbsp;</label>
-                            <% } else { %>
-                              <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributes4()"/>
-                              <label id="switch4label" for="switch4">&nbsp;</label>
-                            <% } %>
-                          </div>
-                        </li>
-                       <!--  <li>
-                          <div class="switchDiv">
-                              <input type="checkbox" id="switch5" name="switchReboot" class="switch" onclick="toggleAttributes4()"/>
-                              <label id="switch5label" for="switch5">&nbsp
-                          </div>
-                        </li> -->
-                      <% } %>
                     </li>
+                    <% if ( admin ){ %>
+                    <li>
+                      <div class="switchDiv">
+                        <% if ( sHash === 1 ){ %>
+                        sHash 1
+                          <input type="checkbox" id="switchHash" name="switchHash" class="switch" checked="checked" onclick="toggleAttributesHash()"/>
+                          <label id="switchHashlabel" for="switchHash">&nbsp;</label>
+                        <% } else if ( !sHash && !hash ) { %>
+                          hash 0 and null
+                          <input type="checkbox" id="switchHash" name="switchHash" class="switch" onclick="toggleAttributesHash()" disabled="disabled"/>
+                          <label id="switchHashlabel" for="switchHash" class="muted">&nbsp;</label>
+                        <% } else { %>
+                        else
+                          <input type="checkbox" id="switchHash" name="switchHash" class="switch" onclick="toggleAttributesHash()" />
+                          <label id="switchHashlabel" for="switchHash">&nbsp;</label>
+                        <% } %>
+                      </div>
+                    </li>
+                      <input type="hidden" name="admin" value="true">
+                      <input type="hidden" name="status" value="<%= status %>">
+
+                      <li>
+                        <div class="switchDiv">
+                          <% if ( mNoti ){ %>
+                          <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributesMasterNoti()" checked="checked"/>
+                            <label id="switch4label" for="switch4">&nbsp;</label>
+                          <% } else { %>
+                            <input type="checkbox" id="switch4" name="switchMasterNotification" class="switch" onclick="toggleAttributesMasterNoti()"/>
+                            <label id="switch4label" for="switch4">&nbsp;</label>
+                          <% } %>
+                        </div>
+                      </li>
+                     <!--  <li>
+                        <div class="switchDiv">
+                            <input type="checkbox" id="switch5" name="switchReboot" class="switch" onclick="toggleAttributes4()"/>
+                            <label id="switch5label" for="switch5">&nbsp
+                        </div>
+                      </li> -->
+                    <% } %>
                   </ul>
               </div>
             </div>

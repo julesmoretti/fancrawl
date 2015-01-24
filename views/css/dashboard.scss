@@ -617,7 +617,7 @@ html {
                     label.muted::after {
                     background-color: grey !important;
                     }
-                    input#switch2:checked ~ label:after, {
+                    input#switchClean:checked ~ label:after, {
                           background-color: $inst_yellow;
                     }
                     input.switch:empty {
@@ -671,6 +671,7 @@ html {
                       background-color: $inst_green;
                     }
                   }
+
 
                   span {
                     display: table-cell;
