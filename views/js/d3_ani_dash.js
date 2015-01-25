@@ -109,3 +109,69 @@ d3.selectAll(".mainControllers")
               .delay(500)
               .style("opacity", 1)
               .style("width", "calc("+100+"% - 16px)")
+
+
+/**
+ * Calculate incremental amounts of pixels scrolled in each axis.
+ * Value is signed to its direction.
+ */
+
+function incrementalScroll(e) {
+
+    var scrollX = (this.x || window.pageXOffset) - window.pageXOffset;
+    var scrollY = (this.y || window.pageYOffset) - window.pageYOffset;
+
+    this.x = window.pageXOffset;
+    this.y = window.pageYOffset;
+
+    direction(scrollX, scrollY);
+}
+
+function direction(scrollX, scrollY){
+
+    var directionX = !scrollX ? "NONE" : scrollX>0 ? "LEFT" : "RIGHT";
+    var directionY = !scrollY ? "NONE" : scrollY>0 ? "UP" : "DOWN";
+    var diff = window.screen.availHeight - window.pageYOffset - 36;
+
+    if ( directionY === "UP" ) {
+        d3.selectAll(".header")
+          .transition()
+          .duration(100)
+          .style("top", 0+"px");
+      if ( diff > 30 ) {
+        d3.selectAll(".status_bar")
+          .transition()
+          .duration(100)
+          .style("bottom", -30+"px");
+      } else if ( diff < 0 ) {
+        d3.selectAll(".status_bar")
+          .style("bottom", 0+"px");
+      } else {
+        d3.selectAll(".status_bar")
+          .style("bottom", "-"+diff+"px");
+      }
+
+    } else if ( directionY === "DOWN" ) {
+
+      if ( window.pageYOffset > 44 ) {
+        d3.selectAll(".header")
+          .transition()
+          .duration(100)
+          .style("top", -44+"px");
+      } else if ( window.pageYOffset < 0 ) {
+        d3.selectAll(".header")
+          .style("top", 0+"px");
+      } else {
+        d3.selectAll(".header")
+          .style("top", "-"+window.pageYOffset+"px");
+      }
+
+      d3.selectAll(".status_bar")
+        .transition()
+        .duration(100)
+        .style("bottom", 0+"px");
+
+    }
+}
+
+window.onscroll = incrementalScroll;

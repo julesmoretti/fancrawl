@@ -1,68 +1,3 @@
-/**
- * Calculate incremental amounts of pixels scrolled in each axis.
- * Value is signed to its direction.
- */
-
-function incrementalScroll(e) {
-
-    var scrollX = (this.x || window.pageXOffset) - window.pageXOffset;
-    var scrollY = (this.y || window.pageYOffset) - window.pageYOffset;
-
-    this.x = window.pageXOffset;
-    this.y = window.pageYOffset;
-
-    direction(scrollX, scrollY);
-}
-
-function direction(scrollX, scrollY){
-
-    var directionX = !scrollX ? "NONE" : scrollX>0 ? "LEFT" : "RIGHT";
-    var directionY = !scrollY ? "NONE" : scrollY>0 ? "UP" : "DOWN";
-    var diff = window.screen.availHeight - window.pageYOffset - 36;
-
-    if ( directionY === "UP" ) {
-        d3.selectAll(".header")
-          .transition()
-          .duration(100)
-          .style("top", 0+"px");
-      if ( diff > 30 ) {
-        d3.selectAll(".status_bar")
-          .transition()
-          .duration(100)
-          .style("bottom", -30+"px");
-      } else if ( diff < 0 ) {
-        d3.selectAll(".status_bar")
-          .style("bottom", 0+"px");
-      } else {
-        d3.selectAll(".status_bar")
-          .style("bottom", "-"+diff+"px");
-      }
-
-    } else if ( directionY === "DOWN" ) {
-
-      if ( window.pageYOffset > 44 ) {
-        d3.selectAll(".header")
-          .transition()
-          .duration(100)
-          .style("top", -44+"px");
-      } else if ( window.pageYOffset < 0 ) {
-        d3.selectAll(".header")
-          .style("top", 0+"px");
-      } else {
-        d3.selectAll(".header")
-          .style("top", "-"+window.pageYOffset+"px");
-      }
-
-      d3.selectAll(".status_bar")
-        .transition()
-        .duration(100)
-        .style("bottom", 0+"px");
-
-    }
-}
-
-window.onscroll = incrementalScroll;
-
 var logOut = function(){
   $.ajax( {url: "https://instagram.com/accounts/logout", dataType: 'jsonp' } )
     .done(function() {
@@ -78,11 +13,44 @@ var logOut = function(){
     });
 }
 
+// SWITCH SETTINGS CHANGE TRACKER
+var oriSwitchFanCrawl               = false,
+    oriSwitchClean                  = false,
+    oriSwitchEmailNoti              = false,
+    oriInputEmailNoti               = false,
+    oriSwitchHash                   = false,
+    oriInputHash                    = false,
+    oriSwitchMasterNoti             = false;
+
+// checks for switch change to show or hide the update button
+var checkSwitchChange = function(){
+  var submitButton = document.getElementById("submitButton");
+
+  if (  oriSwitchFanCrawl ||
+        oriSwitchClean ||
+        oriSwitchEmailNoti ||
+        oriInputEmailNoti ||
+        oriSwitchHash ||
+        oriInputHash ||
+        oriSwitchMasterNoti
+      ) {
+
+    // show update button
+    submitButton.removeAttribute("disabled");
+    document.getElementById("submitButton").className = "saveButton ";
+  } else {
+    // hide update button
+    submitButton.setAttribute("disabled", "disabled");
+    document.getElementById("submitButton").className = "saveButton disabledButton";
+  }
+};
+
+// FanCrawl switch button controller
 var toggleAttributesFanCrawl = function() {
 
   $('#hidden').removeClass('show');
 
-  // tobbles other tab
+  // toggles clean tab
   var switchClean = document.getElementById("switchClean");
   var disabled = switchClean.getAttribute("disabled");
 
@@ -94,17 +62,13 @@ var toggleAttributesFanCrawl = function() {
     document.getElementById("switchCleanlabel").setAttribute("class", "muted");
   }
 
-  // toggles save button
-  var submitButton = document.getElementById("submitButton");
-  var subDisabled = submitButton.getAttribute("disabled");
-  if ( subDisabled !== null || subDisabled === 'disabled' ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
+  // check difference for update button
+  if ( oriSwitchFanCrawl ) {
+    oriSwitchFanCrawl = false;
   } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
+    oriSwitchFanCrawl = true;
   }
-
+  checkSwitchChange();
 };
 
 var toggleAttributesClean = function() {
@@ -123,145 +87,314 @@ var toggleAttributesClean = function() {
     document.getElementById("switchFanCrawllabel").setAttribute("class", "muted");
   }
 
-  // toggles save button
-  var submitButton = document.getElementById("submitButton");
-  var subDisabled = submitButton.getAttribute("disabled");
-
-  if ( subDisabled !== null || subDisabled === 'disabled' ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton";
+  // check difference for update button
+  if ( oriSwitchClean ) {
+    oriSwitchClean = false;
   } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
+    oriSwitchClean = true;
   }
+  checkSwitchChange();
 };
 
 var toggleAttributesEmailNoti = function() {
 
   $('#hidden').removeClass('show');
 
-  // toggles save button
-  var submitButton = document.getElementById("submitButton");
-  var subDisabled = submitButton.getAttribute("disabled");
+  // check difference for update button
+  if ( oriSwitchEmailNoti ) {
+    oriSwitchEmailNoti = false;
+  } else {
+    oriSwitchEmailNoti = true;
+  }
+  checkSwitchChange();
+
+};
+
+var eMailChangeVerification = function() {
+
   var eMail = document.getElementById("eMail");
   var value = eMail.getAttribute("value");
   var input = eMail.value;
 
-  if ( value !== input ) {
-    // do nothing on change
-  } else if ( subDisabled !== null || subDisabled === 'disabled' ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
-  } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
+  var switchEmail           = document.getElementById("switchEmailNoti");
+  var disabled              = switchEmail.getAttribute("disabled");
+  var checkbox              = switchEmail.checked;
+
+  // nothing in the input to begin with and empty input
+  if ( value === "" && input.length === 0 ) {
+    oriInputEmailNoti = false;
+
+    // uncheck switch and disable it
+    switchEmail.setAttribute("disabled", "disabled");
+    document.getElementById("switchEmailNotilabel").setAttribute("class", "muted");
+    // switch off switch if previously on
+    if ( checkbox === true ) {
+      document.getElementById('switchEmailNoti').checked = false;
+
+      // check difference for update button
+      if ( oriSwitchEmailNoti ) {
+        oriSwitchEmailNoti = false;
+      } else {
+        oriSwitchEmailNoti = true;
+      }
+    }
+
+  // nothing in the input to begin with but something in the in input
+  } else if ( value === "" && input.length !== 0 ) {
+    oriInputEmailNoti = true;
+
+    // show switch
+    switchEmail.removeAttribute("disabled");
+    document.getElementById("switchEmailNotilabel").removeAttribute("class");
+
+  // something in the input to begin with and matching input
+  } else if ( value !== "" && input === value ) {
+    oriInputEmailNoti = false;
+
+    // show switch
+    switchEmail.removeAttribute("disabled");
+    document.getElementById("switchEmailNotilabel").removeAttribute("class");
+
+    // switch on switch if previously dissabled
+    if ( checkbox === false ) {
+      document.getElementById('switchEmailNoti').checked = true;
+
+      // check difference for update button
+      if ( oriSwitchEmailNoti ) {
+        oriSwitchEmailNoti = false;
+      } else {
+        oriSwitchEmailNoti = true;
+      }
+    }
+
+  // something in the input to begin with and different input but not nothing
+  } else if ( value !== "" && input !== value && input.length !== 0) {
+    oriInputEmailNoti = true;
+
+    // show switch
+    switchEmail.removeAttribute("disabled");
+    document.getElementById("switchEmailNotilabel").removeAttribute("class");
+
+    // switch on switch if previously dissabled
+    if ( checkbox === false ) {
+      document.getElementById('switchEmailNoti').checked = true;
+
+      // check difference for update button
+      if ( oriSwitchEmailNoti ) {
+        oriSwitchEmailNoti = false;
+      } else {
+        oriSwitchEmailNoti = true;
+      }
+    }
+
+  // something in the input to begin with and input empty
+  } else if ( value !== "" && input !== value && input.length === 0) {
+    oriInputEmailNoti = true;
+
+    // uncheck switch and disable it
+    switchEmail.setAttribute("disabled", "disabled");
+    document.getElementById("switchEmailNotilabel").setAttribute("class", "muted");
+
+    // switch off switch if previously on
+    if ( checkbox === true ) {
+      document.getElementById('switchEmailNoti').checked = false;
+
+      // check difference for update button
+      if ( oriSwitchEmailNoti ) {
+        oriSwitchEmailNoti = false;
+      } else {
+        oriSwitchEmailNoti = true;
+      }
+    }
   }
-};
 
-var toggleAttributesMasterNoti = function() {
+  checkSwitchChange();
+}
 
-  $('#hidden').removeClass('show');
 
-  // toggles save button
-  var submitButton = document.getElementById("submitButton");
-  var subDisabled = submitButton.getAttribute("disabled");
-
-  if ( subDisabled !== null || subDisabled === 'disabled' ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
-  } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
-  }
-};
 
 var toggleAttributesHash = function() {
 
   $('#hidden').removeClass('show');
 
-  // toggles save button
-  var submitButton = document.getElementById("submitButton");
-  var subDisabled = submitButton.getAttribute("disabled");
-  var hash = document.getElementById("hash");
-  var value = hash.getAttribute("value");
-  var input = hash.value;
+  // // toggles save button
+    // var submitButton = document.getElementById("submitButton");
+    // var subDisabled = submitButton.getAttribute("disabled");
+    // var hash = document.getElementById("hash");
+    // var value = hash.getAttribute("value");
+    // var input = hash.value;
 
-  if ( value !== input ) {
-    // do nothing on change
-  } else if ( subDisabled !== null || subDisabled === 'disabled' ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
+    // if ( value !== input ) {
+    //   // do nothing on change
+    // } else if ( subDisabled !== null || subDisabled === 'disabled' ) {
+    //   submitButton.removeAttribute("disabled");
+    //   document.getElementById("submitButton").className = "saveButton ";
+    // } else {
+    //   submitButton.setAttribute("disabled", "disabled");
+    //   document.getElementById("submitButton").className = "saveButton disabledButton";
+    // }
+
+  // check difference for update button
+  if ( oriSwitchHash ) {
+    oriSwitchHash = false;
   } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
+    oriSwitchHash = true;
   }
+  checkSwitchChange();
+
 };
 
 
-var eMailChangeVerification = function() {
-  var eMail = document.getElementById("eMail");
-  var value = eMail.getAttribute("value");
-  var input = eMail.value;
-
-  if ( value !== input ) {
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
-  } else {
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
-  }
-}
-
 var hashChangeVerification  = function() {
-  var submitButton          = document.getElementById("submitButton");
 
   var hash                  = document.getElementById("hash");
-  var original              = hash.getAttribute("class");            // either empty, selected or deselected
   var value                 = hash.getAttribute("value");            // original saved hash
   var input                 = hash.value;                            // user input field
 
-  var switchHashLabel       = document.getElementById("switchHashlabel");
-
   var switchHash            = document.getElementById("switchHash");
   var disabled              = switchHash.getAttribute("disabled");
-  var checkbox              = switchHash.getAttribute("checkd");
+  var checkbox              = switchHash.checked;
 
-  console.log( switchHash );
-  console.log( switchHashlabel );
+  // nothing in the input to begin with and empty input
+  if ( value === "" && input.length === 0 ) {
+    oriInputHash = false;
 
-  if ( disabled === 'disabled' && value !== input ) {
+    // uncheck switch and disable it
+    switchHash.setAttribute("disabled", "disabled");
+    document.getElementById("switchHashlabel").setAttribute("class", "muted");
+    // switch off switch if previously on
+    if ( checkbox === true ) {
+      document.getElementById('switchHash').checked = false;
+
+      // check difference for update button
+      if ( oriSwitchHash ) {
+        oriSwitchHash = false;
+      } else {
+        oriSwitchHash = true;
+      }
+    }
+
+  // nothing in the input to begin with but something in the in input
+  } else if ( value === "" && input.length !== 0 ) {
+    oriInputHash = true;
+
+    // show switch
     switchHash.removeAttribute("disabled");
     document.getElementById("switchHashlabel").removeAttribute("class");
 
-    submitButton.removeAttribute("disabled");
-    document.getElementById("submitButton").className = "saveButton ";
+  // something in the input to begin with and matching input
+  } else if ( value !== "" && input === value ) {
+    oriInputHash = false;
 
-  } else if ( value === input ) {
+    // show switch
+    switchHash.removeAttribute("disabled");
+    document.getElementById("switchHashlabel").removeAttribute("class");
+
+    // switch on switch if previously dissabled
+    if ( checkbox === false ) {
+      document.getElementById('switchHash').checked = true;
+
+      // check difference for update button
+      if ( oriSwitchHash ) {
+        oriSwitchHash = false;
+      } else {
+        oriSwitchHash = true;
+      }
+    }
+
+  // something in the input to begin with and different input but not nothing
+  } else if ( value !== "" && input !== value && input.length !== 0) {
+    oriInputHash = true;
+
+    // show switch
+    switchHash.removeAttribute("disabled");
+    document.getElementById("switchHashlabel").removeAttribute("class");
+
+    // switch on switch if previously dissabled
+    if ( checkbox === false ) {
+      document.getElementById('switchHash').checked = true;
+
+      // check difference for update button
+      if ( oriSwitchHash ) {
+        oriSwitchHash = false;
+      } else {
+        oriSwitchHash = true;
+      }
+    }
+
+  // something in the input to begin with and input empty
+  } else if ( value !== "" && input !== value && input.length === 0) {
+    oriInputHash = true;
+
+    // uncheck switch and disable it
     switchHash.setAttribute("disabled", "disabled");
     document.getElementById("switchHashlabel").setAttribute("class", "muted");
 
-    submitButton.setAttribute("disabled", "disabled");
-    document.getElementById("submitButton").className = "saveButton disabledButton";
+    // switch off switch if previously on
+    if ( checkbox === true ) {
+      document.getElementById('switchHash').checked = false;
 
-    if ( checkbox === "checked" ) {
-      // switchHash.setAttribute("checked", "empty");
-      document.getElementById("switchHashlabel").setAttribute("class", "switchDivClosed");
+      // check difference for update button
+      if ( oriSwitchHash ) {
+        oriSwitchHash = false;
+      } else {
+        oriSwitchHash = true;
+      }
     }
-
   }
 
 
-  // // when nothing in the input field
-  // if ( original === "empty" && input.length === 0  ) {
-  //   // make sure that check box is grayed out and disabled...
 
-  // // when something new entered the input field from before
-  // } else if ( value !== input && original === "something" ) {
-  //   //
-  //   submitButton.removeAttribute("disabled");
-  //   document.getElementById("submitButton").className = "saveButton ";
-  // } else {
-  //   submitButton.setAttribute("disabled", "disabled");
-  //   document.getElementById("submitButton").className = "saveButton disabledButton";
+
+
+
+
+
+
+
+
+  // if ( disabled === 'disabled' && value !== input ) {
+  //   switchHash.removeAttribute("disabled");
+  //   document.getElementById("switchHashlabel").removeAttribute("class");
+
+  //   // submitButton.removeAttribute("disabled");
+  //   // document.getElementById("submitButton").className = "saveButton ";
+  //   oriInputHash = true;
+
+  // } else if ( value === input ) {
+  //   switchHash.setAttribute("disabled", "disabled");
+  //   document.getElementById("switchHashlabel").setAttribute("class", "muted");
+
+  //   // submitButton.setAttribute("disabled", "disabled");
+  //   // document.getElementById("submitButton").className = "saveButton disabledButton";
+  //   oriInputHash = false;
+
+  //   // switch off switch if previously on
+  //   if ( checkbox === true ) {
+  //     document.getElementById('switchHash').checked = false;
+
+  //     // check difference for update button
+  //     if ( oriSwitchHash ) {
+  //       oriSwitchHash = false;
+  //     } else {
+  //       oriSwitchHash = true;
+  //     }
+  //   }
+
   // }
+
+  checkSwitchChange();
 }
+
+var toggleAttributesMasterNoti = function() {
+
+  $('#hidden').removeClass('show');
+
+  // check difference for update button
+  if ( oriSwitchMasterNoti ) {
+    oriSwitchMasterNoti = false;
+  } else {
+    oriSwitchMasterNoti = true;
+  }
+  checkSwitchChange();
+};
