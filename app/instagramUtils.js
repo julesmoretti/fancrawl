@@ -1506,6 +1506,7 @@ var crypto                    = require('crypto'),
           // console.log("VERIFY CLEANING - QUICK COUNT: "+quickCount+" for "+fancrawl_instagram_id );
           // not done check again after some time....
           // still got data to go through wait longer to check
+
           var postDelay = postCount * 60 * 1000;
           var quickDelay = quickCount * 5 * 1000;
           var totalDelay = postDelay + quickDelay;
@@ -1593,12 +1594,14 @@ var crypto                    = require('crypto'),
           if ( rows && rows[0] ) {
           console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
 
-            // DATABASE HAS USERS TO DEAL WITH
-            for ( var i = 0; i < rows.length; i++ ) {
-              var new_instagram_following_id = rows[i].added_follower_instagram_id;
+          setTimeouts[ fancrawl_instagram_id ].previousData = rows;
 
-              verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
-            }
+            // DATABASE HAS USERS TO DEAL WITH
+            // for ( var i = 0; i < rows.length; i++ ) {
+            //   var new_instagram_following_id = rows[i].added_follower_instagram_id;
+
+            //   verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
+            // }
 
             var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
             var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
@@ -2600,7 +2603,7 @@ var crypto                    = require('crypto'),
             connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
               if (err) throw err;
 
-              var obj = {};
+              // var obj = {};
 
               if ( rows && rows[0] ) {
                 setTimeouts[ fancrawl_instagram_id ].previousData = rows;
