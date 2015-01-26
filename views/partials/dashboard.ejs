@@ -242,9 +242,12 @@
                     </li>
                     <li>
                       <div class="switchDiv">
-                        <% if ( eNoti === 1 ){ %>
+                        <% if ( eNoti === 1 ) { %>
                           <input type="checkbox" id="switchEmailNoti" name="switchMail" class="switch" checked="checked" onclick="toggleAttributesEmailNoti()"/>
                           <label id="switchEmailNotilabel" for="switchEmailNoti">&nbsp;</label>
+                        <% } else if ( !eNoti && !email ) { %>
+                          <input type="checkbox" id="switchEmailNoti" name="switchMail" class="switch" onclick="toggleAttributesEmailNoti()" disabled="disabled"/>
+                          <label id="switchEmailNotilabel" for="switchEmailNoti" class="muted">&nbsp;</label>
                         <% } else { %>
                           <input type="checkbox" id="switchEmailNoti" name="switchMail" class="switch" onclick="toggleAttributesEmailNoti()" />
                           <label id="switchEmailNotilabel" for="switchEmailNoti">&nbsp;</label>
@@ -255,15 +258,12 @@
                     <li>
                       <div class="switchDiv">
                         <% if ( sHash === 1 ){ %>
-                        sHash 1
                           <input type="checkbox" id="switchHash" name="switchHash" class="switch" checked="checked" onclick="toggleAttributesHash()"/>
                           <label id="switchHashlabel" for="switchHash">&nbsp;</label>
                         <% } else if ( !sHash && !hash ) { %>
-                          hash 0 and null
                           <input type="checkbox" id="switchHash" name="switchHash" class="switch" onclick="toggleAttributesHash()" disabled="disabled"/>
                           <label id="switchHashlabel" for="switchHash" class="muted">&nbsp;</label>
                         <% } else { %>
-                        else
                           <input type="checkbox" id="switchHash" name="switchHash" class="switch" onclick="toggleAttributesHash()" />
                           <label id="switchHashlabel" for="switchHash">&nbsp;</label>
                         <% } %>

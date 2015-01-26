@@ -1618,7 +1618,6 @@ var crypto                    = require('crypto'),
                 // console.log(fancrawl_instagram_id);
                 callback( fancrawl_instagram_id );
               });
-              console.log("SETTIMOUT 16 WORKS!!!!");
             }, totalCountTime + 1000, fancrawl_instagram_id );
 
           } else {
@@ -2228,7 +2227,7 @@ var crypto                    = require('crypto'),
       // console.log("has valid structure");
 
       // check access rights from database.
-      connection.query('SELECT state, fancrawl_full_name, fancrawl_username, email, eNoti, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
+      connection.query('SELECT state, fancrawl_full_name, fancrawl_username, email, sHash, eNoti, fancrawl_profile_picture, or_followed_by, or_following FROM access_right where fancrawl_instagram_id = '+ req.query.id, function(err, rows, fields) {
         if (err) throw err;
 
 
@@ -2243,7 +2242,7 @@ var crypto                    = require('crypto'),
           if ( req.query.user === "jules_moretti" ) {
             metrics.admin = true;
           }
-
+          metrics.sHash = rows[0].sHash;
           metrics.fullName = rows[0].fancrawl_full_name;
           metrics.userName = rows[0].fancrawl_username;
           metrics.userID = req.query.id;
@@ -2382,7 +2381,6 @@ var crypto                    = require('crypto'),
                         var data = newTemp.concat(old);
                       }
 
-                      // data = data.splice(data.length - 7,7);
                       if ( data.length > 0 ) {
                         metrics.data = data;
                       }
@@ -2401,9 +2399,17 @@ var crypto                    = require('crypto'),
 
                     connection.query('SELECT mNoti FROM settings', function(err, rows, fields) {
                       if (err) throw err;
-                      // console.log(rows[].mNoti);
                       metrics.mNoti = rows[0].mNoti;
-                      res.render('./partials/dashboard.ejs',  metrics );
+
+                      connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + req.query.id + '"', function(err, rows, fields) {
+                        if (err) throw err;
+                        if ( rows && rows[0] && rows[0].hash_tag ) {
+                          metrics.hash = rows[0].hash_tag;
+                          res.render('./partials/dashboard.ejs',  metrics );
+                        } else {
+                          res.render('./partials/dashboard.ejs',  metrics );
+                        }
+                      });
                     });
                   });
                 });
@@ -2548,17 +2554,8 @@ var crypto                    = require('crypto'),
 
     var fancrawl_instagram_id = req_query.id;
 
-    // console.log( req.body );
+    console.log( req.body );
 
-    if ( req.body.admin && req.body.switchMasterNotification ) {
-      connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
-        if (err) throw err;
-      });
-    } else if ( req.body.admin ) {
-      connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
-        if (err) throw err;
-      });
-    }
 
     // STARTING FANCRAWL
     // dashboard sent a switchFancrawl on so start FanCrawl
@@ -2603,22 +2600,8 @@ var crypto                    = require('crypto'),
             connection.query('select added_follower_instagram_id, count from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
               if (err) throw err;
 
-              // var obj = {};
-
               if ( rows && rows[0] ) {
                 setTimeouts[ fancrawl_instagram_id ].previousData = rows;
-                // var i = 0;
-                // var func = function(){
-
-                //   verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
-                //   if ( i < rows.length - 1 ) {
-                //     i++;
-                //   } else {
-                //     clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
-                //   }
-                // };
-
-                // setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
 
                 connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
@@ -2721,13 +2704,71 @@ var crypto                    = require('crypto'),
     }
 
 
-    // UPDATING EMAIL NOTIFICATIONS
-    if ( req.body.email && req.body.switchMail ) {
-      connection.query('UPDATE access_right set email = "'+ req.body.email +'", eNoti = 1 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+    // UPDATING HASH
+    if ( req.body.admin && req.body.hash ) {
+      connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+        if (err) throw err;
+        if ( rows && rows[0] && rows[0].hash_tag ) {
+          connection.query('UPDATE users_hash_tags set hash_tag = "' + req.body.hash + '" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
+        } else {
+          connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + req.body.hash + '", fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
+        }
+      })
+    } else if ( req.body.admin ) {
+      connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+        if (err) throw err;
+        if ( rows && rows[0] && rows[0].hash_tag ) {
+          connection.query('DELETE FROM users_hash_tags WHERE fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
+        }
+      })
+    }
+
+    // UPDATING HASH SWITCH
+    if ( req.body.admin && req.body.switchHash ) {
+      connection.query('UPDATE access_right set sHash = 1 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    } else if ( req.body.admin ) {
+      connection.query('UPDATE access_right set sHash = 0 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    }
+
+    // UPDATING MASTER EMAIL NOTIFICATIONS
+    if ( req.body.admin && req.body.switchMasterNotification ) {
+      connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    } else if ( req.body.admin ) {
+      connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
+        if (err) throw err;
+      });
+    }
+
+    // UPDATING EMAIL
+    if ( req.body.email ) {
+      connection.query('UPDATE access_right set email = "'+ req.body.email +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
       })
-    } else if ( req.body.email ) {
-      connection.query('UPDATE access_right set email = "'+ req.body.email +'", eNoti = 0 where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+    } else {
+      connection.query('UPDATE access_right set email = "" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+      })
+    }
+
+    // UPDATING EMAIL SWITCH
+    if ( req.body.switchMail ) {
+      connection.query('UPDATE access_right set eNoti = 1 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+      })
+    } else {
+      connection.query('UPDATE access_right set eNoti = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
       })
     }
