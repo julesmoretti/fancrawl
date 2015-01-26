@@ -133,7 +133,3 @@ CREATE TABLE `hash_tags` (
   `created_time` TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Hash Tags';
-
--- SELECT instagram_user_id, COUNT(*) AS freq FROM hash_tags WHERE instagram_user_id != 1 AND instagram_user_id != 3 GROUP BY instagram_user_id ORDER BY freq DESC;
-SELECT instagram_user_id, COUNT(*) AS freq FROM hash_tags GROUP BY instagram_user_id ORDER BY freq DESC;
-

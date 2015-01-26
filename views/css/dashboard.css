@@ -413,6 +413,13 @@ html {
           padding-bottom: 16px;
           margin-bottom: 50px;
           margin-right: 16px; }
+          html body .container .containerInner .mainControllers.updateSettings {
+            border-radius: none;
+            background-color: none;
+            padding: 0;
+            border: 1px solid #808080; }
+            html body .container .containerInner .mainControllers.updateSettings button {
+              border-radius: 6px; }
           html body .container .containerInner .mainControllers span {
             position: relative;
             padding-left: 16px;

@@ -1,8 +1,5 @@
 //  app/instagramUtils.js
 
-//  TODO - fix node-sass on server side
-//  TODO - Check clock load after callout time... seems like duplicates between long and short...
-
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
 //  =============================================================================
@@ -1993,19 +1990,6 @@ var crypto                    = require('crypto'),
           sendMail( 571377691, 'get hash tag media error', 'The function GET_hash_tag_media got the following error: ' + error );
         }
 
-        // if ( pbody.pagination && pbody.pagination.next_url ) {
-          // GET_hash_tag_media( fancrawl_instagram_id, hash_tag, pbody.pagination.next_url );
-          // pagination = pbody.pagination.next_url;
-        // } else {
-
-          // pagination = null;
-        // }
-
-        // if ( callback ) {
-
-          // callback( fancrawl_instagram_id , tag, pagination );
-        // }
-
       });
     });
     };
@@ -2381,6 +2365,7 @@ var crypto                    = require('crypto'),
                         var data = newTemp.concat(old);
                       }
 
+                      // data = data.splice(data.length - 7,7);
                       if ( data.length > 0 ) {
                         metrics.data = data;
                       }
