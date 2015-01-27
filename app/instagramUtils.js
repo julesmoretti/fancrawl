@@ -1085,10 +1085,10 @@ var crypto                    = require('crypto'),
 
           if ( response.statusCode === 503 ) {
             console.log( "GET_relationship reached max request limit - Waiting 10 minutes and trying again." );
-            sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
+            // sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
-              sendMail( 571377691, 'get relationship request attempt', 'The function GET_relationship is attempting to request for: ' + new_instagram_following_id );
+              // sendMail( 571377691, 'get relationship request attempt', 'The function GET_relationship is attempting to request for: ' + new_instagram_following_id );
               console.log( "GET_relationship reached max request limit - Waited 10 minutes and attempted again." );
               GET_relationship( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
