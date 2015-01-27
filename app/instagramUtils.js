@@ -67,14 +67,16 @@ var crypto                    = require('crypto'),
                     //    code: 'EAUTH',
                     //    response: '454 4.7.0 Too many login attempts, please try again later. ca2sm424696pbc.68 - gsmtp',
                     //    responseCode: 454 }
-
+                  console.log( "email error 454 - Too many login attempts - waiting 3 min and trying again.");
                   setTimeouts[ JSON.parse( fancrawl_instagram_id ) ].sendEmail = setTimeout(
                     function(){
                         callTimer( arguments[0], arguments[1] );
+                        console.log( "email error 454 - Too many login attempts - waited 3 min and attempted again.");
                         sendMail( arguments[0], arguments[1], arguments[2] );
                   }, 1000 * 60 * 3, JSON.parse( fancrawl_instagram_id ), subject, error ); // 1 min wait
 
                 } else {
+                  console.log( "email error -", error );
                   sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
                 }
 
