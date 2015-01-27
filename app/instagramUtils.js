@@ -67,11 +67,24 @@ var crypto                    = require('crypto'),
                     //    code: 'EAUTH',
                     //    response: '454 4.7.0 Too many login attempts, please try again later. ca2sm424696pbc.68 - gsmtp',
                     //    responseCode: 454 }
-                  console.log( "email error 454 - Too many login attempts - waiting "+errorLimitDelay+" min and trying again.");
+                  console.log( "eMail error 454 - Too many login attempts - waiting "+errorLimitDelay+" min and trying again.");
                   setTimeouts[ JSON.parse( fancrawl_instagram_id ) ].sendEmail = setTimeout(
                     function(){
                         callTimer( arguments[0], arguments[1] );
-                        console.log( "email error 454 - Too many login attempts - waited "+ arguments[3] +" min and attempted again.");
+                        console.log( "eMail error 454 - Too many login attempts - waited "+ arguments[3] +" min and attempted again.");
+                        sendMail( arguments[0], arguments[1], arguments[2] );
+                  }, 1000 * 60 * errorLimitDelay, JSON.parse( fancrawl_instagram_id ), subject, error, errorLimitDelay ); // 1 min wait
+
+                } else if ( error.responseCode === 421) {
+                  // { [Error: Data command failed]
+                    //    code: 'EENVELOPE',
+                    //    response: '421 4.7.0 Temporary System Problem.  Try again later (WS). i4sm571837pdl.11 - gsmtp',
+                    //    responseCode: 421 }
+                  console.log( "eMail error 421 - Temporary System Problem - waiting "+errorLimitDelay+" min and trying again.");
+                  setTimeouts[ JSON.parse( fancrawl_instagram_id ) ].sendEmail = setTimeout(
+                    function(){
+                        callTimer( arguments[0], arguments[1] );
+                        console.log( "eMail error 421 - Temporary System Problem - waited "+ arguments[3] +" min and attempted again.");
                         sendMail( arguments[0], arguments[1], arguments[2] );
                   }, 1000 * 60 * errorLimitDelay, JSON.parse( fancrawl_instagram_id ), subject, error, errorLimitDelay ); // 1 min wait
 
