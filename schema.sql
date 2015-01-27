@@ -102,7 +102,6 @@ CREATE TABLE `beta_followers` (
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
 
-
 -- ---
 -- Table 'users_hash_tags'
 -- Original users_hash_tags list

@@ -18,16 +18,8 @@ var crypto                    = require('crypto'),
                                   user: 'root',
                                   password: process.env.MYSQLPASSWORD,
                                   database: 'fancrawl'
+                                  // timezone: 'Z'
                                 });
-
-    // connection.connect(function(err) {
-    //                                   if (err) {
-    //                                     console.error('error connecting: ' + err.stack);
-    //                                     return;
-    //                                   }
-
-    //                                   console.log('connected as id ' + connection.threadId);
-    //                                  });
 
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
@@ -757,19 +749,19 @@ var crypto                    = require('crypto'),
     var five_min              = 300, // 5 minutes in seconds
         one_hour              = 3600, // 1 hour in seconds
         one_day               = 86400, // 1 day in seconds
-        tow_days              = 172800, // 2 days in seconds
+        two_days              = 172800, // 2 days in seconds
         time_diff             = current_time - original_time;
 
-    if( time_diff < five_min ){
-      callback(fancrawl_instagram_id, new_instagram_following_id, 0);
+    if( time_diff < five_min || time_diff === 0 ){
+      callback( fancrawl_instagram_id, new_instagram_following_id, 0 );
     } else if( time_diff < one_hour ){
-      callback(fancrawl_instagram_id, new_instagram_following_id, 1);
+      callback( fancrawl_instagram_id, new_instagram_following_id, 1 );
     } else if( time_diff < one_day ){
-      callback(fancrawl_instagram_id, new_instagram_following_id, 2);
-    } else if( time_diff < tow_days ){
-      callback(fancrawl_instagram_id, new_instagram_following_id, 3);
+      callback( fancrawl_instagram_id, new_instagram_following_id, 2 );
+    } else if( time_diff < two_days ){
+      callback( fancrawl_instagram_id, new_instagram_following_id, 3 );
     } else {
-      callback(fancrawl_instagram_id, new_instagram_following_id, 4);
+      callback( fancrawl_instagram_id, new_instagram_following_id, 4 );
     }
     };
 
@@ -1418,8 +1410,9 @@ var crypto                    = require('crypto'),
       if (err) throw err;
       if ( rows && rows[0] ) {
         // CHECK TIME DIFFERENCE
+        var diffTimeZone = ( rows[0]['UNIX_TIMESTAMP(now())'] - rows[0]['UNIX_TIMESTAMP(creation_date)'] ) / 60 / 60;
         time_difference( fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
-          connection.query('UPDATE beta_followers SET count = '+code+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+          connection.query('UPDATE beta_followers SET count = ' + code + ' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
             if (err) throw err;
           });
           // console.log("VERIFY RELATIONSHIP CODE: "+code+" for user "+new_instagram_following_id);
@@ -1669,25 +1662,13 @@ var crypto                    = require('crypto'),
                 var obj = {};
                 if ( rows && rows[0] ) {
                   setTimeouts[ fancrawl_instagram_id ].previousData = rows;
-                  // console.log( setTimeouts[ fancrawl_instagram_id ].previousData );
-                  // var i = 0;
-                  // var func = function(){
-                    // verifyRelationship( arguments[0], arguments[1][i].added_follower_instagram_id );
-                    // if ( i < rows.length - 1 ) {
-                      // i++;
-                    // } else {
-                      // clearInterval( setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout );
-                    // }
-                  // };
 
-                  // setTimeouts[ fancrawl_instagram_id ].startIndividualSetTimeout = setInterval( func, 250, fancrawl_instagram_id, rows );
-
-                  connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                  connection.query('SELECT MAX( CAST( added_follower_instagram_id as UNSIGNED ) ) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                     if (err) throw err;
                     var currentUser = JSON.parse( fancrawl_instagram_id );
 
                     if ( rows && rows[0] ) {
-                      var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id );
+                      var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id ) + 1;
 
                       if ( new_instagram_following_id < currentUser ) {
                         var newUser = ( currentUser + 1 );
@@ -1703,15 +1684,10 @@ var crypto                    = require('crypto'),
 
                   });
 
-
                 } else {
-
-                  // console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE STARTED: ", fancrawl_instagram_id);
 
                   var newUser = ( JSON.parse(fancrawl_instagram_id) + 1 );
                   fetchNewFollowers( fancrawl_instagram_id, newUser );
-
-                  // console.log("STARTING FETCHING FOR USER "+fancrawl_instagram_id+", STARTING WITH: ", newUser );
 
                 }
 
@@ -2588,12 +2564,12 @@ var crypto                    = require('crypto'),
               if ( rows && rows[0] ) {
                 setTimeouts[ fancrawl_instagram_id ].previousData = rows;
 
-                connection.query('SELECT MAX(added_follower_instagram_id) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                connection.query('SELECT MAX( CAST( added_follower_instagram_id as UNSIGNED ) ) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
                   var currentUser = JSON.parse( fancrawl_instagram_id );
 
                   if ( rows && rows[0] ) {
-                    var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id );
+                    var new_instagram_following_id = JSON.parse( rows[0].added_follower_instagram_id ) + 1;
 
                     if ( new_instagram_following_id < currentUser ) {
                       var newUser = ( currentUser + 1 );
