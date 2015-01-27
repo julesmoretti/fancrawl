@@ -60,8 +60,6 @@ var crypto                    = require('crypto'),
             // send mail with defined transport object
             transporter.sendMail( mailOptions, function( error, info ) {
               if ( error ) {
-                console.log( error );
-
                 if ( error.responseCode === 454) {
                   // { [Error: Invalid login]
                     //    code: 'EAUTH',
@@ -73,7 +71,7 @@ var crypto                    = require('crypto'),
                         callTimer( arguments[0], arguments[1] );
                         console.log( "email error 454 - Too many login attempts - waited 3 min and attempted again.");
                         sendMail( arguments[0], arguments[1], arguments[2] );
-                  }, 1000 * 60 * 3, JSON.parse( fancrawl_instagram_id ), subject, error ); // 1 min wait
+                  }, 1000 * 60 * 10, JSON.parse( fancrawl_instagram_id ), subject, error ); // 1 min wait
 
                 } else {
                   console.log( "email error -", error );
@@ -1071,14 +1069,13 @@ var crypto                    = require('crypto'),
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
           if ( response.statusCode === 503 ) {
-            console.log( 'response from line 785:', response );
-            sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
+            sendEmail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
               sendMail( 571377691, 'get relationship request attempt', 'The function GET_relationship is attempting to request for: ' + new_instagram_following_id );
               GET_relationship( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
-            }, 60000 * 5, fancrawl_instagram_id, new_instagram_following_id, callback );
+            }, 60000 * 10, fancrawl_instagram_id, new_instagram_following_id, callback );
 
             return;
           } else if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
