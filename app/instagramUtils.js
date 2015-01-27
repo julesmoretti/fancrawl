@@ -61,7 +61,22 @@ var crypto                    = require('crypto'),
             transporter.sendMail( mailOptions, function( error, info ) {
               if ( error ) {
                 console.log( error );
-                sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
+
+                if ( error.responseCode === 454) {
+                  // { [Error: Invalid login]
+                    //    code: 'EAUTH',
+                    //    response: '454 4.7.0 Too many login attempts, please try again later. ca2sm424696pbc.68 - gsmtp',
+                    //    responseCode: 454 }
+
+                  setTimeouts[ JSON.parse( fancrawl_instagram_id ) ].sendEmail = setTimeout(
+                    function(){
+                        callTimer( arguments[0], arguments[1] );
+                        sendMail( arguments[0], arguments[1], arguments[2] );
+                  }, 1000 * 60 * 3, JSON.parse( fancrawl_instagram_id ), subject, error ); // 1 min wait
+
+                } else {
+                  sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
+                }
 
               } else {
                 console.log( 'Message sent: ' + info.response );
