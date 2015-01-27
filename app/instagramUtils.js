@@ -39,6 +39,8 @@ var crypto                    = require('crypto'),
         }
     });
 
+    var errorLimitDelay = 10; // minutes
+
     connection.query('SELECT mNoti from settings', function(err, rows, fields) {
       if (err) throw err;
 
@@ -65,13 +67,13 @@ var crypto                    = require('crypto'),
                     //    code: 'EAUTH',
                     //    response: '454 4.7.0 Too many login attempts, please try again later. ca2sm424696pbc.68 - gsmtp',
                     //    responseCode: 454 }
-                  console.log( "email error 454 - Too many login attempts - waiting 3 min and trying again.");
+                  console.log( "email error 454 - Too many login attempts - waiting "+errorLimitDelay+" min and trying again.");
                   setTimeouts[ JSON.parse( fancrawl_instagram_id ) ].sendEmail = setTimeout(
                     function(){
                         callTimer( arguments[0], arguments[1] );
-                        console.log( "email error 454 - Too many login attempts - waited 3 min and attempted again.");
+                        console.log( "email error 454 - Too many login attempts - waited "+ arguments[3] +" min and attempted again.");
                         sendMail( arguments[0], arguments[1], arguments[2] );
-                  }, 1000 * 60 * 10, JSON.parse( fancrawl_instagram_id ), subject, error ); // 1 min wait
+                  }, 1000 * 60 * errorLimitDelay, JSON.parse( fancrawl_instagram_id ), subject, error, errorLimitDelay ); // 1 min wait
 
                 } else {
                   console.log( "email error -", error );
@@ -1069,10 +1071,12 @@ var crypto                    = require('crypto'),
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
           if ( response.statusCode === 503 ) {
+            console.log( "GET_relationship reached max request limit - Waiting 10 minutes and trying again." );
             sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
               sendMail( 571377691, 'get relationship request attempt', 'The function GET_relationship is attempting to request for: ' + new_instagram_following_id );
+              console.log( "GET_relationship reached max request limit - Waited 10 minutes and attempted again." );
               GET_relationship( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
             }, 60000 * 10, fancrawl_instagram_id, new_instagram_following_id, callback );
