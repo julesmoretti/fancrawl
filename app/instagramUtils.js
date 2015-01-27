@@ -1053,13 +1053,18 @@ var crypto                    = require('crypto'),
         } else if ( !error && response.statusCode !== 200 ) {
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
-          if ( response.statusCode !== 400 ) {
+          if ( response.statusCode === 503 ) {
             console.log( 'response from line 785:', response );
-          }
-          if ( response.statusCode !== 400 ) {
-            console.log( 'response from line 785:', response );
-          }
-          if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
+            sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
+              function(){
+              sendMail( 571377691, 'get relationship request attempt', 'The function GET_relationship is attempting to request for: ' + new_instagram_following_id );
+              GET_relationship( arguments[0], arguments[1], arguments[2] );
+              delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, 60000 * 5, fancrawl_instagram_id, new_instagram_following_id, callback );
+
+            return;
+          } else if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
             // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
             sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + new_instagram_following_id );
 
