@@ -1706,6 +1706,7 @@ var crypto                    = require('crypto'),
               cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
                 STOP( fancrawl_instagram_id, true );
                 console.log("FINISHED CLEANING UP DATABASE FROM RESTART & PRE CLEANING: ", fancrawl_instagram_id);
+                sendMail( fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
               });
             } else {
               console.log("STOPPED STATE: ", fancrawl_instagram_id);
@@ -2602,14 +2603,6 @@ var crypto                    = require('crypto'),
     } else if ( req.body.switchclean && req.body.switchclean === "on" && req.body.status !== "statusCleaning") {
       console.log("switchclean detected");
 
-      // START USER SPECIFIC CLOCK
-      timerPostStructure( fancrawl_instagram_id, "force" );
-      timerQuickStructure( fancrawl_instagram_id, "force" );
-
-      // START CLOCKS
-      timer_post( fancrawl_instagram_id );
-      timer_quick( fancrawl_instagram_id );
-
       GET_relationship( fancrawl_instagram_id, 571377691, function( fancrawl_instagram_id, new_instagram_following_id, response ){
         if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
           // do nothing
@@ -2630,6 +2623,14 @@ var crypto                    = require('crypto'),
 
         } else {
 
+          // START USER SPECIFIC CLOCK
+          timerPostStructure( fancrawl_instagram_id, "force" );
+          timerQuickStructure( fancrawl_instagram_id, "force" );
+
+          // START CLOCKS
+          timer_post( fancrawl_instagram_id );
+          timer_quick( fancrawl_instagram_id );
+
           connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
             if (err) throw err;
 
@@ -2642,6 +2643,7 @@ var crypto                    = require('crypto'),
               //done cleaning so set to stopped
               STOP( fancrawl_instagram_id, true );
               console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", fancrawl_instagram_id );
+              sendMail( fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
             });
           });
         }
