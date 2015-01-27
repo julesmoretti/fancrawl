@@ -1061,8 +1061,14 @@ var crypto                    = require('crypto'),
           }
           if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
             // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-            sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body );
-            GET_relationship( fancrawl_instagram_id, new_instagram_following_id, callback );
+            sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + new_instagram_following_id );
+
+            setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
+              function(){
+              GET_relationship( arguments[0], arguments[1], arguments[2] );
+              delete setTimeouts[ arguments[0] ][ arguments[1] ];
+            }, 5000, fancrawl_instagram_id, new_instagram_following_id, callback );
+
             return;
           } else if ( typeof body === "string" ) {
             var pbody = JSON.parse( body );
