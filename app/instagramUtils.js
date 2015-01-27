@@ -230,7 +230,7 @@ var crypto                    = require('crypto'),
       // SETTIMEOUT LONG
       callTimer( JSON.parse( fancrawl_instagram_id ), "post_long" );
 
-      console.log( timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
 
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         // CHECK STATE OF USER
@@ -1406,7 +1406,6 @@ var crypto                    = require('crypto'),
 
 //  ZERO = Clock Manage  ========================================================
   var clockManager            = function ( fancrawl_instagram_id, new_instagram_following_id, process, callback ) {
-    timerPostStructure( fancrawl_instagram_id );
 
     // look up relevant clock queue
     if ( process === "follow" ) {
@@ -1455,12 +1454,8 @@ var crypto                    = require('crypto'),
     // TIMER QUICK CONFIGURATIONS
     } else if ( process === "new" ) {
 
-      // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
       var quick_count_new = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length;
-      // var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
-      // if < then 100 = add to queue and run callback
-      // if ( quick_count_new < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
       if ( quick_count_new < ( queueCap - 2 ) ) {
         // console.log("CURRENT USER: ", fancrawl_instagram_id);
         timer[ fancrawl_instagram_id ].quick_queue.new[ new_instagram_following_id ] = process;
@@ -1481,14 +1476,10 @@ var crypto                    = require('crypto'),
     } else {
       // if process = "unfollow_verify" or 3,2,1,0
 
-      // var quick_count = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
       var quick_count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify ).length;
-      // var post_count = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length;
 
-      // if < then 100 = add to queue and run callback
-      // if ( quick_count_verify < ( queueCap - 2 ) && post_count < ( queueCap - 2 ) ) {
       if ( quick_count_verify < ( queueCap - 2 ) ) {
-        // console.log("CURRENT USER: ", fancrawl_instagram_id);
+
         timer[ fancrawl_instagram_id ].quick_queue.verify[ new_instagram_following_id ] = process;
         if ( callback ) {
           callback( fancrawl_instagram_id, new_instagram_following_id, process );
@@ -1807,13 +1798,6 @@ var crypto                    = require('crypto'),
           console.log("XXXXXXX = IN CLEANING DATABASE: ", fancrawl_instagram_id );
 
           setTimeouts[ fancrawl_instagram_id ].previousData = rows;
-
-            // DATABASE HAS USERS TO DEAL WITH
-            // for ( var i = 0; i < rows.length; i++ ) {
-            //   var new_instagram_following_id = rows[i].added_follower_instagram_id;
-
-            //   verifyRelationship( fancrawl_instagram_id, new_instagram_following_id )
-            // }
 
             var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
             var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue ).length;
@@ -2292,10 +2276,6 @@ var crypto                    = require('crypto'),
                   // START USER SPECIFIC CLOCK
                   timerPostStructure( pbody.user.id );
                   timerQuickStructure( pbody.user.id );
-
-                  // START CLOCKS ONLY ONCE! (RIGHT AWAY)
-                  // timer_post( fancrawl_instagram_id );
-                  // timer_quick( fancrawl_instagram_id );
 
                   // START CLOCKS ONLY ONCE! (DELAYED)
                   callTimer( pbody.user.id, "quick_long" );
