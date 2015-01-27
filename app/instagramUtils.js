@@ -39,7 +39,7 @@ var crypto                    = require('crypto'),
         }
     });
 
-    var errorLimitDelay = 10; // minutes
+    var errorLimitDelay = 20; // minutes
 
     connection.query('SELECT mNoti from settings', function(err, rows, fields) {
       if (err) throw err;
@@ -1092,18 +1092,18 @@ var crypto                    = require('crypto'),
               console.log( "GET_relationship reached max request limit - Waited 10 minutes and attempted again." );
               GET_relationship( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
-            }, 60000 * 10, fancrawl_instagram_id, new_instagram_following_id, callback );
+            }, 60000 * 20, fancrawl_instagram_id, new_instagram_following_id, callback );
 
             return;
           } else if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
             // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-            sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + new_instagram_following_id );
+            sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
 
             setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
               function(){
               GET_relationship( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
-            }, 5000, fancrawl_instagram_id, new_instagram_following_id, callback );
+            }, 1000 * 20, fancrawl_instagram_id, new_instagram_following_id, callback );
 
             return;
           } else if ( typeof body === "string" ) {
@@ -1598,7 +1598,7 @@ var crypto                    = require('crypto'),
                     function(){
                     fetchNewFollowers( arguments[0], arguments[1] );
                     delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                    console.log("SETTIMOUT 10 WORKS!!!!", JSON.parse( fancrawl_instagram_id ));
+                    console.log("SETTIMOUT 10 WORKS!!!!", JSON.parse( fancrawl_instagram_id ), arguments[1] );
                   }, time, fancrawl_instagram_id, new_instagram_following_id );
                 }
 
