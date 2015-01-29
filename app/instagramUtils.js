@@ -1,4 +1,3 @@
-//  app/instagramUtils.js
 
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
@@ -230,7 +229,7 @@ var crypto                    = require('crypto'),
       // SETTIMEOUT LONG
       callTimer( JSON.parse( fancrawl_instagram_id ), "post_long" );
 
-      console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
 
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         // CHECK STATE OF USER
@@ -376,7 +375,7 @@ var crypto                    = require('crypto'),
       // SETTIMEOUT LONG
       callTimer( fancrawl_instagram_id, "quick_long" );
 
-      // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
 
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
@@ -433,9 +432,7 @@ var crypto                    = require('crypto'),
 
               } else if ( timer[ fancrawl_instagram_id ].quick_counter === 3 ) {
                 // get new from hash library
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -490,9 +487,7 @@ var crypto                    = require('crypto'),
 
               } else if ( timer[ fancrawl_instagram_id ].quick_counter === 2 ) {
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -520,9 +515,7 @@ var crypto                    = require('crypto'),
 
               } else if ( timer[ fancrawl_instagram_id ].quick_counter === 2 ) {
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -548,9 +541,7 @@ var crypto                    = require('crypto'),
                 timer[ fancrawl_instagram_id ].quick_counter = 0;
               } else if ( timer[ fancrawl_instagram_id ].quick_counter === 2 ) {
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -561,6 +552,7 @@ var crypto                    = require('crypto'),
 
             // only 2 but new & hash
             } else if ( previousData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length == 0 ) {
+              // console.log("XXXX - previous & verify only");
 
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
@@ -583,6 +575,7 @@ var crypto                    = require('crypto'),
 
             // only 2 but verify & hash
             } else if ( previousData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+              // console.log("XXXX - previous & new only");
 
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
@@ -605,7 +598,8 @@ var crypto                    = require('crypto'),
               }
 
             // only 2 but verify & new
-            } else if ( previousData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+            } else if ( previousData.length !== 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+              // console.log("XXXX - previous & hash only");
 
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
@@ -620,9 +614,7 @@ var crypto                    = require('crypto'),
               } else {
 
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -632,6 +624,7 @@ var crypto                    = require('crypto'),
 
             // only 2 but previous & hash
             } else if ( previousData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+              // console.log("XXXX - verify & new only");
 
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
@@ -653,6 +646,7 @@ var crypto                    = require('crypto'),
 
             // only 2 but previous & new
             } else if ( previousData.length === 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+              // console.log("XXXX - verify & hash only");
 
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
@@ -666,9 +660,7 @@ var crypto                    = require('crypto'),
               } else {
 
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -678,7 +670,8 @@ var crypto                    = require('crypto'),
 
             // only 2 but previous & verify
             } else if ( previousData.length === 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
-              console.log();
+
+              // console.log("XXXX - new & hash only");
               timer[ fancrawl_instagram_id ].quick_counter_cap = 2;
 
               if ( timer[ fancrawl_instagram_id ].quick_counter === 2 || timer[ fancrawl_instagram_id ].quick_counter === 1 ) {
@@ -691,9 +684,7 @@ var crypto                    = require('crypto'),
               } else {
 
                 // get hash
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -738,9 +729,7 @@ var crypto                    = require('crypto'),
                 // only this one has data
                 timer[ fancrawl_instagram_id ].quick_counter_cap = 1;
                 // get new
-                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] === "none" ) {
-                  GET_hash_tag_media( fancrawl_instagram_id, count_hash[0] );
-                } else {
+                if ( timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] ) {
                   GET_hash_tag_media( fancrawl_instagram_id, count_hash[0], timer[ fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ] );
                 }
 
@@ -2343,11 +2332,13 @@ var crypto                    = require('crypto'),
 
 //  ZERO = Get media list of tags ===============================================
   var GET_hash_tag_media      = function ( fancrawl_instagram_id, hash_tag, pagination, callback ) {
-    connection.query('SELECT token, sHash from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+
+    connection.query('SELECT state, token, sHash from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
       if (err) throw err;
       if ( rows && rows[0] && rows[0].state ) {
-        if ( rows[0].state !== stated || rows[0].sHash ) {
+        if ( rows[0].state !== "started" || rows[0].sHash !== 1 ) {
           timer[ fancrawl_instagram_id ].quick_queue.hash = {};
+
         } else {
 
           // instagram header secret system
