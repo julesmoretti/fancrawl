@@ -192,7 +192,11 @@
               </div>
               <div class="controllerStatus">
                   <ul>
-                    <input type="hidden" name="admin" value="true">
+                    <% if ( admin ){ %>
+                      <input type="hidden" name="admin" value="true">
+                  <% } else { %>
+                      <input type="hidden" name="admin" value="false">
+                  <% } %>
                     <input type="hidden" name="status" value="<%= status %>">
                     <li>
                       <div class="switchDiv">
