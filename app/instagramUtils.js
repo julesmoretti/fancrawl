@@ -3117,7 +3117,7 @@ var crypto                    = require('crypto'),
 
 
     // UPDATING HASH
-    if ( req.body.admin && req.body.hash ) {
+    if ( req.body.hash ) {
       connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
         if (err) throw err;
         if ( rows && rows[0] && rows[0].hash_tag ) {
@@ -3130,7 +3130,7 @@ var crypto                    = require('crypto'),
           });
         }
       })
-    } else if ( req.body.admin ) {
+    } else {
       connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
         if (err) throw err;
         if ( rows && rows[0] && rows[0].hash_tag ) {
@@ -3142,11 +3142,11 @@ var crypto                    = require('crypto'),
     }
 
     // UPDATING HASH SWITCH
-    if ( req.body.admin && req.body.switchHash ) {
+    if ( req.body.switchHash ) {
       connection.query('UPDATE access_right set sHash = 1 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
         if (err) throw err;
       });
-    } else if ( req.body.admin ) {
+    } else {
       connection.query('UPDATE access_right set sHash = 0 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
         if (err) throw err;
       });
