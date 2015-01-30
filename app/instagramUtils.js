@@ -1164,7 +1164,7 @@ var crypto                    = require('crypto'),
 
         } else {
           console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error "+new_instagram_following_id+" - ", error);
-          sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error + ' with response' + response.statusCode );
+          sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
           callback(fancrawl_instagram_id, new_instagram_following_id, "error");
         }
 
