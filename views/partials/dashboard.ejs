@@ -181,10 +181,10 @@
                   <li><span>following back</span></li>
                   <li><span>email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
                   </li>
-                  <% if ( admin ){ %>
                   <li>
                     <span>hash tag<input id="hash" value="<%= hash %>" type="text" name="hash" oninput="hashChangeVerification()" class="empty"></span>
                   </li>
+                  <% if ( admin ){ %>
                     <li><span>master notifications</span></li>
                     <!-- <li><span>Reboot Server</span></li> -->
                   <% } %>
@@ -192,6 +192,8 @@
               </div>
               <div class="controllerStatus">
                   <ul>
+                    <input type="hidden" name="admin" value="true">
+                    <input type="hidden" name="status" value="<%= status %>">
                     <li>
                       <div class="switchDiv">
                         <% if ( status === "statusStopped" ){ %>
@@ -254,7 +256,6 @@
                         <% } %>
                       </div>
                     </li>
-                    <% if ( admin ){ %>
                     <li>
                       <div class="switchDiv">
                         <% if ( sHash === 1 ){ %>
@@ -269,9 +270,7 @@
                         <% } %>
                       </div>
                     </li>
-                      <input type="hidden" name="admin" value="true">
-                      <input type="hidden" name="status" value="<%= status %>">
-
+                    <% if ( admin ){ %>
                       <li>
                         <div class="switchDiv">
                           <% if ( mNoti ){ %>
@@ -283,12 +282,6 @@
                           <% } %>
                         </div>
                       </li>
-                     <!--  <li>
-                        <div class="switchDiv">
-                            <input type="checkbox" id="switch5" name="switchReboot" class="switch" onclick="toggleAttributes4()"/>
-                            <label id="switch5label" for="switch5">&nbsp
-                        </div>
-                      </li> -->
                     <% } %>
                   </ul>
               </div>
