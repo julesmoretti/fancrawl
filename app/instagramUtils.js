@@ -2645,8 +2645,11 @@ var crypto                    = require('crypto'),
             metrics.status = 'statusStarted';
           } else {
           }
+          if ( rows[0].email === null || rows[0].email === "null" ) {
 
-          metrics.email = rows[0].email;
+          } else {
+            metrics.email = rows[0].email;
+          }
           metrics.eNoti = rows[0].eNoti;
           metrics.followedBy = rows[0].or_followed_by ;
           metrics.following = rows[0].or_following ;
