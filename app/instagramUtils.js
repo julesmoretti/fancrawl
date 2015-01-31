@@ -3114,6 +3114,7 @@ var crypto                    = require('crypto'),
         STOP( JSON.parse( fancrawl_instagram_id ), false );
 
       });
+
     } else {
       res.redirect("/dashboard?user="+req_query.user+"&id="+fancrawl_instagram_id);
     }
@@ -3156,11 +3157,11 @@ var crypto                    = require('crypto'),
     }
 
     // UPDATING MASTER EMAIL NOTIFICATIONS
-    if ( req.body.admin && req.body.switchMasterNotification ) {
+    if ( ( req.body.admin === true || req.body.admin === "true" ) && req.body.switchMasterNotification ) {
       connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
         if (err) throw err;
       });
-    } else if ( req.body.admin ) {
+    } else if ( req.body.admin === true || req.body.admin === "true" ) {
       connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
         if (err) throw err;
       });
