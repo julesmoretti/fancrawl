@@ -1972,6 +1972,9 @@ var crypto                    = require('crypto'),
         } else if ( !error && response.statusCode !== 200 ) {
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
+          if ( response ) {
+            console.log( response );
+          }
           if ( response.statusCode === 503 ) {
             console.log( "GET_relationship reached max request limit - Waiting 10 minutes and trying again." );
             // sendMail( 571377691, 'get relationship too many request reached', 'The function GET_relationship requested too many times and got the following body: ' + body + ' for trying to check relationship of: ' + new_instagram_following_id );
