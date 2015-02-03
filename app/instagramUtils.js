@@ -1975,7 +1975,6 @@ var crypto                    = require('crypto'),
           if ( response && ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) ) {
           } else if ( response ) {
             console.log( response );
-            throw response;
           }
           if ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) {
             console.log( "GET_relationship reached max request limit - Waiting 10 minutes and trying again." );
