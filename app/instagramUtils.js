@@ -1972,8 +1972,10 @@ var crypto                    = require('crypto'),
         } else if ( !error && response.statusCode !== 200 ) {
           // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
 
-          if ( response ) {
+          if ( response && ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) ) {
+          } else if ( response ) {
             console.log( response );
+            throw response;
           }
           if ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) {
             console.log( "GET_relationship reached max request limit - Waiting 10 minutes and trying again." );
