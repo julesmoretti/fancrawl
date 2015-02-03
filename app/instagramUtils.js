@@ -65,8 +65,9 @@ var crypto                    = require('crypto'),
       timer[ JSON.parse( fancrawl_instagram_id ) ].post_minute = true;
       // SETTIMEOUT LONG
       callTimer( JSON.parse( fancrawl_instagram_id ), "post_long" );
-
-      console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      if ( fancrawl_instagram_id === 571377691 ) {
+        console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      }
 
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         // CHECK STATE OF USER
@@ -208,7 +209,9 @@ var crypto                    = require('crypto'),
       // SETTIMEOUT LONG
       callTimer( fancrawl_instagram_id, "quick_long" );
 
-      // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      if ( fancrawl_instagram_id === 571377691 ) {
+        // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+      }
 
       // RUN SOME STUFF HERE //////////////////////////////////////////////
         connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
