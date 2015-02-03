@@ -3157,6 +3157,11 @@ var crypto                    = require('crypto'),
 
     // UPDATING HASH
     if ( req.body.hash ) {
+
+      if ( req.body.hash[0] && req.body.hash[0] === "#" ){
+        req.body.hash = req.body.hash.slice(1);
+      }
+
       connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
         if (err) throw err;
         if ( rows && rows[0] && rows[0].hash_tag ) {
@@ -3169,6 +3174,7 @@ var crypto                    = require('crypto'),
           });
         }
       })
+
     } else {
       connection.query('SELECT hash_tag FROM users_hash_tags where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
         if (err) throw err;
