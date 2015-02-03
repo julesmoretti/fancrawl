@@ -182,7 +182,7 @@
                   <li><span>email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
                   </li>
                   <li>
-                    <span>hash tag<input id="hash" value="<%= hash %>" type="text" name="hash" oninput="hashChangeVerification()" class="empty"></span>
+                    <span>hash tag<input id="hash" value="<%= hash %>" type="text" name="hash" oninput="hashChangeVerification()" class="empty" autocorrect="none" autocapitalize="none"></span>
                   </li>
                   <% if ( admin ){ %>
                     <li><span>master notifications</span></li>
