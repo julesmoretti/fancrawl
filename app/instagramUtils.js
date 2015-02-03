@@ -2000,15 +2000,18 @@ var crypto                    = require('crypto'),
           }
 
           // DOES NOT EXIST - POST_FOLLOW THE NEXT USER
-          if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist") {
+          if ( pbody && !pbody.meta ) {
+            sendMail( 571377691, 'get relationship no meta', 'The function GET_relationship did not have meta: ' + pbody );
+
+          } else if ( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist" ) {
             // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
             // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
             callback(fancrawl_instagram_id, new_instagram_following_id, "not_exist");
 
-          } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError") {
+          } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
             // {"meta":{"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
             // sendMail( "571377691", "API Error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id + "of relationships trying to follow: " + new_instagram_following_id );
-            callback(fancrawl_instagram_id, new_instagram_following_id, "APINotAllowedError");
+            callback(fancrawl_instagram_id, new_instagram_following_id, "APINotAllowedError" );
 
           // OAUTH TOKEN EXPIRED
           } else if( pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
@@ -2019,11 +2022,11 @@ var crypto                    = require('crypto'),
           // OAUTH TIME LIMIT REACHED LET TIMER KNOW AND TRIES AGAIN
           } else if( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
             // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-            console.log("RELATIONSHIP: LIMIT REACH FOR: "+fancrawl_instagram_id+" - ", body);
+            console.log("RELATIONSHIP: LIMIT REACH FOR: "+fancrawl_instagram_id+" - ", pbody);
             callback(fancrawl_instagram_id, new_instagram_following_id, "oauth_limit");
           } else {
-            console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got a weird statusCode "+new_instagram_following_id+" - ", body);
-            sendMail( 571377691, 'get relationship weird statusCode', 'The function GET_relationship got the following body: ' + body );
+            console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got a weird statusCode "+new_instagram_following_id+" - ", pbody);
+            sendMail( 571377691, 'get relationship weird statusCode', 'The function GET_relationship got the following body: ' + pbody );
             callback(fancrawl_instagram_id, new_instagram_following_id, "error");
           }
 
