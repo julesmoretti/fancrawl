@@ -2698,7 +2698,7 @@ var crypto                    = require('crypto'),
 
 
               // count from mysql all users still processing that is not with a 4 value
-              connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (4) AND following_status = 1', function(err, rows, fields) {
+              connection.query('SELECT count(*) from beta_followers where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
                 if (err) throw err;
                 var quickCount = 0;
                 var postCount = 0;
