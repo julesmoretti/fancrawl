@@ -14,6 +14,8 @@ var crypto                                = require('crypto'),
     queueCap                              = 10,
     connection                            = mysql.createConnection({
                                               host: 'localhost',
+                                              port: 3306,
+                                              // socketPath: '...tmp/mysql/mysql.sock',
                                               user: 'root',
                                               password: process.env.MYSQLPASSWORD,
                                               database: 'fancrawl'
@@ -1354,16 +1356,23 @@ var crypto                                = require('crypto'),
                   // if < then 100 = add to queue and run callback
                   if ( quick_count < ( queueCap - 2 ) ) {
                     clockManager( fancrawl_instagram_id, new_instagram_following_id, "new", function( fancrawl_instagram_id, new_instagram_following_id ) {
-                      var nextUser = JSON.parse( new_instagram_following_id ) + 1;
-                      fetchNewFollowers( fancrawl_instagram_id, JSON.stringify( nextUser ) );
+                      var nextUser = JSON.stringify( JSON.parse( new_instagram_following_id ) + 1 );
+
+                      // goes fetch next user after 3 sec
+                      var time = 1000 * 3; // 3 seconds
+                      setTimeouts[ fancrawl_instagram_id ][ nextUser ] = setTimeout(
+                        function(){
+                        fetchNewFollowers( arguments[0], arguments[1] );
+                        delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                      }, time, fancrawl_instagram_id, nextUser );
+
                     });
                   } else {
-                    var time = 1000 * 30;
+                    var time = 1000 * 60; // wait 1 minute
                     setTimeouts[ fancrawl_instagram_id ][ new_instagram_following_id ] = setTimeout(
                       function(){
                       fetchNewFollowers( arguments[0], arguments[1] );
                       delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                      console.log("SETTIMOUT 10 WORKS!!!!", fancrawl_instagram_id, arguments[1] );
                     }, time, fancrawl_instagram_id, new_instagram_following_id );
                   }
 
@@ -1388,6 +1397,7 @@ var crypto                                = require('crypto'),
     //  TO  | fetchNewFromHashDB - fetchNewFollowers
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchFromHash                       = function ( fancrawl_instagram_id, retry ) {
+
       connection.query('SELECT state, sHash FROM access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
@@ -1534,12 +1544,18 @@ var crypto                                = require('crypto'),
                 timer[ fancrawl_instagram_id ].quick_queue.new[ processCounter ] = { 'new_instagram_following_id' : rows[0].instagram_user_id, 'process' : 'new' };
                 processCounter++;
 
-                // launch fetchNew again
-                fetchNewFromHashDB( fancrawl_instagram_id, rows[0].hash_tag, rows[0].id );
+                // launch fetchNew again after 3 sec
+                var time = 1000 * 3; // 3 seconds
+
+                setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                  function(){
+                  fetchNewFromHashDB( arguments[0], arguments[1], arguments[2] );
+                  delete setTimeouts[ arguments[0] ][ arguments[3] ];
+                }, time, fancrawl_instagram_id, rows[0].hash_tag, rows[0].id, processCounter );
 
               } else {
                 // wait longer
-                var time = 1000 * 1; // 30 seconds
+                var time = 1000 * 5; // 5 seconds
 
                 setTimeouts[ fancrawl_instagram_id ][ hash_tag ] = setTimeout(
                   function(){
@@ -1551,7 +1567,7 @@ var crypto                                = require('crypto'),
             });
 
           } else {
-            var time = 1000 * 20; // 20 seconds
+            var time = 1000 * 60; // 1 minute
 
             // wait a while and try again
             setTimeouts[ fancrawl_instagram_id ][ hash_tag ] = setTimeout(
@@ -2877,16 +2893,12 @@ var crypto                                = require('crypto'),
       }
 
       // request for the token and data back
-      request(options, function (error, response, body) {
+      request( options, function (error, response, body) {
 
         if ( typeof body === "string" ) {
           var pbody = JSON.parse( body );
           console.log("HANDLEN AUTH - it was a string");
-          console.log(pbody);
-        } else if ( typeof body === "object" ) {
-          var pbody = body;
-          console.log("HANDLEN AUTH - it was an object");
-          console.log(pbody);
+          console.log( pbody );
         } else {
           var pbody = body;
           console.log( "Body of Handleauth is neither a string or object: ", body );
