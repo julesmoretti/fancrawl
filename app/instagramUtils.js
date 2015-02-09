@@ -87,7 +87,7 @@ var crypto                                = require('crypto'),
         // SETTIMEOUT LONG
         callTimer( fancrawl_instagram_id, "post_long" );
         if ( fancrawl_instagram_id === "571377691" ) {
-          console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ JSON.parse( fancrawl_instagram_id ) ] );
+          console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
         }
 
         // RUN SOME STUFF HERE //////////////////////////////////////////////
@@ -1631,7 +1631,6 @@ var crypto                                = require('crypto'),
                   function(){
                   fetchNewFromHashDB( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  // console.log("SETTIMOUT X WORKS!!!!", JSON.parse( fancrawl_instagram_id ), arguments[1], arguments[2] );
                 }, time, fancrawl_instagram_id, hash_tag, last_id );
               }
             });
@@ -1644,7 +1643,6 @@ var crypto                                = require('crypto'),
               function(){
               fetchNewFromHashDB( arguments[0], arguments[1], arguments[2] );
               delete setTimeouts[ arguments[0] ][ arguments[1] ];
-              // console.log("SETTIMOUT X WORKS!!!!", JSON.parse( fancrawl_instagram_id ), arguments[1], arguments[2] );
             }, time, fancrawl_instagram_id, hash_tag, last_id );
           }
 
