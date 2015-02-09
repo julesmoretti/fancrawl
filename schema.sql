@@ -11,6 +11,7 @@ USE fancrawl;
 -- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- SET FOREIGN_KEY_CHECKS=0;
 
+
 -- ---
 -- Table 'access_right'
 -- Original access_right list
@@ -24,10 +25,11 @@ CREATE TABLE `access_right` (
   `fancrawl_full_name` VARCHAR(255),
   `fancrawl_username` VARCHAR(255),
   `fancrawl_instagram_id` VARCHAR(20),
-  `email` VARCHAR(255),
+  `email` VARCHAR(255) DEFAULT '',
   `sHash` INT(1) DEFAULT 0,
   `eNoti` INT(1) DEFAULT 0,
   `pNoti` INT(1) DEFAULT 0,
+  `hash_tag` VARCHAR(20) DEFAULT '',
   `code` VARCHAR(255),
   `token` VARCHAR(255),
   `fancrawl_profile_picture` VARCHAR(255),
@@ -36,6 +38,7 @@ CREATE TABLE `access_right` (
   `or_following` INT(20) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) COMMENT 'Original access_right list';
+
 
 -- ---
 -- Table 'settings'
@@ -67,6 +70,7 @@ CREATE TABLE `s_followed_by` (
   PRIMARY KEY (`id`)
 ) COMMENT 'Original followed_by list';
 
+
 -- ---
 -- Table 's_followers'
 -- original followers
@@ -82,6 +86,7 @@ CREATE TABLE `s_following` (
   `following_id` VARCHAR(20),
   PRIMARY KEY (`id`)
 ) COMMENT 'original followers';
+
 
 -- ---
 -- Table 'beta_followers'
@@ -102,6 +107,7 @@ CREATE TABLE `beta_followers` (
   PRIMARY KEY (`id`)
 ) COMMENT 'Attempted followers';
 
+
 -- ---
 -- Table 'users_hash_tags'
 -- Original users_hash_tags list
@@ -113,6 +119,7 @@ CREATE TABLE `users_hash_tags` (
   `id` INT(20) AUTO_INCREMENT,
   `fancrawl_instagram_id` VARCHAR(20),
   `hash_tag` VARCHAR(20),
+  `last_id` VARCHAR(20),
   PRIMARY KEY (`id`)
 ) COMMENT 'Original users_hash_tags list';
 

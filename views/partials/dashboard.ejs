@@ -173,7 +173,7 @@
                 <ul>
                   <li><span>FanCrawl</span></li>
                   <li><span>clean up</span></li>
-                  <% if ( status === "statusCleaning" ){ %>
+                  <% if ( state === "cleaning" ){ %>
                     <li><span>Approximate time remaining:</span></li>
                   <% } else { %>
                   <% } %>
@@ -182,7 +182,7 @@
                   <li><span>email notification<input id="eMail" value="<%= email %>" type="email" name="email" oninput="eMailChangeVerification()"></span>
                   </li>
                   <li>
-                    <span>hash tag<input id="hash" value="<%= hash %>" type="text" name="hash" oninput="hashChangeVerification()" class="empty" autocorrect="none" autocapitalize="none"></span>
+                    <span>hash tag<input id="hash" value="<%= hash_tag %>" type="text" name="hash_tag" oninput="hashChangeVerification()" class="empty" autocorrect="none" autocapitalize="none"></span>
                   </li>
                   <% if ( admin ){ %>
                     <li><span>master notifications</span></li>
@@ -197,16 +197,16 @@
                   <% } else { %>
                       <input type="hidden" name="admin" value="false">
                   <% } %>
-                    <input type="hidden" name="status" value="<%= status %>">
+                    <input type="hidden" name="state" value="<%= state %>">
                     <li>
                       <div class="switchDiv">
-                        <% if ( status === "statusStopped" ){ %>
+                        <% if ( state === "stopped" ){ %>
                           <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="toggleAttributesFanCrawl()"/>
                           <label id="switchFanCrawllabel" for="switchFanCrawl">&nbsp;</label>
-                        <% } else if ( status === "statusStarted" ){ %>
+                        <% } else if ( state === "started" ){ %>
                           <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="toggleAttributesFanCrawl()" checked="checked"/>
                           <label id="switchFanCrawllabel" for="switchFanCrawl">&nbsp;</label>
-                        <% } else if ( status === "statusCleaning" ){ %>
+                        <% } else if ( state === "cleaning" ){ %>
                           <input type="checkbox" id="switchFanCrawl" name="switchFancrawl" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                           <label id="switchFanCrawllabel" for="switchFanCrawl" class="muted">&nbsp;</label>
                         <% } %>
@@ -214,20 +214,20 @@
                     </li>
                     <li>
                       <div class="switchDiv">
-                        <% if ( status === "statusStopped" ){ %>
+                        <% if ( state === "stopped" ){ %>
                           <input type="checkbox" id="switchClean" name="switchclean" class="switch" onclick="toggleAttributesClean();"/>
                           <label id="switchCleanlabel" for="switchClean">&nbsp;</label>
-                        <% } else if ( status === "statusStarted" ){ %>
+                        <% } else if ( state === "started" ){ %>
                           <input type="checkbox" id="switchClean" name="switchclean" class="switch" onclick="$('#hidden').removeClass('show');" disabled="disabled"/>
                           <label id="switchCleanlabel" for="switchClean" class="muted">&nbsp;</label>
-                        <% } else if ( status === "statusCleaning" ){ %>
+                        <% } else if ( state === "cleaning" ){ %>
                           <input type="checkbox" id="switchClean" name="switchclean" class="switch" checked="checked" onclick="toggleAttributesClean()"/>
                           <label id="switchCleanlabel" for="switchClean">&nbsp;</label>
                         <% } %>
                       </div>
                     </li>
 
-                    <% if ( status === "statusCleaning" ){ %>
+                    <% if ( state === "cleaning" ){ %>
                       <li><span><%= cleaningTime %></span></li>
                     <% } else { %>
                     <% } %>
@@ -265,7 +265,7 @@
                         <% if ( sHash === 1 ){ %>
                           <input type="checkbox" id="switchHash" name="switchHash" class="switch" checked="checked" onclick="toggleAttributesHash()"/>
                           <label id="switchHashlabel" for="switchHash">&nbsp;</label>
-                        <% } else if ( !sHash && !hash ) { %>
+                        <% } else if ( !sHash && !hash_tag ) { %>
                           <input type="checkbox" id="switchHash" name="switchHash" class="switch" onclick="toggleAttributesHash()" disabled="disabled"/>
                           <label id="switchHashlabel" for="switchHash" class="muted">&nbsp;</label>
                         <% } else { %>
