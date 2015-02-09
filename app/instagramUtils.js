@@ -151,8 +151,8 @@ var crypto                                = require('crypto'),
                 } else {
 
                   // go unfollow
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
-                  var process = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].process;
+                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ followCount[0] ].new_instagram_following_id;
+                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ followCount[0] ].process;
 
                   if ( process === "unfollow" ) {
 
