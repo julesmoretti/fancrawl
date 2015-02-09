@@ -288,7 +288,7 @@ var crypto                                = require('crypto'),
 
                   } else {
 
-                    console.log("TIMER POST XXXX - No process found... "+process);
+                    console.log("TIMER POST XXXX - No process found of singles... " + process);
 
                   }
                 }
