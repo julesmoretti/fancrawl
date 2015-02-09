@@ -1504,7 +1504,6 @@ var crypto                                = require('crypto'),
       });
     };
 
-
 //  -----------------------------------------------------------------------------
 //  ZERO = follow crawler function
 //  -----------------------------------------------------------------------------
@@ -1612,7 +1611,7 @@ var crypto                                = require('crypto'),
 
               if ( rows && rows[0] && rows[0].instagram_user_id ) {
 
-                timer[ fancrawl_instagram_id ].quick_queue.new[ processCounter ] = { 'new_instagram_following_id' : rows[0].instagram_user_id, 'process' : 'new', 'last_id' : last_id, 'hash_tag' : rows[0].hash_tag };
+                timer[ fancrawl_instagram_id ].quick_queue.new[ processCounter ] = { 'new_instagram_following_id' : rows[0].instagram_user_id, 'process' : 'new', 'last_id' : id, 'hash_tag' : rows[0].hash_tag };
                 processCounter++;
 
                 // launch fetchNew again after 3 sec
@@ -1820,7 +1819,6 @@ var crypto                                = require('crypto'),
         callback();
       }
     };
-
 
 //  -----------------------------------------------------------------------------
 //  ZERO = check status of current database users
