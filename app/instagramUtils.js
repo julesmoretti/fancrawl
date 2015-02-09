@@ -151,14 +151,14 @@ var crypto                                = require('crypto'),
                 } else {
 
                   // go unfollow
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ followCount[0] ].new_instagram_following_id;
-                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ followCount[0] ].process;
+                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].new_instagram_following_id;
+                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].process;
 
                   if ( process === "unfollow" ) {
 
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
 
-                      if ( timer[ fancrawl_instagram_id ].post_queue.ufollow[ processCounter ].last_id ) {
+                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                         var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
                         var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
