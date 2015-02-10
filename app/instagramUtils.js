@@ -158,7 +158,7 @@ var crypto                                = require('crypto'),
 
                     POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
 
-                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
+                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                         var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
                         var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
@@ -2918,10 +2918,6 @@ console.log("FROM GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new
 
           connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
             if (err) throw err;
-
-            if ( callback ) {
-              callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-            }
           });
 
         }
