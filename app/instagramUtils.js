@@ -807,7 +807,7 @@ console.log("FROM GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new
                     if ( relationship === "not_exist" ) {
 
                       delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-
+// FROM GET RELATIONSHIP OF TIMER_QUICK:  254237816 435096163 follows 14305
                     } else if ( relationship === "access_token" ) {
 
                       if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -885,19 +885,25 @@ console.log("FROM GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new
 
                       if ( count_follow.length < ( queueCap - 2 ) ) {
 
-                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ] ) {
 
-                          var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
-                          var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+                          if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
 
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
+                            var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
+                            var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
+
+                          } else {
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
+
+                          }
 
                         } else {
-
-                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-
+                          console.log( "CANNOT FIND UNIQUE PROCESS FOR TIMER_QUICK FOLLOW: ", timer[ fancrawl_instagram_id ].quick_queue.new );
                         }
 
                       }
@@ -2910,9 +2916,13 @@ console.log("FROM GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new
           });
         } else {
 
-          if ( callback ) {
-            callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-          }
+          connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
+            if (err) throw err;
+
+            if ( callback ) {
+              callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+            }
+          });
 
         }
       });
