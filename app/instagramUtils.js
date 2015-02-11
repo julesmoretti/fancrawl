@@ -23,6 +23,28 @@ var crypto                                = require('crypto'),
                                             });
 
 
+console.log("server RESTARTED");
+
+setTimeout(
+  function(){
+      console.log( "2 SEC" );
+}, 2000 );
+
+setTimeout(
+  function(){
+      console.log( "4 SEC" );
+}, 4000 );
+
+setTimeout(
+  function(){
+      console.log( "6 SEC" );
+}, 6000 );
+
+setTimeout(
+  function(){
+      console.log( "8 SEC" );
+}, 8000 );
+
 
 //  =============================================================================
 //  TIMER OPERATIONS
@@ -1296,7 +1318,7 @@ var crypto                                = require('crypto'),
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 100000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
+          }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
         } else if ( state === "post_short" ) {
 
@@ -1352,7 +1374,7 @@ var crypto                                = require('crypto'),
           }
         }
       });
-    }();
+    };
 
 //  -----------------------------------------------------------------------------
 //  initiates clocks, database previous user check and new following processes
