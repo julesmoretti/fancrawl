@@ -1413,6 +1413,7 @@ var crypto                                = require('crypto'),
         setTimeouts[ fancrawl_instagram_id ] = {};
       }
 
+      console.log( "GET_relationship of startIndividual" );
       GET_relationship( fancrawl_instagram_id, 571377691, null, function( blank_slot, d_fancrawl_instagram_id, new_instagram_following_id, response ){
 
       console.log( "GET_relationship callback" );
