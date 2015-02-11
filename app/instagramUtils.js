@@ -1402,7 +1402,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var startIndividual                     = function ( fancrawl_instagram_id ) {
 
-      console.log( "startIndividual" );
+      console.log( "startIndividual", fancrawl_instagram_id );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -1416,14 +1416,14 @@ var crypto                                = require('crypto'),
       }
 
       console.log( "GET_relationship of startIndividual", fancrawl_instagram_id );
-      GET_relationship( fancrawl_instagram_id, 571377691, null, function( blank_slot, d_fancrawl_instagram_id, new_instagram_following_id, response ){
+      GET_relationship( fancrawl_instagram_id, 571377691, null, function( fancrawl_instagram_id, new_instagram_following_id, response ){
 
 
-        var fancrawl_instagram_id = d_fancrawl_instagram_id;
+        var fancrawl_instagram_id = fancrawl_instagram_id;
         var new_instagram_following_id = new_instagram_following_id;
         var response = response;
 
-      console.log( "GET_relationship callback", fancrawl_instagram_id, d_fancrawl_instagram_id, new_instagram_following_id, response );
+      console.log( "GET_relationship callback", fancrawl_instagram_id, new_instagram_following_id, response );
 
 
         if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
@@ -1442,6 +1442,11 @@ var crypto                                = require('crypto'),
 
         } else {
 
+          // START CLOCKS
+          console.log("LOADING TIMERS: ", fancrawl_instagram_id );
+          timer_post( fancrawl_instagram_id );
+          timer_quick( fancrawl_instagram_id );
+
           connection.query('SELECT state, fancrawl_instagram_id, sHash FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
             if (err) throw err;
 
@@ -1450,15 +1455,11 @@ var crypto                                = require('crypto'),
               console.log( "STARTED STATE: ", rows[0].fancrawl_instagram_id, rows );
               var state = rows[0].state;
 
-              // START CLOCKS
-              timer_post( rows[0].fancrawl_instagram_id );
-              timer_quick( rows[0].fancrawl_instagram_id );
-
                 // start fetching process from hash users
                 if ( rows[0].sHash ) {
 
                   // fetch new user from hash
-                  // fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
+                  fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes check current database
                   connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count NOT IN (5)', function(err, rows, fields) {
@@ -1469,7 +1470,7 @@ var crypto                                = require('crypto'),
                       setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
 
                       for ( var i = 0; i < rows.length; i++ ) {
-                        // setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                        setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
                         processCounter++;
                       }
                     }
@@ -1479,7 +1480,7 @@ var crypto                                = require('crypto'),
                 } else {
 
                   // fetch new user
-                  // fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
+                  fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes through current database
                   connection.query('select fancrawl_instagram_id, added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
@@ -1487,7 +1488,7 @@ var crypto                                = require('crypto'),
                     if ( rows && rows[0] ) {
                       setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
                       for ( var i = 0; i < rows.length; i++ ) {
-                        // setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                        setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
                         processCounter++;
                       }
                     }
@@ -1498,11 +1499,9 @@ var crypto                                = require('crypto'),
             } else if ( rows[0].state && rows[0].state === "cleaning" ) {
               console.log("CLEANING STATE: ", fancrawl_instagram_id);
 
-              // START CLOCKS
-              timer_post( fancrawl_instagram_id );
-              timer_quick( fancrawl_instagram_id );
 
               var state = rows[0].state;
+
               // CLEAN DATABASE
               cleanDatabase( fancrawl_instagram_id, function( fancrawl_instagram_id ){
                 STOP( fancrawl_instagram_id, true );
@@ -2520,13 +2519,15 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_relationship                    = function ( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, callback ) {
 
-      console.log( "GET_relationship" );
+      console.log( "GET_relationship", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
       var uniqueProcessCounter = uniqueProcessCounter;
 
       connection.query('SELECT fancrawl_instagram_id, "'+ new_instagram_following_id +'" AS new_instagram_following_id, "'+ uniqueProcessCounter +'" AS uniqueProcessCounter, token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+
+        console.log("GET_relationship rows from select: ", rows );
 
         if (err) throw err;
 
