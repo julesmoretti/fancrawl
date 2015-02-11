@@ -1384,6 +1384,7 @@ var crypto                                = require('crypto'),
             // EXTRACT USER FROM DATABASE IN STARTED OR CLEANING STATE
             if ( rows[i].fancrawl_instagram_id ){
               if( rows[i].state !== "stopped" ) {
+                console.log("GO_start - startIndividual for user: ", rows[i].fancrawl_instagram_id );
                 startIndividual( rows[i].fancrawl_instagram_id );
               };
             }
