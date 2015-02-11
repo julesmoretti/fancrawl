@@ -1423,7 +1423,7 @@ var crypto                                = require('crypto'),
         var new_instagram_following_id = new_instagram_following_id;
         var response = response;
 
-      console.log( "GET_relationship callback", fancrawl_instagram_id, new_instagram_following_id, response );
+      console.log( "GET_relationship callback", fancrawl_instagram_id, d_fancrawl_instagram_id, new_instagram_following_id, response );
 
 
         if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
