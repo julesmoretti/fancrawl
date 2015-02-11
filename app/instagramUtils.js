@@ -1445,7 +1445,7 @@ var crypto                                = require('crypto'),
 
             // IF USER WAS STARTED
             if ( rows[0].state && rows[0].state === "started" ) {
-              console.log("STARTED STATE: ", rows[0].fancrawl_instagram_id);
+              console.log( "STARTED STATE: ", rows[0].fancrawl_instagram_id, rows );
               var state = rows[0].state;
 
               // START CLOCKS
