@@ -808,7 +808,10 @@ var crypto                                = require('crypto'),
                 console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
                   // check relationship and unfollow with proper
                   GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
-                console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
+
+                    if ( relationship === "neither" ) {
+                      console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
+                    }
 
                     // connection.query('SELECT state, fancrawl_instagram_id, sHash FROM access_right', function(err, rows, fields) {
                     //   if (err) throw err;
