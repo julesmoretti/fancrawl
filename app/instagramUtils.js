@@ -35,6 +35,10 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timerPostStructure                  = function ( fancrawl_instagram_id ) {
 
+      console.log( "timerPostStructure" );
+
+      var fancrawl_instagram_id = fancrawl_instagram_id;
+
       if ( !timer[ fancrawl_instagram_id ] ) {
         timer[ fancrawl_instagram_id ]                        = {};
       }
@@ -57,6 +61,8 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timerQuickStructure                 = function ( fancrawl_instagram_id ) {
+
+      console.log( "timerQuickStructure" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -83,6 +89,10 @@ var crypto                                = require('crypto'),
     //  TO  | callTimer - STOP - POST_follow - POST_unfollow
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_post                          = function ( fancrawl_instagram_id ) {
+
+      console.log( "timer_post" );
+
+      var fancrawl_instagram_id = fancrawl_instagram_id;
 
       if ( !timer[ fancrawl_instagram_id ].post_called ) {
 
@@ -327,6 +337,8 @@ var crypto                                = require('crypto'),
     //  TO  | callTimer - STOP - verifyRelationship - GET_hash_tag_media - GET_relationship - sendMail - clockManager - STOP
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_quick                         = function ( fancrawl_instagram_id ) {
+
+      console.log( "timer_quick" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -1218,9 +1230,12 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var clockManager                        = function ( fancrawl_instagram_id, new_instagram_following_id, process, last_id, hash_tag, callback ) {
 
+      console.log( "clockManager" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
       var process = process;
+
       if ( last_id ) {
         var last_id = last_id;
       }
@@ -1287,6 +1302,8 @@ var crypto                                = require('crypto'),
     //  TO  | callTimer
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var callTimer                           = function ( fancrawl_instagram_id, state) {
+
+      console.log( "callTimer" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var state = state;
@@ -1382,6 +1399,8 @@ var crypto                                = require('crypto'),
     //  TO  | timerPostStructure - timerQuickStructure - GET_relationship - timer_post - timer_quick - fetchFromHashInitializer - fetchNewFollowers - cleanDatabase - STOP - sendMail
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var startIndividual                     = function ( fancrawl_instagram_id ) {
+
+      console.log( "startIndividual" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -1500,6 +1519,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchNewFollowersInitializer        = function ( fancrawl_instagram_id ) {
 
+      console.log( "fetchNewFollowersInitializer" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
       connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, null AS added_follower_instagram_id UNION SELECT null, MAX( CAST( added_follower_instagram_id as UNSIGNED ) ) AS added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
@@ -1543,6 +1564,8 @@ var crypto                                = require('crypto'),
     //  TO  | fetchNewFollowers - checkSecured - checkIfInDatabase - fetchNewFollowers - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchNewFollowers                   = function ( fancrawl_instagram_id, new_instagram_following_id ) {
+
+      console.log( "fetchNewFollowers" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -1630,6 +1653,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchFromHashInitializer            = function ( fancrawl_instagram_id, retry ) {
 
+      console.log( "fetchFromHashInitializer" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       if ( retry ) {
         var retry = retry;
@@ -1701,6 +1726,8 @@ var crypto                                = require('crypto'),
     //  TO  | fetchFromHash - fetchNewFollowers
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchFromHash                       = function ( fancrawl_instagram_id, hash_tag, last_id ) {
+
+      console.log( "fetchFromHash" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var hash_tag = hash_tag;
@@ -1782,6 +1809,8 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var verifyRelationship                  = function ( fancrawl_instagram_id, new_instagram_following_id ) {
+
+      console.log( "verifyRelationship" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -1872,6 +1901,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var STOP                                = function ( fancrawl_instagram_id, blockNotification, callback ) {
 
+      console.log( "STOP" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       if ( blockNotification ) {
         var blockNotification = blockNotification;
@@ -1916,6 +1947,8 @@ var crypto                                = require('crypto'),
     //  TO  | checkDuplicate - verifyCleaning
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
+
+      console.log( "cleanDatabase" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -1972,6 +2005,8 @@ var crypto                                = require('crypto'),
     //  TO  | verifyCleaning
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var verifyCleaning                      = function ( fancrawl_instagram_id, callback ) {
+
+      console.log( "verifyCleaning" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -2030,6 +2065,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkSecured                        = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
 
+      console.log( "checkSecured" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
 
@@ -2083,6 +2120,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkIfInDatabase                   = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
 
+      console.log( "checkIfInDatabase" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
 
@@ -2110,6 +2149,8 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var time_difference                     = function ( fancrawl_instagram_id, new_instagram_following_id, original_time, current_time, callback ) {
+
+      console.log( "time_difference" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -2144,6 +2185,8 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkDuplicate                      = function ( fancrawl_instagram_id, callback ) {
+
+      console.log( "checkDuplicate" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -2193,6 +2236,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var lastWeek                            = function ( fancrawl_instagram_id, callback ) {
 
+      console.log( "lastWeek" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
       connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and followed_by_status = 1 and creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
@@ -2233,6 +2278,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var insert_hash_data                    = function ( instagram_user_id, instagram_photo_id, hash_tag, created_time ) {
 
+      console.log( "insert_hash_data" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var instagram_photo_id = instagram_photo_id;
       var hash_tag = hash_tag;
@@ -2262,6 +2309,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var add_hash_data                       = function ( fancrawl_instagram_id, body, hash_tag ) {
 
+      console.log( "add_hash_data" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var body = body;
       var hash_tag = hash_tag;
@@ -2285,6 +2334,8 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var sendMail                            = function ( fancrawl_instagram_id, subject, error ) {
+
+      console.log( "sendMail" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var subject = subject;
@@ -2381,9 +2432,11 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_stats                           = function ( fancrawl_instagram_id, callback ) {
 
-    var fancrawl_instagram_id = fancrawl_instagram_id;
+      console.log( "GET_stats" );
 
-     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      var fancrawl_instagram_id = fancrawl_instagram_id;
+
+      connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
         // instagram header secret system
 
@@ -2459,6 +2512,8 @@ var crypto                                = require('crypto'),
     //  TO  | GET_relationship - sendMail
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_relationship                    = function ( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, callback ) {
+
+      console.log( "GET_relationship" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -2657,6 +2712,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_hash_tag_media                  = function ( fancrawl_instagram_id, hash_tag, pagination, callback ) {
 
+      console.log( "GET_hash_tag_media" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var hash_tag = hash_tag;
       var pagination = pagination;
@@ -2736,6 +2793,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_follows                         = function ( fancrawl_instagram_id, pagination, write, callback ) {
 
+      console.log( "GET_follows" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       if ( pagination ) {
         var pagination = pagination;
@@ -2808,6 +2867,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_followed_by                     = function ( fancrawl_instagram_id, pagination, write, callback ) {
 
+      console.log( "GET_followed_by" );
+
       var fancrawl_instagram_id = fancrawl_instagram_id;
       if ( pagination ) {
         var pagination = pagination;
@@ -2877,6 +2938,8 @@ var crypto                                = require('crypto'),
     //  TO  | sendMail - clockManager - verifyRelationship
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_follow                         = function ( fancrawl_instagram_id, new_instagram_following_id, processCounter, callback ) {
+
+      console.log( "POST_follow" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -2961,6 +3024,8 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - sendMail - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_unfollow                       = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, callback ) {
+
+      console.log( "POST_unfollow" );
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
       var new_instagram_following_id = new_instagram_following_id;
@@ -3092,6 +3157,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.login                           = function ( req, res ) {
 
+      console.log( "exports.login" );
+
       console.log("loggedin");
       res.render('./partials/login.ejs');
     };
@@ -3104,6 +3171,8 @@ var crypto                                = require('crypto'),
     //  TO  | handleauth
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.authorize_user                  = function ( req, res ) {
+
+      console.log( "exports.authorize_user" );
 
       console.log("authorizing");
       var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
@@ -3118,6 +3187,8 @@ var crypto                                = require('crypto'),
     //  TO  | timerPostStructure - timerQuickStructure - callTimer - dashboard
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.handleauth                      = function ( req, res ) {
+
+      console.log( "exports.handleauth" );
 
       // queryCode           = req.query.code;
       // form data
@@ -3266,6 +3337,8 @@ var crypto                                = require('crypto'),
     //  TO  | GET_stats - lastWeek
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.dashboard                       = function ( req, res ) {
+
+      console.log( "exports.dashboard" );
 
       var metrics                         = {
                                               'admin': false,
@@ -3585,6 +3658,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.users                           = function ( req, res ) {
 
+      console.log( "exports.users" );
+
       var metrics                         = {
                                             'admin': false,
                                             'users': {},
@@ -3713,6 +3788,8 @@ var crypto                                = require('crypto'),
     //  TO  | STOP - timer_post - timer_quick - GET_relationship - fetchFromHashInitializer - fetchNewFollowers - cleanDatabase
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.trigger                         = function ( req, res ) {
+
+      console.log( "exports.trigger" );
 
       var original_url                    = req.headers.referer,
           url_split                       = original_url.split("?"),
@@ -3971,4 +4048,4 @@ var crypto                                = require('crypto'),
     //      -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  sendMail ( 571377691, 'server was restarted', 'Rebooted' );
+  // sendMail ( 571377691, 'server was restarted', 'Rebooted' );
