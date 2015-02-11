@@ -48,6 +48,7 @@ var crypto                                = require('crypto'),
       timer[ fancrawl_instagram_id ].post_counter_cap         = 0; // handles new versus verify
       timer[ fancrawl_instagram_id ].post_counter             = 0; // handles sequence of people to follow or unfollow
       timer[ fancrawl_instagram_id ].post_minute              = false; // keep track of a minute has gone by
+      timer[ fancrawl_instagram_id ].post_called              = false; // keep track with the timer being called separation
     };
 
 //  -----------------------------------------------------------------------------
@@ -69,6 +70,7 @@ var crypto                                = require('crypto'),
       timer[ fancrawl_instagram_id ].quick_counter_cap        = 0; // handles new versus verify
       timer[ fancrawl_instagram_id ].quick_counter            = 0; // handles new versus verify
       timer[ fancrawl_instagram_id ].quick_seconds            = false; // keep track of minimum seconds separation
+      timer[ fancrawl_instagram_id ].quick_called             = false; // keep track with the timer being called separation
     };
 
 //  -----------------------------------------------------------------------------
@@ -80,232 +82,239 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_post                          = function ( fancrawl_instagram_id ) {
 
-      // IF POST_MINUTE = FALSE
-      if ( timer[ fancrawl_instagram_id ].post_minute === false ) {
-        // ENABLE
-        timer[ fancrawl_instagram_id ].post_minute = true;
-        // SETTIMEOUT LONG
-        callTimer( fancrawl_instagram_id, "post_long" );
-        if ( fancrawl_instagram_id === "571377691" ) {
-          console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
-        }
+      if ( !timer[ fancrawl_instagram_id ].post_called ) {
 
-        // RUN SOME STUFF HERE //////////////////////////////////////////////
-          // CHECK STATE OF USER
-          connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
-            if (err) throw err;
+        // IF POST_MINUTE = FALSE
+        if ( timer[ fancrawl_instagram_id ].post_minute === false ) {
+          // ENABLE
+          timer[ fancrawl_instagram_id ].post_minute = true;
+          // SETTIMEOUT LONG
+          callTimer( fancrawl_instagram_id, "post_long" );
+          if ( fancrawl_instagram_id === "571377691" ) {
+            console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
+          }
 
-            // IF STOPPED DELETE QUEUES
-            if ( rows[0].state === 'stopped' ) {
+          // RUN SOME STUFF HERE //////////////////////////////////////////////
+            // CHECK STATE OF USER
+            connection.query('SELECT state FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+              if (err) throw err;
 
-              // RESET post_timer & quick_timer as well as any setTimouts
-              STOP( fancrawl_instagram_id );
+              // IF STOPPED DELETE QUEUES
+              if ( rows[0].state === 'stopped' ) {
 
-            // PROCESS STARTED OR CLEANING SO CARRY ON
-            } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
+                // RESET post_timer & quick_timer as well as any setTimouts
+                STOP( fancrawl_instagram_id );
 
-              var followCount         = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ),  // pulls out the FanCrawl id that has a follow process
-                  unfollowCount       = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
+              // PROCESS STARTED OR CLEANING SO CARRY ON
+              } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
-              // if follow and unfollow queues are empty
-              if ( !followCount.length && !unfollowCount.length ) {
-                // do nothing
-                timer[ fancrawl_instagram_id ].post_counter_cap = 0;
+                var followCount         = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ),  // pulls out the FanCrawl id that has a follow process
+                    unfollowCount       = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
 
-              // if both follow and unfollow queue has something
-              } else if ( followCount.length && unfollowCount.length ) {
+                // if follow and unfollow queues are empty
+                if ( !followCount.length && !unfollowCount.length ) {
+                  // do nothing
+                  timer[ fancrawl_instagram_id ].post_counter_cap = 0;
 
-                if ( unfollowCount.length > ( queueCap * 0.5 ) ) {
+                // if both follow and unfollow queue has something
+                } else if ( followCount.length && unfollowCount.length ) {
 
-                  timer[ fancrawl_instagram_id ].post_counter_cap = 3;
+                  if ( unfollowCount.length > ( queueCap * 0.5 ) ) {
 
+                    timer[ fancrawl_instagram_id ].post_counter_cap = 3;
+
+                  } else {
+
+                    timer[ fancrawl_instagram_id ].post_counter_cap = 2;
+
+                  }
+
+                  if ( timer[ fancrawl_instagram_id ].post_counter === 0 ) {
+
+                    // go follow
+                    var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
+
+                    POST_follow( fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+
+                      if ( timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id ) {
+
+                        var last_id = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id;
+                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].hash_tag;
+
+                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                        });
+
+                      }
+
+                      delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
+                      }
+                    });
+
+                    timer[ fancrawl_instagram_id ].post_counter = timer[ fancrawl_instagram_id ].post_counter_cap;
+
+                  } else {
+
+                    // go unfollow
+                    var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].new_instagram_following_id;
+                    var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].process;
+
+                    if ( process === "unfollow" ) {
+
+                      POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+
+                        if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
+
+                          var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
+
+                          connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                            if (err) throw err;
+                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                          });
+
+                        }
+
+                        delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
+                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                          console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        }
+                      });
+
+                    } else if ( process === "unfollow_followedby" ) {
+
+                      POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+
+                        if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
+
+                          var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
+
+                          connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                            if (err) throw err;
+                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                          });
+
+                        }
+
+                        delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
+                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                          console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        }
+                      });
+
+                    } else {
+
+                      console.log("TIMER POST XXXX - No process found... "+process);
+
+                    }
+
+                    timer[ fancrawl_instagram_id ].post_counter--;
+
+                  }
+
+                // singles
                 } else {
-
-                  timer[ fancrawl_instagram_id ].post_counter_cap = 2;
-
-                }
-
-                if ( timer[ fancrawl_instagram_id ].post_counter === 0 ) {
+                  timer[ fancrawl_instagram_id ].post_counter_cap = 0;
 
                   // go follow
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
+                  if ( followCount.length ) {
+                    var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
 
-                  POST_follow( fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+                    POST_follow( fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
 
-                    if ( timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id ) {
+                      if ( timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id ) {
 
-                      var last_id = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id;
-                      var hash_tag = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].hash_tag;
+                        var last_id = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id;
+                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].hash_tag;
 
-                      connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
-                      });
+                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                        });
 
-                    }
+                      }
 
-                    delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
-                    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
-                    }
-                  });
-
-                  timer[ fancrawl_instagram_id ].post_counter = timer[ fancrawl_instagram_id ].post_counter_cap;
-
-                } else {
+                      delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
+                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                        console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
+                      }
+                    });
 
                   // go unfollow
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].new_instagram_following_id;
-                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].process;
+                  } else if ( unfollowCount.length ) {
 
-                  if ( process === "unfollow" ) {
+                    var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].new_instagram_following_id;
+                    var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].process;
 
-                    POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+                    if ( process === "unfollow" ) {
 
-                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
+                      POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
 
-                        var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
-                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
+                        if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
-                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                          if (err) throw err;
-                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
-                        });
+                          var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
 
-                      }
+                          connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                            if (err) throw err;
+                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                          });
 
-                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                      }
-                    });
+                        }
 
-                  } else if ( process === "unfollow_followedby" ) {
-
-                    POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-
-                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
-
-                        var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
-                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
-
-                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                          if (err) throw err;
-                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
-                        });
-
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                      }
-                    });
-
-                  } else {
-
-                    console.log("TIMER POST XXXX - No process found... "+process);
-
-                  }
-
-                  timer[ fancrawl_instagram_id ].post_counter--;
-
-                }
-
-              // singles
-              } else {
-                timer[ fancrawl_instagram_id ].post_counter_cap = 0;
-
-                // go follow
-                if ( followCount.length ) {
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
-
-                  POST_follow( fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-
-                    if ( timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id ) {
-
-                      var last_id = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].last_id;
-                      var hash_tag = timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ].hash_tag;
-
-                      connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                        delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
+                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                          console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        }
                       });
 
+                    } else if ( process === "unfollow_followedby" ) {
+
+                      POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+
+                        if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
+
+                          var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
+
+                          connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
+                            if (err) throw err;
+                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                          });
+
+                        }
+
+                        delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
+                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
+                          console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
+                        }
+                      });
+
+                    } else {
+
+                      console.log("TIMER POST XXXX - No process found of singles... " + process);
+
                     }
-
-                    delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
-                    if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                      console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
-                    }
-                  });
-
-                // go unfollow
-                } else if ( unfollowCount.length ) {
-
-                  var last_instagram_following_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].new_instagram_following_id;
-                  var process = timer[ fancrawl_instagram_id ].post_queue.unfollow[ unfollowCount[0] ].process;
-
-                  if ( process === "unfollow" ) {
-
-                    POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-
-                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
-
-                        var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
-                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
-
-                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                          if (err) throw err;
-                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
-                        });
-
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                      }
-                    });
-
-                  } else if ( process === "unfollow_followedby" ) {
-
-                    POST_unfollow( fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-
-                      if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
-
-                        var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
-                        var hash_tag = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].hash_tag;
-
-                        connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
-                          if (err) throw err;
-                          console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
-                        });
-
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                      }
-                    });
-
-                  } else {
-
-                    console.log("TIMER POST XXXX - No process found of singles... " + process);
-
                   }
+
                 }
-
               }
-            }
-          });
-        /////////////////////////////////////////////////////////////////////
+            });
+          /////////////////////////////////////////////////////////////////////
 
-      // IF TRUE TO SETTIMEOUT SHORT
+        // IF TRUE TO SETTIMEOUT SHORT
+        } else {
+          callTimer( fancrawl_instagram_id, "post_short" );
+        }
+
       } else {
-        callTimer( fancrawl_instagram_id, "post_short" );
+        timer[ fancrawl_instagram_id ].post_called = true;
       }
+
     };
 
 //  -----------------------------------------------------------------------------
@@ -319,872 +328,879 @@ var crypto                                = require('crypto'),
       if ( fancrawl_instagram_id = "571377691" ) {
         console.log("CALLED TIMER: ", fancrawl_instagram_id );
       }
-      // IF POST_MINUTE = FALSE
-      if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
-        // ENABLE
-        timer[ fancrawl_instagram_id ].quick_seconds = true;
-        // SETTIMEOUT LONG
-        callTimer( fancrawl_instagram_id, "quick_long" );
 
-        if ( fancrawl_instagram_id === "571377691" ) {
-          // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].quick_queue.hash );
-          // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
-        }
+      if ( !timer[ fancrawl_instagram_id ].quick_called ) {
 
-        // RUN SOME STUFF HERE //////////////////////////////////////////////
-          connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
-            if (err) throw err;
+        // IF POST_MINUTE = FALSE
+        if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
+          // ENABLE
+          timer[ fancrawl_instagram_id ].quick_seconds = true;
+          // SETTIMEOUT LONG
+          callTimer( fancrawl_instagram_id, "quick_long" );
 
-            // IF STOPPED DELETE QUEUES
-            if ( rows && rows[0] && rows[0].state && rows[0].state === 'stopped' ) {
+          if ( fancrawl_instagram_id === "571377691" ) {
+            // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].quick_queue.hash );
+            // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
+          }
 
-              // RESET post_timer & quick_timer as well as any setTimouts
-              STOP( fancrawl_instagram_id );
+          // RUN SOME STUFF HERE //////////////////////////////////////////////
+            connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+              if (err) throw err;
 
-            // PROCESS STARTED OR CLEANING SO CARRY ON
-            } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
+              // IF STOPPED DELETE QUEUES
+              if ( rows && rows[0] && rows[0].state && rows[0].state === 'stopped' ) {
 
-              if ( setTimeouts && setTimeouts[ rows[0].fancrawl_instagram_id ] && setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData && typeof setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData === "object" ) {
-                var count_databaseData    = Object.keys( setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData );
-              } else {
-                var count_databaseData    = [];
-              }
+                // RESET post_timer & quick_timer as well as any setTimouts
+                STOP( fancrawl_instagram_id );
 
-              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
-                var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
-              } else {
-                var count_verify          = [];
-              }
+              // PROCESS STARTED OR CLEANING SO CARRY ON
+              } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
-              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.new && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.new === "object" ) {
-                var count_new             = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.new );
-              } else {
-                var count_new             = [];
-              }
-
-              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash === "object" ) {
-                var count_hash            = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash );
-              } else {
-                var count_hash            = [];
-              }
-
-
-              // all 4 empty - nothing to do
-              if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length === 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 0;
-                return;
-
-              // all 4 have data
-              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 3;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 2 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 3 ) {
-
-                  // get new from hash library
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-                  return;
-
-                }
-
-
-              // all 3 have data but hash
-              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                }
-
-              // all 3 have data but new
-              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                }
-
-              // all 3 have data but verify
-              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                }
-
-              // all 3 have data but previous
-              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
-                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                }
-
-
-              // only 2 but new & hash
-              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length == 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
-
+                if ( setTimeouts && setTimeouts[ rows[0].fancrawl_instagram_id ] && setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData && typeof setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData === "object" ) {
+                  var count_databaseData    = Object.keys( setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData );
                 } else {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-
+                  var count_databaseData    = [];
                 }
 
-              // only 2 but verify & hash
-              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
-
+                if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                  var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
                 } else {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-
+                  var count_verify          = [];
                 }
 
-              // only 2 but verify & new
-              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
-
+                if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.new && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.new === "object" ) {
+                  var count_new             = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.new );
                 } else {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
+                  var count_new             = [];
                 }
 
-              // only 2 but previous & hash
-              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
+                if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash === "object" ) {
+                  var count_hash            = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash );
                 } else {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-
-                }
-
-              // only 2 but previous & new
-              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
-                } else {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
-                }
-
-              // only 2 but previous & verify
-              } else if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
-
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
-
-                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
-
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-
-                } else {
-
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-                  return;
-
+                  var count_hash            = [];
                 }
 
 
-              // singles
-              } else {
+                // all 4 empty - nothing to do
+                if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length === 0 ) {
 
-                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 1;
-
-                if ( count_databaseData.length !== 0 ) {
-
-                  // get databaseData
-                  if ( count_verify.length < ( queueCap - 2 ) ) {
-                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-                  }
-
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 0;
                   return;
 
-                } else if ( count_verify.length !== 0 ) {
+                // all 4 have data
+                } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
-                  // get verify
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-                  var uniqueProcessCounter = count_verify[0];
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
 
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-                } else if ( count_new.length !== 0 ) {
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
 
-                  // get new
-                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-                  var process = "new";
-                  var uniqueProcessCounter = count_new[0];
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 3;
 
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-                } else if ( count_hash.length !== 0 ) {
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
 
-                  // get hash
-                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-                  } else {
-                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-                  }
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-                  return;
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 2 ) {
 
-                }
-
-              }
-
-              if ( process ) {
-
-                if ( process === "new" ) {
-                  if ( rows[0].fancrawl_instagram_id = "571377691" ) {
-                    console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
-                  }
-                  // check relationship and unfollow with proper
-
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, ori_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
-
-                    if ( fancrawl_instagram_id = "571377691" && relationship === "neither" ) {
-                      console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", ori_fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
                     }
 
-                    var fancrawl_instagram_id = ori_fancrawl_instagram_id;
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
 
-                    if ( relationship === "not_exist" ) {
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 3 ) {
 
-                      delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                    // get new from hash library
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
 
-                    } else if ( relationship === "access_token" ) {
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                    return;
 
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
+                  }
+
+
+                // all 3 have data but hash
+                } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+                // all 3 have data but new
+                } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+                // all 3 have data but verify
+                } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+                // all 3 have data but previous
+                } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+
+                // only 2 but new & hash
+                } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length == 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+
+                  }
+
+                // only 2 but verify & hash
+                } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+
+                  }
+
+                // only 2 but verify & new
+                } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+                // only 2 but previous & hash
+                } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+
+                  }
+
+                // only 2 but previous & new
+                } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+                // only 2 but previous & verify
+                } else if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                    return;
+
+                  }
+
+
+                // singles
+                } else {
+
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 1;
+
+                  if ( count_databaseData.length !== 0 ) {
+
+                    // get databaseData
+                    if ( count_verify.length < ( queueCap - 2 ) ) {
+                      verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                      delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  } else if ( count_verify.length !== 0 ) {
+
+                    // get verify
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                    var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                    var uniqueProcessCounter = count_verify[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else if ( count_new.length !== 0 ) {
+
+                    // get new
+                    var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                    var process = "new";
+                    var uniqueProcessCounter = count_new[0];
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+
+                  } else if ( count_hash.length !== 0 ) {
+
+                    // get hash
+                    if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                    } else {
+                      GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                    }
+
+                    timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                    return;
+
+                  }
+
+                }
+
+                if ( process ) {
+
+                  if ( process === "new" ) {
+                    if ( rows[0].fancrawl_instagram_id = "571377691" ) {
+                      console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
+                    }
+                    // check relationship and unfollow with proper
+
+                    GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, a_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
+
+                      if ( fancrawl_instagram_id = "571377691" && relationship === "neither" ) {
+                        console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", a_fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
                       }
 
-                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        STOP( fancrawl_instagram_id, true );
-                      }
+                      var fancrawl_instagram_id = a_fancrawl_instagram_id;
 
-                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+                      if ( relationship === "not_exist" ) {
 
-                    } else if ( relationship === "APINotAllowedError" ) {
+                        delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
 
-                      delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                      } else if ( relationship === "access_token" ) {
 
-                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
-                        if (err) throw err;
-                      });
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
 
-                    } else if ( relationship === "oauth_limit" ) {
+                        if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          STOP( fancrawl_instagram_id, true );
+                        }
 
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
+                        usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+                      } else if ( relationship === "APINotAllowedError" ) {
 
-                      sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
+                        delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
 
-                    // new_instagram user follows FanCrawl user
-                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                        connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+                          if (err) throw err;
+                        });
 
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
+                      } else if ( relationship === "oauth_limit" ) {
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
-                      } else {
-                        var count_unfollow = [];
-                      }
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
 
-                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                        usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
 
-                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+                        sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
 
-                          var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
-                          var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+                      // new_instagram user follows FanCrawl user
+                      } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
 
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby", last_id, hash_tag );
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
 
+                        if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                          var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
                         } else {
+                          var count_unfollow = [];
+                        }
 
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                        if ( count_unfollow.length < ( queueCap - 2 ) ) {
+
+                          if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+
+                            var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
+                            var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby", last_id, hash_tag );
+
+                          } else {
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+
+                          }
+
+                        }
+
+                      // only from FanCrawl user side - nothing from the other side
+                      } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
+
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
+
+                        if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
+                          var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
+                        } else {
+                          var count_follow = [];
+                        }
+
+                        if ( count_follow.length < ( queueCap - 2 ) ) {
+
+                          if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+
+                            var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
+                            var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
+
+                          } else {
+
+                            delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
+
+                          }
+
+                        }
+
+                      }
+                    });
+
+                  } else if ( process === "unfollow_verify" ) {
+
+                    // check relationship to determine best what to do
+                    GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, b_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
+
+                      var fancrawl_instagram_id = b_fancrawl_instagram_id;
+
+                      if ( relationship === "access_token" ) {
+
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          STOP( fancrawl_instagram_id, true );
+                        }
+                        usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+
+                      } else if ( relationship === "APINotAllowedError" ) {
+
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          // usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "B There has been a special API Error - Report this issue.";
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        });
+
+                      } else if ( relationship === "oauth_limit" ) {
+
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+
+                      } else if ( relationship === "neither" ) {
+
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
+
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+
+                        connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
+                        });
+
+                      } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
+
+                        if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                          var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                        } else {
+                          var count_unfollow = [];
+                        }
+
+                        if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
                           clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-
                         }
 
-                      }
+                      } else if ( relationship === "not_exist" ) {
 
-                    // only from FanCrawl user side - nothing from the other side
-                    } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
 
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
-                        var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
+                        connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          console.log("USER DELETED THERE ACCOUNT");
+                        });
+
                       } else {
-                        var count_follow = [];
-                      }
 
-                      if ( count_follow.length < ( queueCap - 2 ) ) {
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
 
-                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
-
-                          var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
-                          var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
-
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
-
+                        if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                          var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
                         } else {
+                          var count_unfollow = [];
+                        }
 
-                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
-
+                        if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
                         }
 
                       }
+                    });
 
-                    }
-                  });
+                  } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
 
-                } else if ( process === "unfollow_verify" ) {
+                    // check relationship to determine best what to do
+                    GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, c_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
 
-                  // check relationship to determine best what to do
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, ori_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
+                      var fancrawl_instagram_id = c_fancrawl_instagram_id;
 
-                    var fancrawl_instagram_id = ori_fancrawl_instagram_id;
+                      if ( relationship === "access_token" ) {
 
-                    if ( relationship === "access_token" ) {
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          STOP( fancrawl_instagram_id, true );
+                        }
+                        usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        STOP( fancrawl_instagram_id, true );
-                      }
-                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+                      } else if ( relationship === "APINotAllowedError" ) {
 
-                    } else if ( relationship === "APINotAllowedError" ) {
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        });
 
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        // usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "B There has been a special API Error - Report this issue.";
+                      } else if ( relationship === "oauth_limit" ) {
+
+                        if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                          usersInfo[ fancrawl_instagram_id ] = {};
+                        }
+                        usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+
+                      } else if ( relationship === "neither" ) {
+
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
+
                         delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                      });
 
-                    } else if ( relationship === "oauth_limit" ) {
+                        connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
+                        });
 
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+                      } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
 
-                    } else if ( relationship === "neither" ) {
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
 
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
+                        if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                          var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                        } else {
+                          var count_unfollow = [];
+                        }
 
-                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        }
 
-                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
-                      });
+                      } else if ( relationship === "not_exist" ) {
 
-                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
 
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                        connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          console.log("USER DELETED THERE ACCOUNT");
+                        });
+
                       } else {
-                        var count_unfollow = [];
+
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                          delete usersInfo[ fancrawl_instagram_id ].access_token;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                          delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                        }
+                        if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                          delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                        }
+
+                        if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify && typeof timer[ fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                          var count_verify          = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
+                        } else {
+                          var count_verify          = [];
+                        }
+
+                        if ( count_verify.length < ( queueCap - 2 ) ) {
+                          delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                          verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
+                        }
+
                       }
+                    });
 
-                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
-                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-                      }
+                  } else {
+                    return;
+                    console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
 
-                    } else if ( relationship === "not_exist" ) {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-
-                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        console.log("USER DELETED THERE ACCOUNT");
-                      });
-
-                    } else {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-                      } else {
-                        var count_unfollow = [];
-                      }
-
-                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
-                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
-                      }
-
-                    }
-                  });
-
-                } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
-
-                  // check relationship to determine best what to do
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, ori_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
-
-                    var fancrawl_instagram_id = ori_fancrawl_instagram_id;
-
-                    if ( relationship === "access_token" ) {
-
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        STOP( fancrawl_instagram_id, true );
-                      }
-                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
-
-                    } else if ( relationship === "APINotAllowedError" ) {
-
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                      });
-
-                    } else if ( relationship === "oauth_limit" ) {
-
-                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                        usersInfo[ fancrawl_instagram_id ] = {};
-                      }
-                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
-
-                    } else if ( relationship === "neither" ) {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-
-                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
-                      });
-
-                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-                      } else {
-                        var count_unfollow = [];
-                      }
-
-                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
-                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                      }
-
-                    } else if ( relationship === "not_exist" ) {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-
-                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                        if (err) throw err;
-                        console.log("USER DELETED THERE ACCOUNT");
-                      });
-
-                    } else {
-
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-                        delete usersInfo[ fancrawl_instagram_id ].access_token;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-                      }
-                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-                      }
-
-                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify && typeof timer[ fancrawl_instagram_id ].quick_queue.verify === "object" ) {
-                        var count_verify          = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
-                      } else {
-                        var count_verify          = [];
-                      }
-
-                      if ( count_verify.length < ( queueCap - 2 ) ) {
-                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-                        verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
-                      }
-
-                    }
-                  });
-
-                } else {
-                  return;
-                  console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
+                  }
 
                 }
 
+              } else {
+
+                sendMail( 571377691, 'timer_quick error', 'The function timer_quick could not determine the state for user: ' + rows[0].fancrawl_instagram_id );
+                console.log( "state undefined from timer_quick" )
+
               }
+            });
+          /////////////////////////////////////////////////////////////////////
 
-            } else {
-
-              sendMail( 571377691, 'timer_quick error', 'The function timer_quick could not determine the state for user: ' + rows[0].fancrawl_instagram_id );
-              console.log( "state undefined from timer_quick" )
-
-            }
-          });
-        /////////////////////////////////////////////////////////////////////
-
-      // IF TRUE TO SETTIMEOUT SHORT
+        // IF TRUE TO SETTIMEOUT SHORT
+        } else {
+          callTimer( fancrawl_instagram_id, "quick_short" );
+        }
       } else {
-        callTimer( fancrawl_instagram_id, "quick_short" );
+        timer[ fancrawl_instagram_id ].quick_called = true;
       }
+
     };
 
 //  -----------------------------------------------------------------------------
@@ -1275,11 +1291,12 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
             function(){
                 if ( timer[ arguments[0] ] ) {
+                  timer[ arguments[0] ].quick_called = false;
                   timer[ arguments[0] ].quick_seconds = false;
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 1000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
+          }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
         } else if ( state === "post_short" ) {
 
@@ -1293,6 +1310,7 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
             function(){
               if ( timer[ arguments[0] ] ) {
+                timer[ arguments[0] ].post_called = false;
                 timer[ arguments[0] ].post_minute = false;
                 timer_post( arguments[0] );
               }
@@ -1354,7 +1372,9 @@ var crypto                                = require('crypto'),
         setTimeouts[ fancrawl_instagram_id ] = {};
       }
 
-      GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, fancrawl_instagram_id, new_instagram_following_id, response ){
+      GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, d_fancrawl_instagram_id, new_instagram_following_id, response ){
+
+        var fancrawl_instagram_id = d_fancrawl_instagram_id;
 
         if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
 
@@ -3684,7 +3704,9 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ] = {};
         }
 
-        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, fancrawl_instagram_id, new_instagram_following_id, response ){
+        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, e_fancrawl_instagram_id, new_instagram_following_id, response ){
+
+          var fancrawl_instagram_id = e_fancrawl_instagram_id;
 
           if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
 
@@ -3770,7 +3792,9 @@ var crypto                                = require('crypto'),
 
         STOP( fancrawl_instagram_id );
 
-        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, fancrawl_instagram_id, new_instagram_following_id, response ){
+        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, f_fancrawl_instagram_id, new_instagram_following_id, response ){
+
+          var fancrawl_instagram_id = f_fancrawl_instagram_id;
 
           if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
             // do nothing
