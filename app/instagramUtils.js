@@ -894,7 +894,7 @@ var crypto                                = require('crypto'),
                       if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
                         var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
                       } else {
-                        var count_unfollow = [];
+                        var count_follow = [];
                       }
 
                       if ( count_follow.length < ( queueCap - 2 ) ) {
