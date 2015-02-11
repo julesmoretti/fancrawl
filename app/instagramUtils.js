@@ -795,9 +795,9 @@ var crypto                                = require('crypto'),
               if ( process ) {
 
                 if ( process === "new" ) {
-                if ( fancrawl_instagram_id = "571377691" ) {
-                  console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
-                }
+                  if ( rows[0].fancrawl_instagram_id = "571377691" ) {
+                    console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
+                  }
                   // check relationship and unfollow with proper
                   GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
 
@@ -891,8 +891,8 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.follow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.follow === "object" ) {
-                        var count_follow  = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
+                        var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
                       } else {
                         var count_unfollow = [];
                       }
@@ -983,8 +983,8 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
                       } else {
                         var count_unfollow = [];
                       }
@@ -1025,8 +1025,8 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
                       } else {
                         var count_unfollow = [];
                       }
@@ -1102,8 +1102,8 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
                       } else {
                         var count_unfollow = [];
                       }
@@ -1144,8 +1144,8 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
-                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
-                        var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify && typeof timer[ fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                        var count_verify          = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
                       } else {
                         var count_verify          = [];
                       }
