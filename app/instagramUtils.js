@@ -1333,7 +1333,8 @@ var crypto                                = require('crypto'),
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 4000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
+          },  5000 , fancrawl_instagram_id ); // 1 ~ 1.5 sec
+          // }, Math.floor( ( Math.random() * 500 ) + 4000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
         } else if ( state === "post_short" ) {
 
