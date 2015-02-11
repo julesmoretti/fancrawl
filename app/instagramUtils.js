@@ -316,6 +316,8 @@ var crypto                                = require('crypto'),
     //  TO  | callTimer - STOP - verifyRelationship - GET_hash_tag_media - GET_relationship - sendMail - clockManager - STOP
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_quick                         = function ( fancrawl_instagram_id ) {
+
+      console.log("CALLED TIMER: ", fancrawl_instagram_id );
       // IF POST_MINUTE = FALSE
       if ( timer[ fancrawl_instagram_id ].quick_seconds === false ) {
         // ENABLE
@@ -363,19 +365,6 @@ var crypto                                = require('crypto'),
                 var count_hash            = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash );
               } else {
                 var count_hash            = [];
-              }
-
-
-              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-                var count_unfollow        = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
-              } else {
-                var count_unfollow        = [];
-              }
-
-              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.follow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.follow === "object" ) {
-                var count_follow          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );
-              } else {
-                var count_follow          = [];
               }
 
 
@@ -813,13 +802,6 @@ var crypto                                = require('crypto'),
                       console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
                     }
 
-                    // connection.query('SELECT state, fancrawl_instagram_id, sHash FROM access_right', function(err, rows, fields) {
-                    //   if (err) throw err;
-
-                    // });
-
-
-
                     if ( relationship === "not_exist" ) {
 
                       delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
@@ -869,6 +851,8 @@ var crypto                                = require('crypto'),
 
                       if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
                         var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
                       }
 
                       if ( count_unfollow.length < ( queueCap - 2 ) ) {
@@ -905,6 +889,8 @@ var crypto                                = require('crypto'),
 
                       if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.follow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.follow === "object" ) {
                         var count_follow  = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );
+                      } else {
+                        var count_unfollow = [];
                       }
 
                       if ( count_follow.length < ( queueCap - 2 ) ) {
@@ -993,6 +979,12 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
+                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
+
                       if ( count_unfollow.length < ( queueCap - 2 ) ) {
                         delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
                         clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
@@ -1027,6 +1019,12 @@ var crypto                                = require('crypto'),
                       }
                       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
+
+                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
                       }
 
                       if ( count_unfollow.length < ( queueCap - 2 ) ) {
@@ -1100,6 +1098,12 @@ var crypto                                = require('crypto'),
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
                       }
 
+                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
+
                       if ( count_unfollow.length < ( queueCap - 2 ) ) {
                         clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
                         delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
@@ -1134,6 +1138,12 @@ var crypto                                = require('crypto'),
                       }
                       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
                         delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
+
+                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                        var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
+                      } else {
+                        var count_verify          = [];
                       }
 
                       if ( count_verify.length < ( queueCap - 2 ) ) {
