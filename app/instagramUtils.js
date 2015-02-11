@@ -2350,7 +2350,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_relationship                    = function ( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, callback ) {
 
-      connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      connection.query('SELECT fancrawl_instagram_id, "'+ new_instagram_following_id +'" AS new_instagram_following_id, "'+ uniqueProcessCounter +'" AS uniqueProcessCounter token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
         var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
@@ -2366,7 +2366,7 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
+            uri: 'https://api.instagram.com/v1/users/'+rows[0].new_instagram_following_id+'/relationship',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers
@@ -2402,20 +2402,20 @@ var crypto                                = require('crypto'),
                   if( pbody.data.outgoing_status === "none" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"none"}}
                     // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" and user "+new_instagram_following_id+" are not following one another" );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "neither", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "neither", rows[0].uniqueProcessCounter );
 
                   // ONLY FOLLOWS NEW USER
                   } else if( pbody.data.outgoing_status === "requested"  ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"none"}}
                     // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow this user: "+new_instagram_following_id );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "requested", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "requested", rows[0].uniqueProcessCounter );
 
 
                   // ONLY FOLLOWS NEW USER
                   } else if( pbody.data.outgoing_status === "follows"  ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"none"}}
                     // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are only following user: "+new_instagram_following_id );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "follows", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "follows", rows[0].uniqueProcessCounter );
                   }
 
                 } else if( pbody.data.incoming_status === "followed_by" ) {
@@ -2424,31 +2424,31 @@ var crypto                                = require('crypto'),
                   if( pbody.data.outgoing_status === "none" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"followed_by"}}
                     // console.log( "RELATIONSHIP: "+new_instagram_following_id+" is following you "+fancrawl_instagram_id+" back" );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "followed_by", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by", rows[0].uniqueProcessCounter );
 
                   // BOTH FOLLOW AND FOLLOWED_BY BACK
                   } else if( pbody.data.outgoing_status === "requested" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"followed_by"}}
                     // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow user "+new_instagram_following_id+" and he is following you back" );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "followed_by_and_requested", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by_and_requested", rows[0].uniqueProcessCounter );
 
                   // BOTH FOLLOW AND FOLLOWED_BY BACK
                   } else if( pbody.data.outgoing_status === "follows" ) {
                     // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
                     // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are following user "+new_instagram_following_id+" and he is following you back" );
-                    callback( fancrawl_instagram_id, new_instagram_following_id, "both", uniqueProcessCounter );
+                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "both", rows[0].uniqueProcessCounter );
 
                   }
                 }
 
               } else {
-                console.log("RELATIONSHIP: you "+fancrawl_instagram_id+"did not pick up on body of user "+new_instagram_following_id+" - ", body);
-                callback( fancrawl_instagram_id, new_instagram_following_id, "error", uniqueProcessCounter );
+                console.log("RELATIONSHIP: you "+fancrawl_instagram_id+"did not pick up on body of user "+rows[0].new_instagram_following_id+" - ", body);
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
               }
 
             } else {
-              console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error from pbody "+new_instagram_following_id+" - ", pbody );
-              callback( fancrawl_instagram_id, new_instagram_following_id, "error", uniqueProcessCounter );
+              console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got an error from pbody "+rows[0].new_instagram_following_id+" - ", pbody );
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
             }
 
           } else if ( !error && response.statusCode !== 200 ) {
@@ -2461,11 +2461,11 @@ var crypto                                = require('crypto'),
 
             if ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) {
 
-              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+              setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
                 function(){
                 GET_relationship( arguments[0], arguments[1], arguments[2] ,arguments[3] );
                 delete setTimeouts[ arguments[0] ][ arguments[4] ];
-              }, 1000 * 20, fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, callback, processCounter );
+              }, 1000 * 20, rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, rows[0].uniqueProcessCounter, callback, processCounter );
               processCounter++;
 
               return;
@@ -2473,13 +2473,13 @@ var crypto                                = require('crypto'),
               var pbody = JSON.parse( body );
             } else if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
               // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-              sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+              sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + rows[0].new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
 
-              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+              setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
                 function(){
                 GET_relationship( arguments[0], arguments[1], arguments[2], arguments[3] );
                 delete setTimeouts[ arguments[0] ][ arguments[4] ];
-              }, 1000 * 20, fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, callback, processCounter );
+              }, 1000 * 20, rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, rows[0].uniqueProcessCounter, callback, processCounter );
               processCounter++;
 
               return;
@@ -2499,34 +2499,34 @@ var crypto                                = require('crypto'),
             } else if ( pbody && pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist" ) {
               // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
               // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
-              callback( fancrawl_instagram_id, new_instagram_following_id, "not_exist", uniqueProcessCounter );
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "not_exist", rows[0].uniqueProcessCounter );
 
             } else if ( pbody && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
               // {"meta":{"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
               // sendMail( "571377691", "API Error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id + "of relationships trying to follow: " + new_instagram_following_id );
-              callback( fancrawl_instagram_id, new_instagram_following_id, "APINotAllowedError", uniqueProcessCounter );
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "APINotAllowedError", rows[0].uniqueProcessCounter );
 
             // OAUTH TOKEN EXPIRED
             } else if( pbody && pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
               // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-              console.log( "RELATIONSHIP: "+fancrawl_instagram_id+" MUST LOG IN AGAIN - NEED NEW TOKEN - OR VALIDATE ACCOUNT AGAIN");
-              callback( fancrawl_instagram_id, new_instagram_following_id, "access_token", uniqueProcessCounter );
+              console.log( "RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" MUST LOG IN AGAIN - NEED NEW TOKEN - OR VALIDATE ACCOUNT AGAIN");
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "access_token", rows[0].uniqueProcessCounter );
 
             // OAUTH TIME LIMIT REACHED LET TIMER KNOW AND TRIES AGAIN
             } else if( pbody && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
               // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-              console.log("RELATIONSHIP: LIMIT REACH FOR: "+fancrawl_instagram_id+" - ", pbody);
-              callback( fancrawl_instagram_id, new_instagram_following_id, "oauth_limit", uniqueProcessCounter );
+              console.log("RELATIONSHIP: LIMIT REACH FOR: "+rows[0].fancrawl_instagram_id+" - ", pbody);
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "oauth_limit", rows[0].uniqueProcessCounter );
             } else {
-              console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got a weird statusCode "+new_instagram_following_id+" - ", pbody);
+              console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got a weird statusCode "+rows[0].new_instagram_following_id+" - ", pbody);
               sendMail( 571377691, 'get relationship weird statusCode', 'The function GET_relationship got the following body: ' + pbody );
-              callback( fancrawl_instagram_id, new_instagram_following_id, "error", uniqueProcessCounter );
+              callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
             }
 
           } else {
-            console.log("RELATIONSHIP: "+fancrawl_instagram_id+" got an error "+new_instagram_following_id+" - ", error);
+            console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got an error "+rows[0].new_instagram_following_id+" - ", error);
             sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
-            callback( fancrawl_instagram_id, new_instagram_following_id, "error", uniqueProcessCounter );
+            callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
           }
         });
       });
