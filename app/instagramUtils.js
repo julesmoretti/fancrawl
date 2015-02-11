@@ -22,30 +22,6 @@ var crypto                                = require('crypto'),
                                               multipleStatements: true
                                             });
 
-
-console.log("server RESTARTED");
-
-setTimeout(
-  function(){
-      console.log( "2 SEC" );
-}, 2000 );
-
-setTimeout(
-  function(){
-      console.log( "4 SEC" );
-}, 4000 );
-
-setTimeout(
-  function(){
-      console.log( "6 SEC" );
-}, 6000 );
-
-setTimeout(
-  function(){
-      console.log( "8 SEC" );
-}, 8000 );
-
-
 //  =============================================================================
 //  TIMER OPERATIONS
 //  =============================================================================
@@ -1223,7 +1199,7 @@ setTimeout(
         timer[ fancrawl_instagram_id ].quick_called = true;
       }
 
-    };
+    }();
 
 //  -----------------------------------------------------------------------------
 //  determines where each timer process should be stored
