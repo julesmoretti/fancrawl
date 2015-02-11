@@ -69,7 +69,7 @@ var crypto                                = require('crypto'),
       timer[ fancrawl_instagram_id ].quick_counter            = 0; // handles new versus verify
       timer[ fancrawl_instagram_id ].quick_seconds            = false; // keep track of minimum seconds separation
       timer[ fancrawl_instagram_id ].quick_called             = false; // keep track with the timer being called separation
-    };
+    }();
 
 //  -----------------------------------------------------------------------------
 //  POST requests clock that handles follow and unfollow of users
