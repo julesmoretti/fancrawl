@@ -56,7 +56,7 @@ var crypto                                = require('crypto'),
     //      -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  var timerQuickStructure                 = function timerQuickStructure ( fancrawl_instagram_id ) {
+  var timerQuickStructure                 = function ( fancrawl_instagram_id ) {
 
       var fancrawl_instagram_id = fancrawl_instagram_id;
 
@@ -1316,7 +1316,7 @@ var crypto                                = require('crypto'),
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
+          }, Math.floor( ( Math.random() * 500 ) + 4000 ), fancrawl_instagram_id ); // 1 ~ 1.5 sec
 
         } else if ( state === "post_short" ) {
 
@@ -1432,7 +1432,7 @@ var crypto                                = require('crypto'),
                 if ( rows[0].sHash ) {
 
                   // fetch new user from hash
-                  fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
+                  // fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes check current database
                   connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count NOT IN (5)', function(err, rows, fields) {
@@ -1443,7 +1443,7 @@ var crypto                                = require('crypto'),
                       setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
 
                       for ( var i = 0; i < rows.length; i++ ) {
-                        setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                        // setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
                         processCounter++;
                       }
                     }
@@ -1453,7 +1453,7 @@ var crypto                                = require('crypto'),
                 } else {
 
                   // fetch new user
-                  fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
+                  // fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes through current database
                   connection.query('select fancrawl_instagram_id, added_follower_instagram_id from beta_followers where fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
@@ -1461,7 +1461,7 @@ var crypto                                = require('crypto'),
                     if ( rows && rows[0] ) {
                       setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
                       for ( var i = 0; i < rows.length; i++ ) {
-                        setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                        // setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
                         processCounter++;
                       }
                     }
