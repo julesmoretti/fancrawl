@@ -319,7 +319,7 @@ var crypto                                = require('crypto'),
   var timer_quick                         = function ( fancrawl_instagram_id ) {
 
       if ( fancrawl_instagram_id === "571377691" ) {
-        // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].quick_queue.hash );
+        // console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].quick_queue.new ) );
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
       }
 
@@ -891,7 +891,7 @@ var crypto                                = require('crypto'),
                       }
 
                       if ( count_follow.length < ( queueCap - 2 ) ) {
-
+// >>>>>>>>>>> ERROR of uniqueProcessCounter
                         if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
 
                           var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
@@ -1267,7 +1267,7 @@ var crypto                                = require('crypto'),
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 3000 ), fancrawl_instagram_id ); // 3 ~ 3.5 sec
+          }, Math.floor( ( Math.random() * 500 ) + 4000 ), fancrawl_instagram_id ); // 4 ~ 4.5 sec
 
         } else if ( state === "post_short" ) {
 
@@ -1578,7 +1578,7 @@ var crypto                                = require('crypto'),
           timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ processCounter ] = { 'hash_tag' : rows[0].hash_tag };
           processCounter++;
         }
-
+// >>>>> ERROR rows[0];
         connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag, null AS last_id UNION ALL SELECT null, null, last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, rows, fields ) {
           if (err) throw err;
 
