@@ -3584,78 +3584,79 @@ var crypto                                = require('crypto'),
 
       var fancrawl_instagram_id           = req_query.id;
 
-      console.log(req.body);
+      console.log( req_query, req.body );
 
-      // UPDATING HASH
-      if ( req.body.hash_tag && req.body.hash_tag !== '' ) {
-        // handles inserted # character by removing it
-        if ( req.body.hash_tag[0] && req.body.hash_tag[0] === "#" ){
-          req.body.hash_tag = req.body.hash_tag.slice(1).split(" ")[0];
+      // TOGGLES
+        // UPDATING HASH
+        if ( req.body.hash_tag && req.body.hash_tag !== '' ) {
+          // handles inserted # character by removing it
+          if ( req.body.hash_tag[0] && req.body.hash_tag[0] === "#" ){
+            req.body.hash_tag = req.body.hash_tag.slice(1).split(" ")[0];
+          }
+
+          connection.query('UPDATE access_right set hash_tag = "' + req.body.hash_tag + '" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
+
+        } else {
+
+          connection.query('UPDATE access_right set hash_tag = "" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
+
         }
 
-        connection.query('UPDATE access_right set hash_tag = "' + req.body.hash_tag + '" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        // UPDATING HASH SWITCH
+        if ( req.body.switchHash ) {
+          connection.query('UPDATE access_right set sHash = 1 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
 
-      } else {
+        } else {
+          connection.query('UPDATE access_right set sHash = 0 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
+            if (err) throw err;
+          });
 
-        connection.query('UPDATE access_right set hash_tag = "" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        }
 
-      }
+        // UPDATING MASTER EMAIL NOTIFICATIONS
+        if ( ( req.body.admin === true || req.body.admin === "true" ) && req.body.switchMasterNotification ) {
+          connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
+            if (err) throw err;
+          });
 
-      // UPDATING HASH SWITCH
-      if ( req.body.switchHash ) {
-        connection.query('UPDATE access_right set sHash = 1 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        } else if ( req.body.admin === true || req.body.admin === "true" ) {
+          connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
+            if (err) throw err;
+          });
 
-      } else {
-        connection.query('UPDATE access_right set sHash = 0 where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        }
 
-      }
+        // UPDATING EMAIL
+        if ( req.body.email ) {
+          connection.query('UPDATE access_right set email = "'+ req.body.email +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+          })
 
-      // UPDATING MASTER EMAIL NOTIFICATIONS
-      if ( ( req.body.admin === true || req.body.admin === "true" ) && req.body.switchMasterNotification ) {
-        connection.query('UPDATE settings set mNoti = 1', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        } else {
+          connection.query('UPDATE access_right set email = "" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+          })
 
-      } else if ( req.body.admin === true || req.body.admin === "true" ) {
-        connection.query('UPDATE settings set mNoti = 0', function( err, rows, fields ) {
-          if (err) throw err;
-        });
+        }
 
-      }
+        // UPDATING EMAIL SWITCH
+        if ( req.body.switchMail ) {
+          connection.query('UPDATE access_right set eNoti = 1 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+          })
 
-      // UPDATING EMAIL
-      if ( req.body.email ) {
-        connection.query('UPDATE access_right set email = "'+ req.body.email +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-          if (err) throw err;
-        })
+        } else {
+          connection.query('UPDATE access_right set eNoti = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+          })
 
-      } else {
-        connection.query('UPDATE access_right set email = "" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-          if (err) throw err;
-        })
-
-      }
-
-      // UPDATING EMAIL SWITCH
-      if ( req.body.switchMail ) {
-        connection.query('UPDATE access_right set eNoti = 1 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-          if (err) throw err;
-        })
-
-      } else {
-        connection.query('UPDATE access_right set eNoti = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-          if (err) throw err;
-        })
-
-      }
+        }
 
       // STARTING FANCRAWL
       // dashboard sent a switchFancrawl on so start FanCrawl
@@ -3671,9 +3672,7 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ] = {};
         }
 
-        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, e_fancrawl_instagram_id, new_instagram_following_id, response ){
-
-          var fancrawl_instagram_id = e_fancrawl_instagram_id;
+        GET_relationship( fancrawl_instagram_id, 571377691, "", function( fancrawl_instagram_id, new_instagram_following_id, response ){
 
           if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
 
@@ -3690,7 +3689,7 @@ var crypto                                = require('crypto'),
             connection.query('UPDATE access_right SET state = "stopped" WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"; SELECT "'+ req_query.user +'" AS user, "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
               if (err) throw err;
 
-              res.redirect("/dashboard?user="+ results[1].user +"&id="+ results[1].fancrawl_instagram_id );
+              res.redirect("/dashboard?user="+ results[1][0].user +"&id="+ results[1][0].fancrawl_instagram_id );
 
             });
 
@@ -3700,13 +3699,13 @@ var crypto                                = require('crypto'),
 
               if (err) throw err;
 
-              res.redirect("/dashboard?user="+ results[1].user +"&id="+ results[1].fancrawl_instagram_id);
+              res.redirect("/dashboard?user="+ results[1][0].user +"&id="+ results[1][0].fancrawl_instagram_id);
 
               // START CLOCKS
-              timer_post( results[1].fancrawl_instagram_id );
-              timer_quick( results[1].fancrawl_instagram_id );
+              timer_post( results[1][0].fancrawl_instagram_id );
+              timer_quick( results[1][0].fancrawl_instagram_id );
 
-              connection.query('SELECT fancrawl_instagram_id, sHash FROM access_right WHERE fancrawl_instagram_id = "'+ results[1].fancrawl_instagram_id +'"', function(err, rows, fields) {
+              connection.query('SELECT fancrawl_instagram_id, sHash FROM access_right WHERE fancrawl_instagram_id = "'+ results[1][0].fancrawl_instagram_id +'"', function(err, rows, fields) {
                 if (err) throw err;
 
                 // start fetching process from hash users
@@ -3759,9 +3758,7 @@ var crypto                                = require('crypto'),
 
         STOP( fancrawl_instagram_id );
 
-        GET_relationship( fancrawl_instagram_id, 571377691, "", function( blank_slot, f_fancrawl_instagram_id, new_instagram_following_id, response ){
-
-          var fancrawl_instagram_id = f_fancrawl_instagram_id;
+        GET_relationship( fancrawl_instagram_id, 571377691, "", function( fancrawl_instagram_id, new_instagram_following_id, response ){
 
           if ( response === "error" || response === "access_token" || response === "oauth_limit" ) {
             // do nothing
@@ -3778,8 +3775,8 @@ var crypto                                = require('crypto'),
 
             connection.query('UPDATE access_right set state = "stopped" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"; SELECT "'+ req_query.user +'" AS user, "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
               if (err) throw err;
-
-              res.redirect( "/dashboard?user="+ results[1].user +"&id="+ results[1].fancrawl_instagram_id );
+              console.log("THE RESULTS: ", results);
+              res.redirect( "/dashboard?user="+ results[1][0].user +"&id="+ results[1][0].fancrawl_instagram_id );
 
             });
 
@@ -3791,19 +3788,19 @@ var crypto                                = require('crypto'),
 
             connection.query('UPDATE access_right set state = "cleaning" where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"; SELECT "'+ req_query.user +'" AS user, "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
               if (err) throw err;
-
-              res.redirect( "/dashboard?user="+ results[1].user +"&id="+ results[1].fancrawl_instagram_id );
+              console.log("THE RESULTS: ", results);
+              res.redirect( "/dashboard?user="+ results[1][0].user +"&id="+ results[1][0].fancrawl_instagram_id );
 
               // START CLOCKS
-              timer_post( results[1].fancrawl_instagram_id );
-              timer_quick( results[1].fancrawl_instagram_id );
+              timer_post( results[1][0].fancrawl_instagram_id );
+              timer_quick( results[1][0].fancrawl_instagram_id );
 
               // cleaning database process
-              cleanDatabase( results[1].fancrawl_instagram_id, function( fancrawl_instagram_id ){
+              cleanDatabase( results[1][0].fancrawl_instagram_id, function( fancrawl_instagram_id ){
                 //done cleaning so set to stopped
-                STOP( results[1].fancrawl_instagram_id );
-                console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", results[1].fancrawl_instagram_id );
-                sendMail( results[1].fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
+                STOP( results[1][0].fancrawl_instagram_id );
+                console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", results[1][0].fancrawl_instagram_id );
+                sendMail( results[1][0].fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
               });
             });
           }
