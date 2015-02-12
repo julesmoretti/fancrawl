@@ -795,18 +795,9 @@ var crypto                                = require('crypto'),
               if ( process ) {
 
                 if ( process === "new" ) {
-                  if ( rows[0].fancrawl_instagram_id = "571377691" ) {
-                    console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
-                  }
                   // check relationship and unfollow with proper
 
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, a_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
-
-                    if ( fancrawl_instagram_id = "571377691" && relationship === "neither" ) {
-                      console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", a_fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
-                    }
-
-                    var fancrawl_instagram_id = a_fancrawl_instagram_id;
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
 
                     if ( relationship === "not_exist" ) {
 
@@ -924,9 +915,7 @@ var crypto                                = require('crypto'),
                 } else if ( process === "unfollow_verify" ) {
 
                   // check relationship to determine best what to do
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, b_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
-
-                    var fancrawl_instagram_id = b_fancrawl_instagram_id;
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
 
                     if ( relationship === "access_token" ) {
 
@@ -1046,9 +1035,7 @@ var crypto                                = require('crypto'),
                 } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
 
                   // check relationship to determine best what to do
-                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, c_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
-
-                    var fancrawl_instagram_id = c_fancrawl_instagram_id;
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
 
                     if ( relationship === "access_token" ) {
 
@@ -1093,7 +1080,6 @@ var crypto                                = require('crypto'),
 
                       connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                         if (err) throw err;
-                        // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
                       });
 
                     } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
@@ -1165,7 +1151,7 @@ var crypto                                = require('crypto'),
                   });
 
                 } else {
-                  return;
+
                   console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
 
                 }
@@ -2367,8 +2353,6 @@ var crypto                                = require('crypto'),
 
       connection.query('SELECT fancrawl_instagram_id, "'+ new_instagram_following_id +'" AS new_instagram_following_id, "'+ uniqueProcessCounter +'" AS uniqueProcessCounter, token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
 
-        // console.log("GET_relationship rows from select: ", rows );
-
         if (err) throw err;
 
         var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
@@ -2392,7 +2376,7 @@ var crypto                                = require('crypto'),
 
         request( options, function ( error, response, body ) {
 
-          // if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === '571377691' ) {
+          // if ( fancrawl_instagram_id === '571377691' ) {
           //   console.log("relationship "+new_instagram_following_id+" : ", body);
           // }
 
