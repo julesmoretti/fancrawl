@@ -12,19 +12,6 @@ var bodyParser      = require('body-parser'),
 
 //  sass css generator ==========================================================
     if( process.env.LOCAL ){
-      sass.renderFile({
-        file: './views/css/style.scss',
-        success: function(css) {
-          // console.log(css);
-          console.log('style.css overwritten');
-        },
-        error: function(error) {
-          console.log(error);
-        },
-        includePaths: ['views/css'],
-        // outputStyle: 'compressed',
-        outFile: './views/css/style.css'
-      });
 
       sass.renderFile({
         file: './views/css/login.scss',
@@ -41,17 +28,17 @@ var bodyParser      = require('body-parser'),
       });
 
       sass.renderFile({
-        file: './views/css/dashboard.scss',
+        file: './views/css/style.scss',
         success: function(css) {
           // console.log(css);
-          console.log('dashboard.css overwritten');
+          console.log('style.css overwritten');
         },
         error: function(error) {
           console.log(error);
         },
         includePaths: ['views/css'],
         // outputStyle: 'compressed',
-        outFile: './views/css/dashboard.css'
+        outFile: './views/css/style.css'
       });
 
       sass.renderFile({
@@ -66,6 +53,21 @@ var bodyParser      = require('body-parser'),
         includePaths: ['views/css'],
         // outputStyle: 'compressed',
         outFile: './views/css/users.css'
+      });
+
+      sass.renderFile({
+        file: './views/css/dashboard.scss',
+        success: function(css) {
+          // console.log(css);
+          console.log('dashboard.css overwritten');
+          console.log('============================================');
+        },
+        error: function(error) {
+          console.log(error);
+        },
+        includePaths: ['views/css'],
+        // outputStyle: 'compressed',
+        outFile: './views/css/dashboard.css'
       });
     }
 

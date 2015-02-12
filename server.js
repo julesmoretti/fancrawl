@@ -17,3 +17,4 @@ var router = express.Router();
 // launch ======================================================================
     app.listen(port);
     console.log('The magic happens on port ' + port);
+    console.log('--------------------------------------------');
