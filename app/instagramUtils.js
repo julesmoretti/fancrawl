@@ -332,853 +332,853 @@ var crypto                                = require('crypto'),
         callTimer( fancrawl_instagram_id, "quick_long" );
 
         // RUN SOME STUFF HERE //////////////////////////////////////////////
-          // connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
-          //   if (err) throw err;
+          connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+            if (err) throw err;
 
-          //   // IF STOPPED DELETE QUEUES
-          //   if ( rows && rows[0] && rows[0].state && rows[0].state === 'stopped' ) {
+            // IF STOPPED DELETE QUEUES
+            if ( rows && rows[0] && rows[0].state && rows[0].state === 'stopped' ) {
 
-          //     // RESET post_timer & quick_timer as well as any setTimouts
-          //     STOP( fancrawl_instagram_id );
+              // RESET post_timer & quick_timer as well as any setTimouts
+              STOP( fancrawl_instagram_id );
 
-          //   // PROCESS STARTED OR CLEANING SO CARRY ON
-          //   } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
+            // PROCESS STARTED OR CLEANING SO CARRY ON
+            } else if ( rows && rows[0] && rows[0].state && rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
-          //     if ( setTimeouts && setTimeouts[ rows[0].fancrawl_instagram_id ] && setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData && typeof setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData === "object" ) {
-          //       var count_databaseData    = Object.keys( setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData );
-          //     } else {
-          //       var count_databaseData    = [];
-          //     }
+              if ( setTimeouts && setTimeouts[ rows[0].fancrawl_instagram_id ] && setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData && typeof setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData === "object" ) {
+                var count_databaseData    = Object.keys( setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData );
+              } else {
+                var count_databaseData    = [];
+              }
 
-          //     if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
-          //       var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
-          //     } else {
-          //       var count_verify          = [];
-          //     }
+              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                var count_verify          = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify );
+              } else {
+                var count_verify          = [];
+              }
 
-          //     if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.new && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.new === "object" ) {
-          //       var count_new             = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.new );
-          //     } else {
-          //       var count_new             = [];
-          //     }
+              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.new && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.new === "object" ) {
+                var count_new             = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.new );
+              } else {
+                var count_new             = [];
+              }
 
-          //     if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash === "object" ) {
-          //       var count_hash            = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash );
-          //     } else {
-          //       var count_hash            = [];
-          //     }
+              if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].quick_queue && timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash && typeof timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash === "object" ) {
+                var count_hash            = Object.keys( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash );
+              } else {
+                var count_hash            = [];
+              }
 
 
-          //     // all 4 empty - nothing to do
-          //     if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length === 0 ) {
+              // all 4 empty - nothing to do
+              if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length === 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 0;
-          //       return;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 0;
+                return;
 
-          //     // all 4 have data
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+              // all 4 have data
+              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 3;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 3;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 2 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 2 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 3 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 3 ) {
 
-          //         // get new from hash library
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get new from hash library
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                  return;
 
-          //       }
+                }
 
 
-          //     // all 3 have data but hash
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+              // all 3 have data but hash
+              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
-          //     // all 3 have data but new
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+              // all 3 have data but new
+              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
-          //     // all 3 have data but verify
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+              // all 3 have data but verify
+              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
-          //     // all 3 have data but previous
-          //     } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+              // all 3 have data but previous
+              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 3;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 2;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 1 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
+                } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
 
-          //     // only 2 but new & hash
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length == 0 ) {
+              // only 2 but new & hash
+              } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length == 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else {
+                } else {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
 
-          //       }
+                }
 
-          //     // only 2 but verify & hash
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+              // only 2 but verify & hash
+              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length === 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else {
+                } else {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
 
-          //       }
+                }
 
-          //     // only 2 but verify & new
-          //     } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+              // only 2 but verify & new
+              } else if ( count_databaseData.length !== 0 && count_verify.length === 0 && count_new.length === 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else {
+                } else {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
-          //     // only 2 but previous & hash
-          //     } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
+              // only 2 but previous & hash
+              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length === 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else {
+                } else {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
 
-          //       }
+                }
 
-          //     // only 2 but previous & new
-          //     } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
+              // only 2 but previous & new
+              } else if ( count_databaseData.length === 0 && count_verify.length !== 0 && count_new.length === 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else {
+                } else {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
-          //     // only 2 but previous & verify
-          //     } else if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
+              // only 2 but previous & verify
+              } else if ( count_databaseData.length === 0 && count_verify.length === 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 2;
 
-          //       if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
+                if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 1 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else {
+                } else {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 1;
+                  return;
 
-          //       }
+                }
 
 
-          //     // singles
-          //     } else {
+              // singles
+              } else {
 
-          //       timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 1;
+                timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 1;
 
-          //       if ( count_databaseData.length !== 0 ) {
+                if ( count_databaseData.length !== 0 ) {
 
-          //         // get databaseData
-          //         if ( count_verify.length < ( queueCap - 2 ) ) {
-          //           verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
-          //           delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
-          //         }
+                  // get databaseData
+                  if ( count_verify.length < ( queueCap - 2 ) ) {
+                    verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
+                    delete setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ];
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       } else if ( count_verify.length !== 0 ) {
+                } else if ( count_verify.length !== 0 ) {
 
-          //         // get verify
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
-          //         var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
-          //         var uniqueProcessCounter = count_verify[0];
+                  // get verify
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].new_instagram_following_id;
+                  var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
+                  var uniqueProcessCounter = count_verify[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else if ( count_new.length !== 0 ) {
+                } else if ( count_new.length !== 0 ) {
 
-          //         // get new
-          //         var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
-          //         var process = "new";
-          //         var uniqueProcessCounter = count_new[0];
+                  // get new
+                  var new_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ count_new[0] ].new_instagram_following_id;
+                  var process = "new";
+                  var uniqueProcessCounter = count_new[0];
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
-          //       } else if ( count_hash.length !== 0 ) {
+                } else if ( count_hash.length !== 0 ) {
 
-          //         // get hash
-          //         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
-          //         } else {
-          //           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
-          //         }
+                  // get hash
+                  if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
+                  } else {
+                    GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag );
+                  }
 
-          //         timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
-          //         return;
+                  timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
+                  return;
 
-          //       }
+                }
 
-          //     }
+              }
 
-          //     if ( process ) {
+              if ( process ) {
 
-          //       if ( process === "new" ) {
-          //         if ( rows[0].fancrawl_instagram_id = "571377691" ) {
-          //           console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
-          //         }
-          //         // check relationship and unfollow with proper
+                if ( process === "new" ) {
+                  if ( rows[0].fancrawl_instagram_id = "571377691" ) {
+                    console.log("BEFORE GET RELATIONSHIP OF TIMER_QUICK: ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
+                  }
+                  // check relationship and unfollow with proper
 
-          //         GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, a_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, a_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
 
-          //           if ( fancrawl_instagram_id = "571377691" && relationship === "neither" ) {
-          //             console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", a_fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
-          //           }
+                    if ( fancrawl_instagram_id = "571377691" && relationship === "neither" ) {
+                      console.log("AFTER GET RELATIONSHIP OF TIMER_QUICK: ", a_fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
+                    }
 
-          //           var fancrawl_instagram_id = a_fancrawl_instagram_id;
+                    var fancrawl_instagram_id = a_fancrawl_instagram_id;
 
-          //           if ( relationship === "not_exist" ) {
+                    if ( relationship === "not_exist" ) {
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
 
-          //           } else if ( relationship === "access_token" ) {
+                    } else if ( relationship === "access_token" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               STOP( fancrawl_instagram_id, true );
-          //             }
+                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        STOP( fancrawl_instagram_id, true );
+                      }
 
-          //             usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-          //           } else if ( relationship === "APINotAllowedError" ) {
+                    } else if ( relationship === "APINotAllowedError" ) {
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
 
-          //             connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //             });
+                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+                        if (err) throw err;
+                      });
 
-          //           } else if ( relationship === "oauth_limit" ) {
+                    } else if ( relationship === "oauth_limit" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
 
-          //             usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
+                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "oauth_limit error";
 
-          //             sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
+                      sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
 
-          //           // new_instagram user follows FanCrawl user
-          //           } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                    // new_instagram user follows FanCrawl user
+                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-          //               var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
-          //             } else {
-          //               var count_unfollow = [];
-          //             }
+                      if ( timer && timer[ rows[0].fancrawl_instagram_id ] && timer[ rows[0].fancrawl_instagram_id ].post_queue && timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
 
-          //             if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
 
-          //               if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
 
-          //                 var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
-          //                 var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+                          var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
 
-          //                 delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-          //                 clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby", last_id, hash_tag );
+                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby", last_id, hash_tag );
 
-          //               } else {
+                        } else {
 
-          //                 delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-          //                 clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
 
-          //               }
+                        }
 
-          //             }
+                      }
 
-          //           // only from FanCrawl user side - nothing from the other side
-          //           } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
+                    // only from FanCrawl user side - nothing from the other side
+                    } else if ( relationship === "neither" || relationship === "follows" || relationship === "requested" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
-          //               var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
-          //             } else {
-          //               var count_follow = [];
-          //             }
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow && typeof timer[ fancrawl_instagram_id ].post_queue.follow === "object" ) {
+                        var count_follow  = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
+                      } else {
+                        var count_follow = [];
+                      }
 
-          //             if ( count_follow.length < ( queueCap - 2 ) ) {
+                      if ( count_follow.length < ( queueCap - 2 ) ) {
 
-          //               if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
+                        if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
 
-          //                 var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
-          //                 var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
+                          var last_id = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id;
+                          var hash_tag = timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].hash_tag;
 
-          //                 delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-          //                 clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
+                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow", last_id, hash_tag );
 
-          //               } else {
+                        } else {
 
-          //                 delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
-          //                 clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
+                          delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
+                          clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
 
-          //               }
+                        }
 
-          //             }
+                      }
 
-          //           }
-          //         });
+                    }
+                  });
 
-          //       } else if ( process === "unfollow_verify" ) {
+                } else if ( process === "unfollow_verify" ) {
 
-          //         // check relationship to determine best what to do
-          //         GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, b_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
+                  // check relationship to determine best what to do
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, b_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
 
-          //           var fancrawl_instagram_id = b_fancrawl_instagram_id;
+                    var fancrawl_instagram_id = b_fancrawl_instagram_id;
 
-          //           if ( relationship === "access_token" ) {
+                    if ( relationship === "access_token" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               STOP( fancrawl_instagram_id, true );
-          //             }
-          //             usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        STOP( fancrawl_instagram_id, true );
+                      }
+                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-          //           } else if ( relationship === "APINotAllowedError" ) {
+                    } else if ( relationship === "APINotAllowedError" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               // usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "B There has been a special API Error - Report this issue.";
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //             });
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        // usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "B There has been a special API Error - Report this issue.";
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      });
 
-          //           } else if ( relationship === "oauth_limit" ) {
+                    } else if ( relationship === "oauth_limit" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
 
-          //           } else if ( relationship === "neither" ) {
+                    } else if ( relationship === "neither" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-          //             connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
-          //             });
+                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
+                      });
 
-          //           } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-          //               var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-          //             } else {
-          //               var count_unfollow = [];
-          //             }
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
 
-          //             if ( count_unfollow.length < ( queueCap - 2 ) ) {
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //               clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-          //             }
+                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+                      }
 
-          //           } else if ( relationship === "not_exist" ) {
+                    } else if ( relationship === "not_exist" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-          //             connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               console.log("USER DELETED THERE ACCOUNT");
-          //             });
+                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log("USER DELETED THERE ACCOUNT");
+                      });
 
-          //           } else {
+                    } else {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-          //               var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-          //             } else {
-          //               var count_unfollow = [];
-          //             }
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
 
-          //             if ( count_unfollow.length < ( queueCap - 2 ) ) {
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //               clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
-          //             }
+                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
+                      }
 
-          //           }
-          //         });
+                    }
+                  });
 
-          //       } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
+                } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
 
-          //         // check relationship to determine best what to do
-          //         GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, c_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
+                  // check relationship to determine best what to do
+                  GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( blank_slot, c_fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ){
 
-          //           var fancrawl_instagram_id = c_fancrawl_instagram_id;
+                    var fancrawl_instagram_id = c_fancrawl_instagram_id;
 
-          //           if ( relationship === "access_token" ) {
+                    if ( relationship === "access_token" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               STOP( fancrawl_instagram_id, true );
-          //             }
-          //             usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      if ( !usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        STOP( fancrawl_instagram_id, true );
+                      }
+                      usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-          //           } else if ( relationship === "APINotAllowedError" ) {
+                    } else if ( relationship === "APINotAllowedError" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //             });
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      });
 
-          //           } else if ( relationship === "oauth_limit" ) {
+                    } else if ( relationship === "oauth_limit" ) {
 
-          //             if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //               usersInfo[ fancrawl_instagram_id ] = {};
-          //             }
-          //             usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
+                      if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                        usersInfo[ fancrawl_instagram_id ] = {};
+                      }
+                      usersInfo[ fancrawl_instagram_id ].oauth_limit = "The maximum number of IG requests per hour has been exceeded.";
 
-          //           } else if ( relationship === "neither" ) {
+                    } else if ( relationship === "neither" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-          //             connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
-          //             });
+                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
+                      });
 
-          //           } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
+                    } else if ( relationship === "followed_by" || relationship === "followed_by_and_requested" || relationship === "both" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
-          //               var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-          //             } else {
-          //               var count_unfollow = [];
-          //             }
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow && typeof timer[ fancrawl_instagram_id ].post_queue.unfollow === "object" ) {
+                        var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+                      } else {
+                        var count_unfollow = [];
+                      }
 
-          //             if ( count_unfollow.length < ( queueCap - 2 ) ) {
-          //               clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //             }
+                      if ( count_unfollow.length < ( queueCap - 2 ) ) {
+                        clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      }
 
-          //           } else if ( relationship === "not_exist" ) {
+                    } else if ( relationship === "not_exist" ) {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                      delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-          //             connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-          //               if (err) throw err;
-          //               console.log("USER DELETED THERE ACCOUNT");
-          //             });
+                      connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log("USER DELETED THERE ACCOUNT");
+                      });
 
-          //           } else {
+                    } else {
 
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].access_token;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
-          //             }
-          //             if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
-          //               delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
-          //             }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+                        delete usersInfo[ fancrawl_instagram_id ].access_token;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].oauth_limit ) {
+                        delete usersInfo[ fancrawl_instagram_id ].oauth_limit;
+                      }
+                      if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].APINotAllowedError ) {
+                        delete usersInfo[ fancrawl_instagram_id ].APINotAllowedError;
+                      }
 
-          //             if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify && typeof timer[ fancrawl_instagram_id ].quick_queue.verify === "object" ) {
-          //               var count_verify          = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
-          //             } else {
-          //               var count_verify          = [];
-          //             }
+                      if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify && typeof timer[ fancrawl_instagram_id ].quick_queue.verify === "object" ) {
+                        var count_verify          = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
+                      } else {
+                        var count_verify          = [];
+                      }
 
-          //             if ( count_verify.length < ( queueCap - 2 ) ) {
-          //               delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
-          //               verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
-          //             }
+                      if ( count_verify.length < ( queueCap - 2 ) ) {
+                        delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+                        verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
+                      }
 
-          //           }
-          //         });
+                    }
+                  });
 
-          //       } else {
-          //         return;
-          //         console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
+                } else {
+                  return;
+                  console.log("TIMER QUICK XXXX - No process found... "+process+" for user "+new_instagram_following_id);
 
-          //       }
+                }
 
-          //     }
+              }
 
-          //   } else {
+            } else {
 
-          //     sendMail( 571377691, 'timer_quick error', 'The function timer_quick could not determine the state for user: ' + rows[0].fancrawl_instagram_id );
-          //     console.log( "state undefined from timer_quick" )
+              sendMail( 571377691, 'timer_quick error', 'The function timer_quick could not determine the state for user: ' + rows[0].fancrawl_instagram_id );
+              console.log( "state undefined from timer_quick" )
 
-          //   }
-          // });
+            }
+          });
         /////////////////////////////////////////////////////////////////////
 
       // IF TRUE TO SETTIMEOUT SHORT
@@ -1277,7 +1277,6 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
             function(){
                 if ( timer[ arguments[0] ] ) {
-                  timer[ arguments[0] ].quick_called = false;
                   timer[ arguments[0] ].quick_seconds = false;
                   timer_quick( arguments[0] );
                 }
@@ -1296,7 +1295,6 @@ var crypto                                = require('crypto'),
           setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
             function(){
               if ( timer[ arguments[0] ] ) {
-                timer[ arguments[0] ].post_called = false;
                 timer[ arguments[0] ].post_minute = false;
                 timer_post( arguments[0] );
               }
@@ -3853,4 +3851,4 @@ var crypto                                = require('crypto'),
     //      -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // sendMail ( 571377691, 'server was restarted', 'Rebooted' );
+  sendMail ( 571377691, 'server was restarted', 'Rebooted' );
