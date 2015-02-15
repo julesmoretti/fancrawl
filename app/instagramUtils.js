@@ -2954,11 +2954,11 @@ var crypto                                = require('crypto'),
         var followed_by_status = 0;
       }
 
-      connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
-        if (err) throw err;
-        if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select : ", rows );
-        if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
-          if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
+      // connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+        // if (err) throw err;
+        // if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select : ", rows );
+        // if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
+          // if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
           // CHECK TIME DIFFERENCE
           // time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
             // var count = code;
@@ -3061,14 +3061,14 @@ var crypto                                = require('crypto'),
               }
             });
           // });
-        } else {
+        // } else {
 
-          connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
-            if (err) throw err;
-          });
+          // connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
+            // if (err) throw err;
+          // });
 
-        }
-      });
+        // }
+      // });
     }
 
 
