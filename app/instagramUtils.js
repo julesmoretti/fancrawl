@@ -2678,6 +2678,90 @@ var crypto                                = require('crypto'),
     };
 
 //  -----------------------------------------------------------------------------
+//  acquires list of users that current user follows @ 5000/hour collectively
+//  -----------------------------------------------------------------------------
+    // FROM |
+    //      -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+    //  TO  |
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  var GET_follows_verify                  = function ( fancrawl_instagram_id, pagination, callback ) {
+
+    if ( !setTimeouts[ fancrawl_instagram_id ] ) {
+      setTimeouts[ fancrawl_instagram_id ] = {};
+    }
+
+      connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+        // instagram header secret system
+        var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+            hmac.setEncoding('hex');
+            hmac.write(process.env.LOCALIP);
+            hmac.end();
+        var hash = hmac.read();
+
+        // Set the headers
+        var headers = {
+            'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+        }
+
+        // Configure the request
+        var options = {
+            uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
+            qs: {'access_token': rows[0].token},
+            method: 'GET',
+            headers: headers,
+        }
+
+        if ( pagination ) {
+          options.qs.cursor = pagination;
+        }
+
+        request(options, function (error, response, body) {
+          var pbody = JSON.parse(body);
+          if ( !error && response.statusCode == 200 ) {
+            if ( pbody.data) {
+              for ( var i = 0; i < pbody.data.length; i++ ) {
+                console.log( pbody.data[i].id );
+                // connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                //   if (err) throw err;
+                //   if ( rows && rows[0] ) {
+                //     connection.query('UPDATE beta_followers SET count = 0, following_status = 1 WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
+                //       if (err) throw err;
+                //     });
+                //   }
+                // });
+              }
+            }
+          } else if (error) {
+            console.log('GET_follows_verify error ('+fancrawl_instagram_id+'): ', error);
+            sendMail( 571377691, 'GET_follows_verify error', 'The function GET_follows_verify got the following error: ' + error );
+          }
+
+          if (pbody.pagination && pbody.pagination.next_cursor) {
+            setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+              function(){
+                // GET_follows_verify( fancrawl_instagram_id, pbody.pagination.next_cursor, callback );
+                GET_follows_verify( arguments[0], arguments[1], arguments[2] );
+                delete setTimeouts[ arguments[0] ][ arguments[3] ]
+                  // console.log("SETTIMOUT 1 WORKS!!!!", fancrawl_instagram_id);
+            }, 1000 * 2, fancrawl_instagram_id, pbody.pagination.next_cursor, callback, processCounter ); // 3 sec wait
+            processCounter++;
+
+          } else {
+            console.log("done with pagination of GET_follows_verify for user: "+ fancrawl_instagram_id);
+            if ( callback ) {
+              callback( fancrawl_instagram_id );
+              console.log( "ran callback" );
+            }
+          }
+
+        });
+      });
+    };
+
+GET_follows_verify('571377691');
+
+//  -----------------------------------------------------------------------------
 //  acquires list of users that follows current user @ 5000/hour collectively
 //  -----------------------------------------------------------------------------
     // FROM |
