@@ -162,9 +162,9 @@ var crypto                                = require('crypto'),
 
                   if ( process === "unfollow" ) {
 
-                    console.log("CALLING POST_UNFOLLOW - unfollow doubles");
+                    console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      console.log("PASSED POST_UNFOLLOW - unfollow doubles");
+                      console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
@@ -187,9 +187,9 @@ var crypto                                = require('crypto'),
 
                   } else if ( process === "unfollow_followedby" ) {
 
-                    console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles");
+                    console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles");
+                      console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter);
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
