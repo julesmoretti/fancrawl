@@ -29,6 +29,7 @@ CREATE TABLE `access_right` (
   `sHash` INT(1) DEFAULT 0,
   `eNoti` INT(1) DEFAULT 0,
   `pNoti` INT(1) DEFAULT 0,
+  `block` INT(1) DEFAULT 0,
   `hash_tag` VARCHAR(20) DEFAULT '',
   `code` VARCHAR(255),
   `token` VARCHAR(255),

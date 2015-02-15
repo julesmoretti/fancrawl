@@ -851,6 +851,11 @@ var crypto                                = require('crypto'),
 
                         usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
+                        connection.query('UPDATE access_right SET block = 1 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+                          if (err) throw err;
+                          console.log( "UPDATED block to 1 for: ", fancrawl_instagram_id );
+                        })
+
                       } else if ( relationship === "APINotAllowedError" ) {
 
                         delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
@@ -964,6 +969,11 @@ var crypto                                = require('crypto'),
                         STOP( fancrawl_instagram_id, true );
                       }
                       usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+
+                      connection.query('UPDATE access_right SET block = 1 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log( "UPDATED block to 1 for: ", fancrawl_instagram_id );
+                      })
 
                     } else if ( relationship === "APINotAllowedError" ) {
 
@@ -1088,6 +1098,11 @@ var crypto                                = require('crypto'),
                         STOP( fancrawl_instagram_id, true );
                       }
                       usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+
+                      connection.query('UPDATE access_right SET block = 1 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log( "UPDATED block to 1 for: ", fancrawl_instagram_id );
+                      })
 
                     } else if ( relationship === "APINotAllowedError" ) {
 
@@ -1412,7 +1427,7 @@ var crypto                                = require('crypto'),
           timer_post( fancrawl_instagram_id );
           timer_quick( fancrawl_instagram_id );
 
-          connection.query('SELECT state, fancrawl_instagram_id, sHash FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+          connection.query('SELECT state, fancrawl_instagram_id, hash_tag, sHash FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
             if (err) throw err;
 
             // IF USER WAS STARTED
@@ -1421,7 +1436,7 @@ var crypto                                = require('crypto'),
               var state = rows[0].state;
 
                 // start fetching process from hash users
-                if ( rows[0].sHash ) {
+                if ( rows[0].sHash && rows[0].hash_tag ) {
 
                   // fetch new user from hash
                   fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
@@ -1443,7 +1458,12 @@ var crypto                                = require('crypto'),
 
                 // start fetching process for new one
                 } else {
-
+                  if ( rows[0].sHash && !rows[0].hash_tag ) {
+                    connection.query('UPDATE access_right SET sHash = 0 WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      console.log("UPDATED sHash");
+                    })
+                  }
                   // fetch new user
                   fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
 
@@ -2222,7 +2242,7 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var add_hash_data                       = function ( fancrawl_instagram_id, body, hash_tag ) {
-
+      console.log("add_hash_data");
       for ( var i = 0; i < body.data.length; i++ ) {
         if ( body && body.data && body.data[i] && body.data[i].type === 'image' ) {
           if ( body.data[i].id && body.data[i].created_time && body.data[i].user && body.data[i].user.id ) {
@@ -3182,7 +3202,7 @@ var crypto                                = require('crypto'),
           return;
         } else {
 
-          connection.query('SELECT fancrawl_username FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
+          connection.query('SELECT state, fancrawl_username, block FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
             if (err) throw err;
 
             // already signed in
@@ -3193,29 +3213,34 @@ var crypto                                = require('crypto'),
                 delete usersInfo[ pbody.user.id ];
               }
 
-                connection.query('UPDATE access_right set fancrawl_full_name = "'+pbody.user.full_name+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
-                  if (err) throw err;
+              if ( rows[0].block ) {
+                rows[0].state = 'started';
+              }
 
-                  // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
-                  if ( !setTimeouts[ pbody.user.id ] ) {
-                    // START CLOCK TRACKERS
-                    setTimeouts[ pbody.user.id ] = {};
-                  }
+              connection.query('UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
+                if (err) throw err;
 
-                  if ( !timer[ pbody.user.id ] ) {
-                    // START USER SPECIFIC CLOCK
-                    timerPostStructure( pbody.user.id );
-                    timerQuickStructure( pbody.user.id );
+                // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
+                if ( !setTimeouts[ pbody.user.id ] ) {
+                  // START CLOCK TRACKERS
+                  setTimeouts[ pbody.user.id ] = {};
+                }
 
-                    // START CLOCKS ONLY ONCE! (DELAYED)
-                    callTimer( pbody.user.id, "quick_long" );
-                    callTimer( pbody.user.id, "post_long" );
-                  }
+                if ( !timer[ pbody.user.id ] ) {
+                  // START USER SPECIFIC CLOCK
+                  timerPostStructure( pbody.user.id );
+                  timerQuickStructure( pbody.user.id );
 
-                  // redirect to the dashboard
-                  res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                  // START CLOCKS ONLY ONCE! (DELAYED)
+                  callTimer( pbody.user.id, "quick_long" );
+                  callTimer( pbody.user.id, "post_long" );
+                }
 
-                });
+                // redirect to the dashboard
+                res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+
+              });
+
               return;
 
             // first time logging in
@@ -3863,31 +3888,39 @@ var crypto                                = require('crypto'),
               timer_post( results[1][0].fancrawl_instagram_id );
               timer_quick( results[1][0].fancrawl_instagram_id );
 
-              connection.query('SELECT fancrawl_instagram_id, sHash FROM access_right WHERE fancrawl_instagram_id = "'+ results[1][0].fancrawl_instagram_id +'"', function(err, rows, fields) {
+              connection.query('SELECT fancrawl_instagram_id, sHash, hash_tag FROM access_right WHERE fancrawl_instagram_id = "'+ results[1][0].fancrawl_instagram_id +'"', function(err, rows, fields) {
                 if (err) throw err;
 
                 // start fetching process from hash users
-                if ( rows && rows[0] && rows[0].sHash ) {
+                if ( rows && rows[0] && rows[0].sHash && rows[0].hash_tag ) {
 
                   // fetch new user from hash
                   fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes very current database
                   connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND count not in (5)', function(err, rows, fields) {
-
                     if (err) throw err;
 
-                    setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
+                    if ( rows && rows[0] ) {
+                      setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
 
-                    for ( var i = 0; i < rows.length; i++ ) {
-                      setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
-                      processCounter++;
+                      for ( var i = 0; i < rows.length; i++ ) {
+                        setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                        processCounter++;
+                      }
                     }
 
                   });
 
                 // start fetching process for new one
                 } else {
+
+                  if ( rows[0].sHash && !rows[0].hash_tag ) {
+                    connection.query('UPDATE access_right SET sHash = 0 WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      console.log("UPDATED sHash");
+                    })
+                  }
 
                   // fetch from start
                   fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
