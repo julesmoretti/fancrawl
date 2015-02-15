@@ -1841,49 +1841,52 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
 
-      checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ){
+      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
+        
+        checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
-        connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 1', function(err, rows, fields) {
-          if (err) throw err;
+          connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 1', function(err, rows, fields) {
+            if (err) throw err;
 
-          if ( rows && rows[0] ) {
+            if ( rows && rows[0] ) {
 
-            setTimeouts[ fancrawl_instagram_id ].databaseData = {};
+              setTimeouts[ fancrawl_instagram_id ].databaseData = {};
 
-            for ( var i = 0; i < rows.length; i++ ) {
-              setTimeouts[ fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
-              processCounter++;
+              for ( var i = 0; i < rows.length; i++ ) {
+                setTimeouts[ fancrawl_instagram_id ].databaseData[ processCounter ] = { 'added_follower_instagram_id' : rows[i].added_follower_instagram_id };
+                processCounter++;
+              }
+
+              var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
+              var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length + Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify ).length + Object.keys( timer[ fancrawl_instagram_id ].quick_queue.hash ).length + Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData ).length;
+
+              var postCountTime = postCount * 1000 * 80;
+              var quickCountTime = quickCount * 1000 * 1.5;
+              var totalCountTime = quickCountTime + postCountTime;
+
+              setTimeout(
+                function(){
+                verifyCleaning( arguments[0], function( fancrawl_instagram_id ) {
+                  callback( fancrawl_instagram_id );
+                });
+              }, totalCountTime + 1000, fancrawl_instagram_id );
+
+            } else {
+              // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
+              // PROCEED WITH CALLBACK
+              callback( fancrawl_instagram_id );
             }
-
-            var postCount = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow ).length + Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow ).length;
-            var quickCount = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.new ).length + Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify ).length + Object.keys( timer[ fancrawl_instagram_id ].quick_queue.hash ).length + Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData ).length;
-
-            var postCountTime = postCount * 1000 * 80;
-            var quickCountTime = quickCount * 1000 * 1.5;
-            var totalCountTime = quickCountTime + postCountTime;
-
-            setTimeout(
-              function(){
-              verifyCleaning( arguments[0], function( fancrawl_instagram_id ) {
-                callback( fancrawl_instagram_id );
-              });
-            }, totalCountTime + 1000, fancrawl_instagram_id );
-
-          } else {
-            // DATABASE HAS NO USERS TO DEAL WITH ANYMORE
-            // PROCEED WITH CALLBACK
-            callback( fancrawl_instagram_id );
-          }
-        });
-        connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 0', function(err, rows, fields) {
-          if (err) throw err;
-          if ( rows && rows[0] ){
-            for ( var i = 0; i < rows.length; i++ ) {
-              connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
-                if (err) throw err;
-              });
+          });
+          connection.query('SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 0', function(err, rows, fields) {
+            if (err) throw err;
+            if ( rows && rows[0] ){
+              for ( var i = 0; i < rows.length; i++ ) {
+                connection.query('UPDATE beta_followers SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                });
+              }
             }
-          }
+          });
         });
       });
     };
@@ -2721,15 +2724,14 @@ var crypto                                = require('crypto'),
           if ( !error && response.statusCode == 200 ) {
             if ( pbody.data) {
               for ( var i = 0; i < pbody.data.length; i++ ) {
-                console.log( pbody.data[i].id );
-                // connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
-                //   if (err) throw err;
-                //   if ( rows && rows[0] ) {
-                //     connection.query('UPDATE beta_followers SET count = 0, following_status = 1 WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
-                //       if (err) throw err;
-                //     });
-                //   }
-                // });
+                connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+pbody.data[i].id+'"', function(err, rows, fields) {
+                  if (err) throw err;
+                  if ( rows && rows[0] ) {
+                    connection.query('UPDATE beta_followers SET count = 0, following_status = 1 WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
+                      if (err) throw err;
+                    });
+                  }
+                });
               }
             }
           } else if (error) {
@@ -2737,29 +2739,22 @@ var crypto                                = require('crypto'),
             sendMail( 571377691, 'GET_follows_verify error', 'The function GET_follows_verify got the following error: ' + error );
           }
 
-          if (pbody.pagination && pbody.pagination.next_cursor) {
+          if ( pbody.pagination && pbody.pagination.next_cursor ) {
             setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
               function(){
-                // GET_follows_verify( fancrawl_instagram_id, pbody.pagination.next_cursor, callback );
                 GET_follows_verify( arguments[0], arguments[1], arguments[2] );
                 delete setTimeouts[ arguments[0] ][ arguments[3] ]
-                  // console.log("SETTIMOUT 1 WORKS!!!!", fancrawl_instagram_id);
             }, 1000 * 2, fancrawl_instagram_id, pbody.pagination.next_cursor, callback, processCounter ); // 3 sec wait
             processCounter++;
 
           } else {
-            console.log("done with pagination of GET_follows_verify for user: "+ fancrawl_instagram_id);
             if ( callback ) {
               callback( fancrawl_instagram_id );
-              console.log( "ran callback" );
             }
           }
-
         });
       });
     };
-
-GET_follows_verify('571377691');
 
 //  -----------------------------------------------------------------------------
 //  acquires list of users that follows current user @ 5000/hour collectively
@@ -3879,12 +3874,16 @@ GET_follows_verify('571377691');
               timer_post( results[1][0].fancrawl_instagram_id );
               timer_quick( results[1][0].fancrawl_instagram_id );
 
-              // cleaning database process
-              cleanDatabase( results[1][0].fancrawl_instagram_id, function( fancrawl_instagram_id ){
-                //done cleaning so set to stopped
-                STOP( results[1][0].fancrawl_instagram_id );
-                console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", results[1][0].fancrawl_instagram_id );
-                sendMail( results[1][0].fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
+              // check database missmatch
+              checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
+
+                // cleaning database process
+                cleanDatabase( results[1][0].fancrawl_instagram_id, function( fancrawl_instagram_id ){
+                  //done cleaning so set to stopped
+                  STOP( results[1][0].fancrawl_instagram_id );
+                  console.log("FINISHED CLEANING UP DATABASE FROM TRIGGER FOR USER: ", results[1][0].fancrawl_instagram_id );
+                  sendMail( results[1][0].fancrawl_instagram_id, "Finished cleaning up", "FanCrawl, finished cleaning up your previous saved followers. If you still see a high number of followers compared to before, do not be alarmed, wait 48 hours and run a cleaning again." );
+                });
               });
             });
           }
