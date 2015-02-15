@@ -3026,7 +3026,9 @@ var crypto                                = require('crypto'),
                             clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
                           }
 
-                        } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === "none") {
+                          console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
+                        } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
+                          console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id );
                           if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                             delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                           }
@@ -3037,8 +3039,9 @@ var crypto                                = require('crypto'),
                               callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                             }
                           });
+                        } else {
+                          console.log("POST_unfollow - doing nothing at all : ", pbody );
                         }
-                        console.log("POST_unfollow - doing nothing at all : ", pbody );
                       }
 
                     } else if (error) {
