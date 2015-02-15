@@ -168,8 +168,9 @@ var crypto                                = require('crypto'),
 
                     if ( fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
+                      if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
+                        if ( fancrawl_instagram_id === "571377691" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                           var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
@@ -183,9 +184,7 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                          console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                        }
+                        if ( fancrawl_instagram_id === "571377691" ) console.log("****** TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
                       }
                     });
 
@@ -193,8 +192,9 @@ var crypto                                = require('crypto'),
 
                     if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      if ( fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter);
+                      if ( fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
+                        if ( fancrawl_instagram_id === "571377691" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                           var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
@@ -207,9 +207,8 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                          console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                        }
+                        if ( fancrawl_instagram_id === "571377691" ) console.log("******* TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
+
                       }
 
                     });
