@@ -166,9 +166,9 @@ var crypto                                = require('crypto'),
 
                   if ( process === "unfollow" ) {
 
-                    console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
+                    if ( fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
+                      if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
@@ -191,9 +191,9 @@ var crypto                                = require('crypto'),
 
                   } else if ( process === "unfollow_followedby" ) {
 
-                    console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
+                    if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter);
+                      if ( fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, processCounter);
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
@@ -2948,7 +2948,7 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - sendMail - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_unfollow                       = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, callback ) {
-      console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+      if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
       if ( followed_by ) {
         var followed_by_status = 1;
       } else {
@@ -2957,13 +2957,13 @@ var crypto                                = require('crypto'),
 
       connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
         if (err) throw err;
-        console.log( "INSIDE POST_unfollow - passed first select : ", rows );
+        if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select : ", rows );
         if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
-          console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
+          if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
           // CHECK TIME DIFFERENCE
           time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
             var count = code;
-            console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code );
+            if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code );
 
 
             // check in secure detabase before unfollowin if not there then unfollow
