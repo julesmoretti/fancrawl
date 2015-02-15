@@ -105,8 +105,8 @@ var crypto                                = require('crypto'),
             // PROCESS STARTED OR CLEANING SO CARRY ON
             } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
 
-              var followCount         = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow ),  // pulls out the FanCrawl id that has a follow process
-                  unfollowCount       = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
+              var followCount         = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );  // pulls out the FanCrawl id that has a follow process
+              var unfollowCount       = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
 
               // if follow and unfollow queues are empty
               if ( followCount.length === 0 && unfollowCount.length === 0 ) {
@@ -162,7 +162,9 @@ var crypto                                = require('crypto'),
 
                   if ( process === "unfollow" ) {
 
+                    console.log("CALLING POST_UNFOLLOW - unfollow doubles");
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+                      console.log("PASSED POST_UNFOLLOW - unfollow doubles");
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
@@ -185,7 +187,9 @@ var crypto                                = require('crypto'),
 
                   } else if ( process === "unfollow_followedby" ) {
 
+                    console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles");
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
+                      console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles");
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
