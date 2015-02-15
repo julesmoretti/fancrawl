@@ -2610,14 +2610,14 @@ var crypto                                = require('crypto'),
               var options = {
                   uri: pagination,
                   method: 'GET',
-                  headers: headers,
+                  headers: headers
               }
             } else {
               var options = {
                   uri: 'https://api.instagram.com/v1/tags/'+ hash_tag +'/media/recent',
                   qs: {'access_token': rows[0].token},
                   method: 'GET',
-                  headers: headers,
+                  headers: headers
               }
             }
 
