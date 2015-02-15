@@ -81,7 +81,11 @@ var crypto                                = require('crypto'),
   var timer_post                          = function ( fancrawl_instagram_id ) {
 
       if ( fancrawl_instagram_id === "571377691" ) {
+        console.log( "============================================================" );
         console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
+        console.log( "------------------------------------------------------------" );
+        console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
+        console.log( "============================================================" );
       }
 
       // IF POST_MINUTE = FALSE
@@ -2944,20 +2948,22 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - sendMail - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_unfollow                       = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, callback ) {
-
+      console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
       if ( followed_by ) {
         var followed_by_status = 1;
       } else {
         var followed_by_status = 0;
       }
 
-      connection.query('SELECT added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+      connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
         if (err) throw err;
-
+        console.log( "INSIDE POST_unfollow - passed first select : ", rows );
         if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
+          console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
           // CHECK TIME DIFFERENCE
-          time_difference( fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
+          time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
             var count = code;
+            console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code );
 
 
             // check in secure detabase before unfollowin if not there then unfollow
@@ -3032,6 +3038,7 @@ var crypto                                = require('crypto'),
                             }
                           });
                         }
+                        console.log("POST_unfollow - doing nothing at all : ", pbody );
                       }
 
                     } else if (error) {
