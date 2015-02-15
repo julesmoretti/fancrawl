@@ -47,7 +47,7 @@ CREATE TABLE `access_right` (
 
 DROP TABLE IF EXISTS `settings`;
 
-CREATE TABLE `settings` (
+CREATE TABLE `settiexitngs` (
   `id` INT(20) AUTO_INCREMENT,
   `mNoti` INT(1) DEFAULT 0,
   PRIMARY KEY (`id`)
