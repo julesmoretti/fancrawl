@@ -146,7 +146,8 @@ html {
       background-color: rgba(65, 65, 65, 0.95);
       border-radius: 5px;
       margin-bottom: 10px;
-      color: #c8c8c8; }
+      color: #c8c8c8;
+      z-index: 100; }
     html body .status_bar {
       position: fixed;
       left: 0px;
