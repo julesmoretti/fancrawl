@@ -799,7 +799,7 @@ var crypto                                = require('crypto'),
 
                   GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
                     
-                    if ( uniqueProcessCounter !== undefined ) {
+                    if ( uniqueProcessCounter !== undefined || timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ]  ) {
                       
                       if ( relationship === "not_exist" ) {
 
@@ -1590,7 +1590,7 @@ var crypto                                = require('crypto'),
           timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ processCounter ] = { 'hash_tag' : rows[0].hash_tag };
           processCounter++;
         }
-// >>>>> ERROR rows[0];
+
         connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag, null AS last_id UNION ALL SELECT null, null, last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, rows, fields ) {
           if (err) throw err;
 
