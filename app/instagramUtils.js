@@ -799,7 +799,7 @@ var crypto                                = require('crypto'),
 
                   GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
                     
-                    if ( uniqueProcessCounter !== undefined || timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ]  ) {
+                    if ( uniqueProcessCounter && timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ]  ) {
                       
                       if ( relationship === "not_exist" ) {
 
