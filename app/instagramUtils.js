@@ -3029,7 +3029,7 @@ var crypto                                = require('crypto'),
                           console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
                         } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
 
-                          console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id );
+                          if ( fancrawl_instagram_id === "571377691" ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                           if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                             delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
