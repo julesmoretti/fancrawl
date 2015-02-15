@@ -2961,9 +2961,9 @@ var crypto                                = require('crypto'),
         if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
           if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
           // CHECK TIME DIFFERENCE
-          time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
-            var count = code;
-            if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code );
+          // time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
+            // var count = code;
+            // if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code, processCounter );
 
 
             // check in secure detabase before unfollowin if not there then unfollow
@@ -3028,17 +3028,24 @@ var crypto                                = require('crypto'),
 
                           console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
                         } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
+
                           console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id );
+
                           if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                             delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                           }
+
                           connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                             if (err) throw err;
+                            if ( fancrawl_instagram_id === "571377691" ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                             if ( callback ) {
                               callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                              if ( fancrawl_instagram_id === "571377691" ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
                             }
                           });
+
+
                         } else {
                           console.log("POST_unfollow - doing nothing at all : ", pbody );
                         }
@@ -3054,7 +3061,7 @@ var crypto                                = require('crypto'),
                 });
               }
             });
-          });
+          // });
         } else {
 
           connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
