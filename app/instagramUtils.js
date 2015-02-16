@@ -3009,6 +3009,7 @@ var crypto                                = require('crypto'),
             connection.query('SELECT * FROM s_followed_by WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
               if (err) throw err;
               if (rows[0]) {
+                if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
                 // found in secure database so do not unfollow
                 // on success update database with right values
                 connection.query('UPDATE beta_followers SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
@@ -3017,6 +3018,7 @@ var crypto                                = require('crypto'),
                 });
 
               } else {
+                if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
 
                 connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
