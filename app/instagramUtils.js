@@ -1901,8 +1901,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
       console.log("CLEAN DATABASE CALLED");
-      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
-        console.log("PASED GET_follows_verify");
+      // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
+        // console.log("PASED GET_follows_verify");
         
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
@@ -1959,7 +1959,7 @@ var crypto                                = require('crypto'),
             }
           });
         });
-      });
+      // });
     };
 
 //  -----------------------------------------------------------------------------
