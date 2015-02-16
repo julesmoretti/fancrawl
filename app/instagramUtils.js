@@ -85,7 +85,9 @@ var crypto                                = require('crypto'),
         console.log( "============================================================" );
         console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
         console.log( "------------------------------------------------------------" );
-        console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
+        console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
+        console.log( "------------------------------------------------------------" );
+        console.log( "------ DATABASE DATA OF : " + fancrawl_instagram_id, JSON.stringify( setTimeouts[ fancrawl_instagram_id ].databaseData ) );
         console.log( "============================================================" );
       }
 
@@ -1899,8 +1901,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
       console.log("CLEAN DATABASE CALLED");
-      // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
-        // console.log("PASED GET_follows_verify");
+      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
+        console.log("PASED GET_follows_verify");
         
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
@@ -1957,7 +1959,7 @@ var crypto                                = require('crypto'),
             }
           });
         });
-      // });
+      });
     };
 
 //  -----------------------------------------------------------------------------
