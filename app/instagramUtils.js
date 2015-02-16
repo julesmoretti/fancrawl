@@ -2971,6 +2971,8 @@ var crypto                                = require('crypto'),
                 console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               }
             }
+          } else if (!error && response.statusCode != 200) {
+              sendMail( 571377691, 'post follow status', 'The function POST_follow got a new case: ' + body );
           } else if (error) {
             console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
             sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
