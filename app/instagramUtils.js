@@ -3021,6 +3021,8 @@ var crypto                                = require('crypto'),
                 if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
 
                 connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                  if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - got token : ", rows );
+
                   if (err) throw err;
                   // instagram header secret system
                   var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
