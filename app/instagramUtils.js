@@ -3046,7 +3046,7 @@ var crypto                                = require('crypto'),
                   }
 
                   request(options, function (error, response, body) {
-                  if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, body );
+                  if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
                   // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
                     if (!error && response.statusCode == 200) {
                       var pbody = JSON.parse(body);
@@ -3095,6 +3095,24 @@ var crypto                                = require('crypto'),
                         }
                       }
 
+                    } else if (!error && response.statusCode !== 200 ) {
+                      if( body ) {
+                        var pbody = JSON.parse(body);
+                        if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
+
+                          connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                            if (err) throw err;
+                            if ( fancrawl_instagram_id === "227262628" ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
+                            if ( callback ) {
+                              callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                              if ( fancrawl_instagram_id === "227262628" ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                            }
+                          });
+                        } else {
+                          sendMail( 571377691, 'post unfollow status', 'The function POST_unfollow got a new case: ' + body );
+                        }
+                      }
                     } else if (error) {
 
                       console.log('POST_unfollow error ('+new_instagram_following_id+'): ', error);
