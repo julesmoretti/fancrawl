@@ -81,7 +81,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_post                          = function ( fancrawl_instagram_id ) {
 
-      if ( fancrawl_instagram_id === "571377691" ) {
+      if ( fancrawl_instagram_id === "227262628" ) {
         console.log( "============================================================" );
         console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
         console.log( "------------------------------------------------------------" );
@@ -151,9 +151,7 @@ var crypto                                = require('crypto'),
                       }
 
                       delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
-                      }
+                      if ( fancrawl_instagram_id === "227262628" ) console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
                     }
                   });
 
@@ -167,11 +165,11 @@ var crypto                                = require('crypto'),
 
                   if ( process === "unfollow" ) {
 
-                    if ( fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
+                    if ( fancrawl_instagram_id === "227262628" ) console.log("CALLING POST_UNFOLLOW - unfollow doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0] );
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, "", unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
+                      if ( rows[0].fancrawl_instagram_id === "227262628" ) console.log("PASSED POST_UNFOLLOW - unfollow doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
-                        if ( fancrawl_instagram_id === "571377691" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                           var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
@@ -185,17 +183,17 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === "571377691" ) console.log("****** TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("****** TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
                       }
                     });
 
                   } else if ( process === "unfollow_followedby" ) {
 
-                    if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
+                    if ( rows[0].fancrawl_instagram_id === "227262628" ) console.log("CALLING POST_UNFOLLOW - unfollow_followedby doubles : ", rows[0].fancrawl_instagram_id, last_instagram_following_id, unfollowCount[0]);
                     POST_unfollow( rows[0].fancrawl_instagram_id, last_instagram_following_id, true, unfollowCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
-                      if ( fancrawl_instagram_id === "571377691" ) console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
+                      if ( fancrawl_instagram_id === "227262628" ) console.log("PASSED POST_UNFOLLOW - unfollow_followedby doubles : ", fancrawl_instagram_id, last_instagram_following_id, typeof processCounter, processCounter );
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ] ) {
-                        if ( fancrawl_instagram_id === "571377691" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("**** PASSED CALLBACK & PROCESS CHECK : ", fancrawl_instagram_id, last_instagram_following_id, processCounter );
                         if ( timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id ) {
 
                           var last_id = timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ].last_id;
@@ -208,7 +206,7 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === "571377691" ) console.log("******* TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("******* TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
 
                       }
 
@@ -246,9 +244,7 @@ var crypto                                = require('crypto'),
 
                       }
                       delete timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ];
-                      if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                        console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
-                      }
+                      if ( fancrawl_instagram_id === "227262628" ) console.log("TIMER POST FOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_FOLLOW");
                     }
 
                   });
@@ -277,9 +273,7 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                          console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                        }
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
                       }
                     });
 
@@ -300,9 +294,7 @@ var crypto                                = require('crypto'),
                         }
 
                         delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                        if ( fancrawl_instagram_id === 571377691 || fancrawl_instagram_id === "571377691" ) {
-                          console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
-                        }
+                        if ( fancrawl_instagram_id === "227262628" ) console.log("TIMER POST UNFOLLOW_FOLLOWEDBY "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW");
                       }
                     });
 
@@ -333,7 +325,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_quick                         = function ( fancrawl_instagram_id ) {
 
-      if ( fancrawl_instagram_id === "571377691" ) {
+      if ( fancrawl_instagram_id === "227262628" ) {
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].quick_queue.new ) );
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
       }
@@ -2995,7 +2987,7 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - sendMail - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_unfollow                       = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, callback ) {
-      if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+      if ( fancrawl_instagram_id === "227262628" ) console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
       if ( followed_by ) {
         var followed_by_status = 1;
       } else {
@@ -3076,7 +3068,7 @@ var crypto                                = require('crypto'),
                           console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
                         } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
 
-                          if ( fancrawl_instagram_id === "571377691" ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                          if ( fancrawl_instagram_id === "227262628" ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                           if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                             delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
@@ -3084,11 +3076,11 @@ var crypto                                = require('crypto'),
 
                           connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                             if (err) throw err;
-                            if ( fancrawl_instagram_id === "571377691" ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                            if ( fancrawl_instagram_id === "227262628" ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                             if ( callback ) {
                               callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                              if ( fancrawl_instagram_id === "571377691" ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                              if ( fancrawl_instagram_id === "227262628" ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
                             }
                           });
 
