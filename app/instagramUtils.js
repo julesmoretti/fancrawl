@@ -87,7 +87,8 @@ var crypto                                = require('crypto'),
         console.log( "------------------------------------------------------------" );
         console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
         console.log( "------------------------------------------------------------" );
-        console.log( "------ DATABASE DATA OF : " + fancrawl_instagram_id, JSON.stringify( setTimeouts[ fancrawl_instagram_id ].databaseData ) );
+        console.log( "------ DATABASE DATA # : " + fancrawl_instagram_id, Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData ).length );
+        console.log( "------ DATABASE DATA first : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData )[0] ] );
         console.log( "============================================================" );
       }
 
