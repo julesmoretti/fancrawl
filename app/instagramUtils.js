@@ -13,12 +13,12 @@ var crypto                                = require('crypto'),
     processCounter                        = 0,
     queueCap                              = 10,
     connection                            = mysql.createConnection({
-                                              // host: 'localhost',
-                                              socketPath: '/tmp/mysql.sock',
                                               user: 'root',
                                               password: process.env.MYSQLPASSWORD,
                                               database: 'fancrawl',
-                                              // port: 3306,
+                                              host: 'localhost',
+                                              port: 3306,
+                                              socketPath: '/tmp/mysql.sock',
                                               multipleStatements: true
                                             });
 
