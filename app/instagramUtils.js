@@ -3240,26 +3240,12 @@ var crypto                                = require('crypto'),
 
               if ( rows[0].block ) {
                 rows[0].state = rows[0].previous_state;
+
+                startIndividual( pbody.user.id );
               }
 
               connection.query('UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
                 if (err) throw err;
-
-                // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
-                if ( !setTimeouts[ pbody.user.id ] ) {
-                  // START CLOCK TRACKERS
-                  setTimeouts[ pbody.user.id ] = {};
-                }
-
-                if ( !timer[ pbody.user.id ] ) {
-                  // START USER SPECIFIC CLOCK
-                  timerPostStructure( pbody.user.id );
-                  timerQuickStructure( pbody.user.id );
-
-                  // START CLOCKS ONLY ONCE! (DELAYED)
-                  callTimer( pbody.user.id, "quick_long" );
-                  callTimer( pbody.user.id, "post_long" );
-                }
 
                 // redirect to the dashboard
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
