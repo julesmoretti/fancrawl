@@ -3238,7 +3238,7 @@ var crypto                                = require('crypto'),
                 if ( usersInfo[ pbody.user.id ].access_token ) {
                   delete usersInfo[ pbody.user.id ].access_token;
                 }
-                usersInfo[ pbody.user.id = {};
+                usersInfo[ pbody.user.id ] = {};
                 delete usersInfo[ pbody.user.id ];
               }
 
@@ -3252,7 +3252,7 @@ var crypto                                = require('crypto'),
                 if ( rows[0].block ) {
                   startIndividual( pbody.user.id );
                 }
-                
+
                 // redirect to the dashboard
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
 
