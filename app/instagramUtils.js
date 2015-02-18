@@ -3235,18 +3235,24 @@ var crypto                                = require('crypto'),
               console.log("User "+pbody.user.id+" already existed and so granted");
 
               if ( usersInfo[ pbody.user.id ] ) {
+                if ( usersInfo[ pbody.user.id ].access_token ) {
+                  delete usersInfo[ pbody.user.id ].access_token;
+                }
+                usersInfo[ pbody.user.id = {};
                 delete usersInfo[ pbody.user.id ];
               }
 
               if ( rows[0].block ) {
                 rows[0].state = rows[0].previous_state;
-
-                startIndividual( pbody.user.id );
               }
 
               connection.query('UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
                 if (err) throw err;
 
+                if ( rows[0].block ) {
+                  startIndividual( pbody.user.id );
+                }
+                
                 // redirect to the dashboard
                 res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
 
