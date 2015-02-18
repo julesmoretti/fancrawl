@@ -18,7 +18,7 @@ var crypto                                = require('crypto'),
                                               database: 'fancrawl',
                                               host: 'localhost',
                                               port: 3306,
-                                              socketPath: '/var/run/mysqld/mysqld.sock',
+                                              socketPath: process.env.SOCKETPATH,
                                               multipleStatements: true
                                             });
 
