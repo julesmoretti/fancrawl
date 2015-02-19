@@ -32,6 +32,7 @@ CREATE TABLE `access_right` (
   `pNoti` INT(1) DEFAULT 0,
   `block` INT(1) DEFAULT 0,
   `hash_tag` VARCHAR(20) DEFAULT '',
+  `last_id` VARCHAR(20),
   `code` VARCHAR(255),
   `token` VARCHAR(255),
   `fancrawl_profile_picture` VARCHAR(255),

@@ -724,7 +724,7 @@ var crypto                                = require('crypto'),
                 } else {
 
                   if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
-                  
+
                     // get hash
                     if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                       GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -829,9 +829,9 @@ var crypto                                = require('crypto'),
                   // check relationship and unfollow with proper
 
                   GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
-                    
+
                     if ( uniqueProcessCounter && timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ]  ) {
-                      
+
                       if ( relationship === "not_exist" ) {
 
                         delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
@@ -1907,9 +1907,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
       console.log("CLEAN DATABASE CALLED");
-      // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {      
-        // console.log("PASED GET_follows_verify");
-        
+      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
+
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
           connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count = 5 AND following_status = 1', function(err, rows, fields) {
@@ -1965,7 +1964,7 @@ var crypto                                = require('crypto'),
             }
           });
         });
-      // });
+      });
     };
 
 //  -----------------------------------------------------------------------------
@@ -3246,11 +3245,10 @@ var crypto                                = require('crypto'),
                 rows[0].state = rows[0].previous_state;
               }
 
-              connection.query('SELECT "'+rows[0].block+'" AS block; UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, results) {
+              connection.query('SELECT "'+rows[0].block+'" AS block, "'+ pbody.user.id +'" AS fancrawl_instagram_id; UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, results) {
                 if (err) throw err;
-
-                if ( results[0].block ) {
-                  startIndividual( pbody.user.id );
+                if ( results[0][0].block === '1' ) {
+                  startIndividual( results[0][0].fancrawl_instagram_id );
                 }
 
                 // redirect to the dashboard
