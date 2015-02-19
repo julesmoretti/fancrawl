@@ -1,4 +1,3 @@
-
 //  =============================================================================
 //  SET UP AND GLOBAL VARIABLES
 //  =============================================================================
@@ -2801,8 +2800,8 @@ var crypto                                = require('crypto'),
         }
 
         request(options, function (error, response, body) {
-          var pbody = JSON.parse(body);
-          if ( !error && response.statusCode == 200 ) {
+          if ( !error && response.statusCode === 200 ) {
+            var pbody = JSON.parse(body);
             if ( pbody.data) {
               for ( var i = 0; i < pbody.data.length; i++ ) {
                 console.log( pbody.data[i].id );
@@ -2817,26 +2816,29 @@ var crypto                                = require('crypto'),
                 });
               }
             }
+            if ( pbody.pagination && pbody.pagination.next_cursor ) {
+              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                function(){
+                  console.log("GET_follows_verify - PAGINATION");
+                  GET_follows_verify( arguments[0], arguments[1], arguments[2] );
+                  delete setTimeouts[ arguments[0] ][ arguments[3] ]
+              }, 1000 * 2, fancrawl_instagram_id, pbody.pagination.next_cursor, callback, processCounter ); // 3 sec wait
+              processCounter++;
+            } else {
+              if ( callback ) {
+                console.log("GET_follows_verify - CALLBACK");
+                callback( fancrawl_instagram_id );
+              }
+            }
+          } else if ( !error && response.statusCode !== 200 ) {
+
+                sendMail( 571377691, 'post GET_follows_verify status', 'The function GET_follows_verify got a new case: ' + body );
+
           } else if (error) {
             console.log('GET_follows_verify error ('+fancrawl_instagram_id+'): ', error);
             sendMail( 571377691, 'GET_follows_verify error', 'The function GET_follows_verify got the following error: ' + error );
           }
 
-          if ( pbody.pagination && pbody.pagination.next_cursor ) {
-            setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-              function(){
-                console.log("GET_follows_verify - PAGINATION");
-                GET_follows_verify( arguments[0], arguments[1], arguments[2] );
-                delete setTimeouts[ arguments[0] ][ arguments[3] ]
-            }, 1000 * 2, fancrawl_instagram_id, pbody.pagination.next_cursor, callback, processCounter ); // 3 sec wait
-            processCounter++;
-
-          } else {
-            if ( callback ) {
-              console.log("GET_follows_verify - CALLBACK");
-              callback( fancrawl_instagram_id );
-            }
-          }
         });
       });
     };
