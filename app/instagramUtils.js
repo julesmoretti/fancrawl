@@ -2832,8 +2832,20 @@ var crypto                                = require('crypto'),
               }
             }
           } else if ( !error && response.statusCode !== 200 ) {
+            if ( body ) {
+              var pbody = JSON.parse(body);
+              if ( pbody.error_type && pbody.error_type === "OAuthAccessTokenException" ) {
+                // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
+                usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "Refresh token by signing out and back in";
+                STOP( fancrawl_instagram_id, true );
 
-                sendMail( 571377691, 'post GET_follows_verify status', 'The function GET_follows_verify got a new case: ' + body );
+              } else {
+                sendMail( 571377691, 'post GET_follows_verify status with body', 'The function GET_follows_verify got a new case: ' + body );
+              }
+            } else {
+                sendMail( 571377691, 'post GET_follows_verify status without body', 'The function GET_follows_verify got a new case: ' + body );
+            }
+
 
           } else if (error) {
             console.log('GET_follows_verify error ('+fancrawl_instagram_id+'): ', error);
@@ -3006,144 +3018,124 @@ var crypto                                = require('crypto'),
         var followed_by_status = 0;
       }
 
-      // connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
-        // if (err) throw err;
-        // if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select : ", rows );
-        // if ( rows && rows[0] && rows[0].added_follower_instagram_id ) {
-          // if ( rows[0].fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed first select & has rows: ", rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, followed_by, processCounter );
-          // CHECK TIME DIFFERENCE
-          // time_difference( rows[0].fancrawl_instagram_id, rows[0].added_follower_instagram_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
-            // var count = code;
-            // if ( fancrawl_instagram_id === "571377691" ) console.log( "INSIDE POST_unfollow - passed timer_difference: ", fancrawl_instagram_id, new_instagram_following_id, code, processCounter );
+      // check in secure detabase before unfollowin if not there then unfollow
+      connection.query('SELECT * FROM s_followed_by WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+        if (rows[0]) {
+          if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+          // found in secure database so do not unfollow
+          // on success update database with right values
+          connection.query('UPDATE beta_followers SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+            callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+          });
 
+        } else {
+          if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
 
-            // check in secure detabase before unfollowin if not there then unfollow
-            connection.query('SELECT * FROM s_followed_by WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-              if (err) throw err;
-              if (rows[0]) {
-                if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
-                // found in secure database so do not unfollow
-                // on success update database with right values
-                connection.query('UPDATE beta_followers SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                  if (err) throw err;
-                  callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                });
+          connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+            if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - got token : ", rows );
 
-              } else {
-                if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+            if (err) throw err;
+            // instagram header secret system
+            var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+                hmac.setEncoding('hex');
+                hmac.write(process.env.LOCALIP);
+                hmac.end();
+            var hash = hmac.read();
 
-                connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-                  if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - got token : ", rows );
+            // Set the headers
+            var headers = {
+                'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+            }
 
-                  if (err) throw err;
-                  // instagram header secret system
-                  var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
-                      hmac.setEncoding('hex');
-                      hmac.write(process.env.LOCALIP);
-                      hmac.end();
-                  var hash = hmac.read();
+            // Configure the request
+            var options = {
+                uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
+                qs: {'access_token': rows[0].token},
+                method: 'POST',
+                headers: headers,
+                form:{action:'unfollow'}
+            }
 
-                  // Set the headers
-                  var headers = {
-                      'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
-                  }
+            request(options, function (error, response, body) {
+            if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+            // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
+              if (!error && response.statusCode == 200) {
+                var pbody = JSON.parse(body);
+                if( pbody ) {
+                  if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
+                    // check for rate limit reach... if so keep on looping
+                    // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
 
-                  // Configure the request
-                  var options = {
-                      uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
-                      qs: {'access_token': rows[0].token},
-                      method: 'POST',
-                      headers: headers,
-                      form:{action:'unfollow'}
-                  }
-
-                  request(options, function (error, response, body) {
-                  if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
-                  // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
-                    if (!error && response.statusCode == 200) {
-                      var pbody = JSON.parse(body);
-                      if( pbody ) {
-                        if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-                          // check for rate limit reach... if so keep on looping
-                          // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-
-                          if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                            usersInfo[ fancrawl_instagram_id ] = {};
-                          }
-                          CONSOLE.LOG("POST_UNFOLLOW: OAUTH LIMIT RATE FOR: ", fancrawl_instagram_id );
-
-                          sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
-
-                          usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-
-                          if ( followed_by ) {
-                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-                          } else {
-                            clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
-                          }
-
-                          console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
-                        } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
-
-                          if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
-
-                          if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
-                            delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
-                          }
-
-                          connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                            if (err) throw err;
-                            if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-
-                            if ( callback ) {
-                              callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                              if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                            }
-                          });
-
-
-                        } else {
-                          console.log("POST_unfollow - doing nothing at all : ", pbody );
-                        }
-                      }
-
-                    } else if (!error && response.statusCode !== 200 ) {
-                      if( body ) {
-                        var pbody = JSON.parse(body);
-                        if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
-
-                          connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                            if (err) throw err;
-                            if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-
-                            if ( callback ) {
-                              callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                              if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                            }
-                          });
-                        } else {
-                          sendMail( 571377691, 'post unfollow status', 'The function POST_unfollow got a new case: ' + body );
-                        }
-                      }
-                    } else if (error) {
-
-                      console.log('POST_unfollow error ('+new_instagram_following_id+'): ', error);
-                      sendMail( 571377691, 'post unfollow error', 'The function POST_unfollow got the following error: ' + error );
-
+                    if ( !usersInfo[ fancrawl_instagram_id ] ) {
+                      usersInfo[ fancrawl_instagram_id ] = {};
                     }
-                  });
-                });
+                    CONSOLE.LOG("POST_UNFOLLOW: OAUTH LIMIT RATE FOR: ", fancrawl_instagram_id );
+
+                    sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
+
+                    usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
+
+                    if ( followed_by ) {
+                      clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
+                    } else {
+                      clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
+                    }
+
+                    console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
+                  } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
+
+                    if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
+                    if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
+                      delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
+                    }
+
+                    connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
+                      if ( callback ) {
+                        callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                        if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                      }
+                    });
+
+
+                  } else {
+                    console.log("POST_unfollow - doing nothing at all : ", pbody );
+                  }
+                }
+
+              } else if (!error && response.statusCode !== 200 ) {
+                if( body ) {
+                  var pbody = JSON.parse(body);
+                  if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
+
+                    connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
+                      if ( callback ) {
+                        callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                        if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                      }
+                    });
+                  } else {
+                    sendMail( 571377691, 'post unfollow status', 'The function POST_unfollow got a new case: ' + body );
+                  }
+                }
+              } else if (error) {
+
+                console.log('POST_unfollow error ('+new_instagram_following_id+'): ', error);
+                sendMail( 571377691, 'post unfollow error', 'The function POST_unfollow got the following error: ' + error );
+
               }
             });
-          // });
-        // } else {
-
-          // connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', count = 5, added_follower_instagram_id = '+ new_instagram_following_id, function(err, rows, fields) {
-            // if (err) throw err;
-          // });
-
-        // }
-      // });
+          });
+        }
+      });
     }
 
 
