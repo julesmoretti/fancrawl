@@ -11,7 +11,7 @@ var crypto                                = require('crypto'),
     timer                                 = {},
     setTimeouts                           = {},
     processCounter                        = 0,
-    queueCap                              = 10,
+    queueCap                              = 100,
     connection                            = mysql.createConnection({
                                               user: 'root',
                                               password: process.env.MYSQLPASSWORD,
@@ -1907,7 +1907,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
       console.log("CLEAN DATABASE CALLED");
-      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
+      // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
 
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
@@ -1964,7 +1964,7 @@ var crypto                                = require('crypto'),
             }
           });
         });
-      });
+      // });
     };
 
 //  -----------------------------------------------------------------------------
