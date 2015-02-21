@@ -105,7 +105,7 @@ var crypto                                = require('crypto'),
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow ) {
           console.log( "------------------------------------------------------------" );
           var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
-          var max_unfollow = 4;
+          var max_unfollow = 2;
           if ( count_unfollow.length < max_unfollow ) {
             max_unfollow = count_unfollow.length
           }
@@ -118,7 +118,7 @@ var crypto                                = require('crypto'),
         if ( setTimeouts[ fancrawl_instagram_id ] && setTimeouts[ fancrawl_instagram_id ].databaseData ) {
           console.log( "------------------------------------------------------------" );
           var count_databaseData = Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData );
-          var max_database = 4;
+          var max_database = 2;
           if ( count_databaseData.length < max_database ) {
             max_database = count_databaseData.length
           }
@@ -131,7 +131,7 @@ var crypto                                = require('crypto'),
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify ) {
           console.log( "------------------------------------------------------------" );
           var count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
-          var max_verify = 4;
+          var max_verify = 2;
           if ( count_verify.length < max_verify ) {
             max_verify = count_verify.length
           }
