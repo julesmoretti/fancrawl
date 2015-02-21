@@ -85,20 +85,40 @@ var crypto                                = require('crypto'),
         console.log( "============================================================" );
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
         // console.log( "------------------------------------------------------------" );
-        console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
+        // console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
+
+        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow ) {
+          console.log( "------------------------------------------------------------" );
+          var count_follow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
+          console.log( "------ FOLLOW DATA # : " + fancrawl_instagram_id, count_follow.length );
+          for ( var l = 0; l < 2; l++ ) {
+            console.log( "------ FOLLOW DATA "+l+" : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].post_queue.follow[ count_follow[l] ] );
+          }
+        }
+
+        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow ) {
+          console.log( "------------------------------------------------------------" );
+          var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+          console.log( "------ UNFOLLOW DATA # : " + fancrawl_instagram_id, count_unfollow.length );
+          for ( var k = 0; k < 4; k++ ) {
+            console.log( "------ UNFOLLOW DATA "+k+" : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].post_queue.unfollow[ count_unfollow[k] ] );
+          }
+        }
+
         if ( setTimeouts[ fancrawl_instagram_id ] && setTimeouts[ fancrawl_instagram_id ].databaseData ) {
           console.log( "------------------------------------------------------------" );
           var count_databaseData = Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData );
           console.log( "------ DATABASE DATA # : " + fancrawl_instagram_id, count_databaseData.length );
-          for ( var i = 0; i < 10; i++ ) {
+          for ( var i = 0; i < 4; i++ ) {
             console.log( "------ DATABASE DATA "+i+" : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ count_databaseData[i] ] );
           }
         }
+
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify ) {
           console.log( "------------------------------------------------------------" );
           var count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
           console.log( "------ VERIFY DATA # : " + fancrawl_instagram_id, count_verify.length );
-          for ( var j = 0; j < 10; j++ ) {
+          for ( var j = 0; j < 4; j++ ) {
             console.log( "------ VERIFY DATA "+j+" : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ count_verify[j] ] );
           }
         }
