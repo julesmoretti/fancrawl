@@ -238,7 +238,7 @@ var crypto                                = require('crypto'),
                           }
 
                           delete timer[ fancrawl_instagram_id ].post_queue.unfollow[ processCounter ];
-                          if ( fancrawl_instagram_id === userWatch ) console.log("****** TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
+                          // if ( fancrawl_instagram_id === userWatch ) console.log("****** TIMER POST UNFOLLOW - deleted "+fancrawl_instagram_id+": "+last_instagram_following_id+" of process POST_UNFOLLOW : ", processCounter );
                         }
                       });
 
@@ -1869,7 +1869,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("SETTIMOUT 11 WORKS!!!!");
+                  console.log("+++++ SETTIMOUT CODE = 3");
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 1 day
@@ -1881,7 +1881,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("SETTIMOUT 12 WORKS!!!!");
+                  console.log("+++++ SETTIMOUT CODE = 2");
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 1 hour
@@ -1893,7 +1893,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("SETTIMOUT 13 WORKS!!!!", arguments[0] );
+                  console.log("+++++ SETTIMOUT CODE = 1", arguments[0] );
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 5 min
@@ -1905,7 +1905,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("SETTIMOUT 14 WORKS!!!!", arguments[0] );
+                  console.log("+++++ SETTIMOUT CODE = 0", arguments[0] );
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
             } else {
               console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
@@ -2303,7 +2303,7 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var add_hash_data                       = function ( fancrawl_instagram_id, body, hash_tag ) {
-      console.log("add_hash_data");
+      // console.log("add_hash_data");
       for ( var i = 0; i < body.data.length; i++ ) {
         if ( body && body.data && body.data[i] && body.data[i].type === 'image' ) {
           if ( body.data[i].id && body.data[i].created_time && body.data[i].user && body.data[i].user.id ) {
