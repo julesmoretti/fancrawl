@@ -3077,7 +3077,7 @@ var crypto                                = require('crypto'),
     //  TO  | time_difference - sendMail - clockManager
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_unfollow                       = function ( fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter, callback ) {
-      if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+      // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - start : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
       if ( followed_by ) {
         var followed_by_status = 1;
       } else {
@@ -3088,7 +3088,7 @@ var crypto                                = require('crypto'),
       connection.query('SELECT * FROM s_followed_by WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
         if (err) throw err;
         if (rows[0]) {
-          if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+          // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
           // found in secure database so do not unfollow
           // on success update database with right values
           connection.query('UPDATE beta_followers SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
@@ -3097,10 +3097,10 @@ var crypto                                = require('crypto'),
           });
 
         } else {
-          if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+          // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured none : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
 
           connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-            if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - got token : ", rows );
+            // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - got token : ", rows );
 
             if (err) throw err;
             // instagram header secret system
@@ -3125,7 +3125,7 @@ var crypto                                = require('crypto'),
             }
 
             request(options, function (error, response, body) {
-            if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
+            // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
             // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
               if (!error && response.statusCode == 200) {
                 var pbody = JSON.parse(body);
@@ -3152,7 +3152,7 @@ var crypto                                = require('crypto'),
                     console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
                   } else if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
 
-                    if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                    // if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                     if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                       delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
@@ -3160,11 +3160,11 @@ var crypto                                = require('crypto'),
 
                     connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                       if (err) throw err;
-                      if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                      // if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
                       if ( callback ) {
                         callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                        if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                        // if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
                       }
                     });
 
