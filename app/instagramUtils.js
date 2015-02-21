@@ -3042,7 +3042,7 @@ var crypto                                = require('crypto'),
           } else if (!error && response.statusCode != 200) {
             if ( body ) {
               var pbody = JSON.parse(body);
-              if ( pbody.error_type && pbody.error_type === "OAuthRateLimitException" ) {
+              if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
                 if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
                   timer[ fancrawl_instagram_id ].post_delay_call = true;
@@ -3056,8 +3056,9 @@ var crypto                                = require('crypto'),
                   }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
                   processCounter++;
                 }
+              } else {
+                sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
               }
-              sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
             } else {
               sendMail( 571377691, 'post follow status no body', 'The function POST_follow got a new case: ' + body );
             }
@@ -3188,7 +3189,7 @@ var crypto                                = require('crypto'),
                         if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
                       }
                     });
-                  } else if ( pbody.error_type && pbody.error_type === "OAuthRateLimitException" ) {
+                  } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                     // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
                     if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
                       timer[ fancrawl_instagram_id ].post_delay_call = true;
@@ -3203,8 +3204,10 @@ var crypto                                = require('crypto'),
                       processCounter++;
                     }
                   } else {
-                    sendMail( 571377691, 'post unfollow status', 'The function POST_unfollow got a new case: ' + body );
+                    sendMail( 571377691, 'post unfollow status with body', 'The function POST_unfollow got a new case: ' + body );
                   }
+                } else {
+                  sendMail( 571377691, 'post unfollow status without body', 'The function POST_unfollow got a new case: ' + body );
                 }
               } else if (error) {
 
