@@ -99,7 +99,7 @@ var crypto                                = require('crypto'),
           var count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
           console.log( "------ VERIFY DATA # : " + fancrawl_instagram_id, count_verify.length );
           for ( var j = 0; j < 10; j++ ) {
-            console.log( "------ VERIFY DATA "+j+" : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ count_verify[i] ] );
+            console.log( "------ VERIFY DATA "+j+" : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ count_verify[j] ] );
           }
         }
         console.log( "============================================================" );
