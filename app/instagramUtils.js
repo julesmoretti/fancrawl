@@ -94,7 +94,7 @@ var crypto                                = require('crypto'),
           var count_follow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
           console.log( "------ FOLLOW DATA # : " + fancrawl_instagram_id, count_follow.length );
           var max_follow = 2;
-          if ( count_follow.length < max ) {
+          if ( count_follow.length < max_follow ) {
             max_follow = count_follow.length
           }
           for ( var l = 0; l < max_follow; l++ ) {
@@ -106,7 +106,7 @@ var crypto                                = require('crypto'),
           console.log( "------------------------------------------------------------" );
           var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
           var max_unfollow = 4;
-          if ( count_unfollow.length < max ) {
+          if ( count_unfollow.length < max_unfollow ) {
             max_unfollow = count_unfollow.length
           }
           console.log( "------ UNFOLLOW DATA # : " + fancrawl_instagram_id, count_unfollow.length );
@@ -119,7 +119,7 @@ var crypto                                = require('crypto'),
           console.log( "------------------------------------------------------------" );
           var count_databaseData = Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData );
           var max_database = 4;
-          if ( count_databaseData.length < max ) {
+          if ( count_databaseData.length < max_database ) {
             max_database = count_databaseData.length
           }
           console.log( "------ DATABASE DATA # : " + fancrawl_instagram_id, count_databaseData.length );
@@ -132,7 +132,7 @@ var crypto                                = require('crypto'),
           console.log( "------------------------------------------------------------" );
           var count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
           var max_verify = 4;
-          if ( count_verify.length < max ) {
+          if ( count_verify.length < max_verify ) {
             max_verify = count_verify.length
           }
           console.log( "------ VERIFY DATA # : " + fancrawl_instagram_id, count_verify.length );
