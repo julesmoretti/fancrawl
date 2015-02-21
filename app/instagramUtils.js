@@ -11,7 +11,7 @@ var crypto                                = require('crypto'),
     timer                                 = {},
     setTimeouts                           = {},
     processCounter                        = 0,
-    queueCap                              = 100,
+    queueCap                              = 500,
     connection                            = mysql.createConnection({
                                               user: 'root',
                                               password: process.env.MYSQLPASSWORD,
