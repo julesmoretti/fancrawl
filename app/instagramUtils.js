@@ -93,7 +93,11 @@ var crypto                                = require('crypto'),
           console.log( "------------------------------------------------------------" );
           var count_follow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
           console.log( "------ FOLLOW DATA # : " + fancrawl_instagram_id, count_follow.length );
-          for ( var l = 0; l < 2; l++ ) {
+          var max_follow = 2;
+          if ( count_follow.length < max ) {
+            max_follow = count_follow.length
+          }
+          for ( var l = 0; l < max_follow; l++ ) {
             console.log( "------ FOLLOW DATA "+l+" : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].post_queue.follow[ count_follow[l] ] );
           }
         }
@@ -101,8 +105,12 @@ var crypto                                = require('crypto'),
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.unfollow ) {
           console.log( "------------------------------------------------------------" );
           var count_unfollow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.unfollow );
+          var max_unfollow = 4;
+          if ( count_unfollow.length < max ) {
+            max_unfollow = count_unfollow.length
+          }
           console.log( "------ UNFOLLOW DATA # : " + fancrawl_instagram_id, count_unfollow.length );
-          for ( var k = 0; k < 4; k++ ) {
+          for ( var k = 0; k < max_unfollow; k++ ) {
             console.log( "------ UNFOLLOW DATA "+k+" : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].post_queue.unfollow[ count_unfollow[k] ] );
           }
         }
@@ -110,8 +118,12 @@ var crypto                                = require('crypto'),
         if ( setTimeouts[ fancrawl_instagram_id ] && setTimeouts[ fancrawl_instagram_id ].databaseData ) {
           console.log( "------------------------------------------------------------" );
           var count_databaseData = Object.keys( setTimeouts[ fancrawl_instagram_id ].databaseData );
+          var max_database = 4;
+          if ( count_databaseData.length < max ) {
+            max_database = count_databaseData.length
+          }
           console.log( "------ DATABASE DATA # : " + fancrawl_instagram_id, count_databaseData.length );
-          for ( var i = 0; i < 4; i++ ) {
+          for ( var i = 0; i < max_database; i++ ) {
             console.log( "------ DATABASE DATA "+i+" : " + fancrawl_instagram_id, setTimeouts[ fancrawl_instagram_id ].databaseData[ count_databaseData[i] ] );
           }
         }
@@ -119,8 +131,12 @@ var crypto                                = require('crypto'),
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].quick_queue && timer[ fancrawl_instagram_id ].quick_queue.verify ) {
           console.log( "------------------------------------------------------------" );
           var count_verify = Object.keys( timer[ fancrawl_instagram_id ].quick_queue.verify );
+          var max_verify = 4;
+          if ( count_verify.length < max ) {
+            max_verify = count_verify.length
+          }
           console.log( "------ VERIFY DATA # : " + fancrawl_instagram_id, count_verify.length );
-          for ( var j = 0; j < 4; j++ ) {
+          for ( var j = 0; j < max_verify; j++ ) {
             console.log( "------ VERIFY DATA "+j+" : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ].quick_queue.verify[ count_verify[j] ] );
           }
         }
@@ -3002,7 +3018,7 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          if (!error && response.statusCode == 200) {
+          if (!error && response.statusCode === 200) {
             if( pbody ) {
               var pbody = JSON.parse(body);
 
@@ -3039,7 +3055,7 @@ var crypto                                = require('crypto'),
                 console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               }
             }
-          } else if (!error && response.statusCode != 200) {
+          } else if (!error && response.statusCode !== 200) {
             if ( body ) {
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
@@ -3128,7 +3144,7 @@ var crypto                                = require('crypto'),
             request(options, function (error, response, body) {
             // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
             // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
-              if (!error && response.statusCode == 200) {
+              if (!error && response.statusCode === 200) {
                 var pbody = JSON.parse(body);
                 if( pbody ) {
                   if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
