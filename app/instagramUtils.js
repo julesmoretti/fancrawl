@@ -381,9 +381,12 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var timer_quick                         = function ( fancrawl_instagram_id ) {
 
-      if ( fancrawl_instagram_id === userWatch ) {
+      if ( fancrawl_instagram_id === userWatch && timer[ fancrawl_instagram_id ] ) {
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].quick_queue.new ) );
         // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
+        // console.log( "------ QC COU CAP # : " + timer[ fancrawl_instagram_id ].quick_counter_cap );
+        // console.log( "------ QC COUNTER # : " + timer[ fancrawl_instagram_id ].quick_counter );
+        // console.log( "------------------------------------------------------------" );
       }
 
       // IF POST_MINUTE = FALSE
@@ -1006,7 +1009,6 @@ var crypto                                = require('crypto'),
 
                     });
 
-
                   } else if ( process === "unfollow_verify" ) {
                     if ( fancrawl_instagram_id === userWatch ) console.log("TQ - unfollow_verify : ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
                     if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
@@ -1138,14 +1140,14 @@ var crypto                                = require('crypto'),
                       }
                     });
 
-                  } else if ( process === 3 || process === "3" || process === 2 || process === "2" || process === 1 || process === "1" || process === 0 || process === "0" ) {
+                  } else if ( process === 3 || process === 2 || process === 1 || process === 0 ) {
                     if ( fancrawl_instagram_id === userWatch ) console.log("TQ - CODE : ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter );
                     if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
 
 
                     // check relationship to determine best what to do
                     GET_relationship( fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, function( fancrawl_instagram_id, new_instagram_following_id, relationship, uniqueProcessCounter ) {
-                      if ( fancrawl_instagram_id === userWatch ) console.log("TQ - CODE - RL : ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
+                      // if ( fancrawl_instagram_id === userWatch ) console.log("TQ - CODE - RL : ", fancrawl_instagram_id, new_instagram_following_id, uniqueProcessCounter, relationship );
 
                       if ( relationship === "access_token" ) {
 
@@ -1262,8 +1264,10 @@ var crypto                                = require('crypto'),
                         }
 
                         if ( count_verify.length < ( queueCap - 2 ) ) {
+
                           verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
                           delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
+
                         }
 
                       }
@@ -1839,12 +1843,12 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var verifyRelationship                  = function ( fancrawl_instagram_id, new_instagram_following_id ) {
 
-      connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+      connection.query( 'SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
         if ( rows && rows[0] ) {
           // CHECK TIME DIFFERENCE
-          var diffTimeZone = ( rows[0]['UNIX_TIMESTAMP(now())'] - rows[0]['UNIX_TIMESTAMP(creation_date)'] ) / 60 / 60;
+          // var diffTimeZone = ( rows[0]['UNIX_TIMESTAMP(now())'] - rows[0]['UNIX_TIMESTAMP(creation_date)'] ) / 60 / 60;
           time_difference( rows[0].fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
             connection.query('UPDATE beta_followers SET count = ' + code + ' WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
               if (err) throw err;
@@ -1907,6 +1911,7 @@ var crypto                                = require('crypto'),
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
                   console.log("+++++ SETTIMOUT CODE = 0", arguments[0] );
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
+
             } else {
               console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
             }
@@ -2174,16 +2179,26 @@ var crypto                                = require('crypto'),
           two_days              = 172800, // 2 days in seconds
           time_diff             = current_time - original_time;
 
-      if( time_diff < five_min || time_diff === 0 ){
+      if ( time_diff < five_min || time_diff === 0 ) {
+
         callback( fancrawl_instagram_id, new_instagram_following_id, 0 );
-      } else if( time_diff < one_hour ){
+
+      } else if ( time_diff < one_hour ) {
+
         callback( fancrawl_instagram_id, new_instagram_following_id, 1 );
-      } else if( time_diff < one_day ){
+
+      } else if ( time_diff < one_day ) {
+
         callback( fancrawl_instagram_id, new_instagram_following_id, 2 );
-      } else if( time_diff < two_days ){
+
+      } else if ( time_diff < two_days ) {
+
         callback( fancrawl_instagram_id, new_instagram_following_id, 3 );
+
       } else {
+
         callback( fancrawl_instagram_id, new_instagram_following_id, 4 );
+
       }
     };
 

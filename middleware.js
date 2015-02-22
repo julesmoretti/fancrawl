@@ -18,6 +18,7 @@ var bodyParser      = require('body-parser'),
         success: function(css) {
           // console.log(css);
           console.log('login.css overwritten');
+          console.log('--------------------------------------------');
         },
         error: function(error) {
           console.log(error);
@@ -32,6 +33,7 @@ var bodyParser      = require('body-parser'),
         success: function(css) {
           // console.log(css);
           console.log('style.css overwritten');
+          console.log('--------------------------------------------');
         },
         error: function(error) {
           console.log(error);
@@ -46,6 +48,7 @@ var bodyParser      = require('body-parser'),
         success: function(css) {
           // console.log(css);
           console.log('users.css overwritten');
+          console.log('--------------------------------------------');
         },
         error: function(error) {
           console.log(error);
@@ -60,7 +63,7 @@ var bodyParser      = require('body-parser'),
         success: function(css) {
           // console.log(css);
           console.log('dashboard.css overwritten');
-          console.log('============================================');
+          console.log('--------------------------------------------');
         },
         error: function(error) {
           console.log(error);
