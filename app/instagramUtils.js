@@ -91,8 +91,10 @@ var crypto                                = require('crypto'),
 
         if ( timer[ fancrawl_instagram_id ] ) {
           console.log( "------------------------------------------------------------" );
-          console.log( "post_couter_cap: ", timer[ fancrawl_instagram_id ].post_counter_cap );
-          console.log( "post_counter: ", timer[ fancrawl_instagram_id ].post_counter );
+          console.log( "------ post_couter_cap: ", timer[ fancrawl_instagram_id ].post_counter_cap );
+          console.log( "------ post_counter: ", timer[ fancrawl_instagram_id ].post_counter );
+          console.log( "------ post_minute: ", timer[ fancrawl_instagram_id ].post_minute );
+          console.log( "------ post_delay: ", timer[ fancrawl_instagram_id ].post_delay );
         }
 
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow ) {
