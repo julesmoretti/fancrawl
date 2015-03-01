@@ -3055,7 +3055,7 @@ var crypto                                = require('crypto'),
           if (!error && response.statusCode === 200) {
             if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: 200: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
-            if( pbody ) {
+            if( body ) {
               var pbody = JSON.parse(body);
 
               if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
