@@ -3023,6 +3023,7 @@ var crypto                                = require('crypto'),
     //  TO  | sendMail - clockManager - verifyRelationship
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_follow                         = function ( fancrawl_instagram_id, new_instagram_following_id, processCounter, callback ) {
+      if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
       // console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -3052,6 +3053,8 @@ var crypto                                = require('crypto'),
         request(options, function (error, response, body) {
 
           if (!error && response.statusCode === 200) {
+            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: 200: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
             if( pbody ) {
               var pbody = JSON.parse(body);
 
@@ -3089,6 +3092,8 @@ var crypto                                = require('crypto'),
               }
             }
           } else if (!error && response.statusCode !== 200) {
+            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: !200: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
             if ( body ) {
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
@@ -3112,6 +3117,8 @@ var crypto                                = require('crypto'),
               sendMail( 571377691, 'post follow status no body', 'The function POST_follow got a new case: ' + body );
             }
           } else if (error) {
+            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: ERROR: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
+
             console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
             sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
           }
