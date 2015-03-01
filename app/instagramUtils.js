@@ -163,23 +163,17 @@ var crypto                                = require('crypto'),
             // CHECK STATE OF USER
             connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
               if (err) throw err;
-              if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT: ", rows[0].fancrawl_instagram_id, rows[0].state );
               // IF STOPPED DELETE QUEUES
               if ( rows[0].state === 'stopped' ) {
-                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STOPPED: ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                 // RESET post_timer & quick_timer as well as any setTimouts
                 STOP( rows[0].fancrawl_instagram_id );
 
               // PROCESS STARTED OR CLEANING SO CARRY ON
               } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
-                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                 var followCount         = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );  // pulls out the FanCrawl id that has a follow process
                 var unfollowCount       = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
-
-                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: followCount ", followCount, rows[0].fancrawl_instagram_id, rows[0].state );
-                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: unfollowCount ", unfollowCount, rows[0].fancrawl_instagram_id, rows[0].state );
 
                 // if follow and unfollow queues are empty
                 if ( followCount.length === 0 && unfollowCount.length === 0 ) {
@@ -294,13 +288,10 @@ var crypto                                = require('crypto'),
                 // singles
                 } else {
                   timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 0;
-                  if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                   // go follow
                   if ( followCount.length ) {
-                    if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES + FOLLOWCOUNT ", rows[0].fancrawl_instagram_id, rows[0].state );
                     var last_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
-                    if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES + FOLLOWCOUNT + last_instagram_following_id ", last_instagram_following_id, rows[0].fancrawl_instagram_id, rows[0].state );
 
                     POST_follow( rows[0].fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ] ) {
@@ -3023,7 +3014,6 @@ var crypto                                = require('crypto'),
     //  TO  | sendMail - clockManager - verifyRelationship
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_follow                         = function ( fancrawl_instagram_id, new_instagram_following_id, processCounter, callback ) {
-      if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
       // console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -3053,7 +3043,6 @@ var crypto                                = require('crypto'),
         request(options, function (error, response, body) {
 
           if (!error && response.statusCode === 200) {
-            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: 200: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
             if( body ) {
               var pbody = JSON.parse(body);
@@ -3092,7 +3081,6 @@ var crypto                                = require('crypto'),
               }
             }
           } else if (!error && response.statusCode !== 200) {
-            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: !200: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
             if ( body ) {
               var pbody = JSON.parse(body);
@@ -3117,7 +3105,6 @@ var crypto                                = require('crypto'),
               sendMail( 571377691, 'post follow status no body', 'The function POST_follow got a new case: ' + body );
             }
           } else if (error) {
-            if ( fancrawl_instagram_id === userWatch ) console.log( "POST_FOLLOW: ERROR: ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
             console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
             sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
