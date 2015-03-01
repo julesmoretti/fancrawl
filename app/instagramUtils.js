@@ -89,6 +89,12 @@ var crypto                                = require('crypto'),
         // console.log( "------------------------------------------------------------" );
         // console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
 
+        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_counter_cap ) {
+          console.log( "------------------------------------------------------------" );
+          console.log( "post_couter_cap: ", timer[ fancrawl_instagram_id ].post_counter_cap );
+          console.log( "post_counter: ", timer[ fancrawl_instagram_id ].post_counter );
+        }
+
         if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_queue && timer[ fancrawl_instagram_id ].post_queue.follow ) {
           console.log( "------------------------------------------------------------" );
           var count_follow = Object.keys( timer[ fancrawl_instagram_id ].post_queue.follow );
@@ -3010,6 +3016,7 @@ var crypto                                = require('crypto'),
       // console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
+
         // instagram header secret system
         var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
             hmac.setEncoding('hex');
@@ -3208,7 +3215,7 @@ var crypto                                = require('crypto'),
 
               } else if (!error && response.statusCode !== 200 ) {
                 if( body ) {
-                  var pbody = JSON.parse(body);
+                  var pbody = JSON.parse( body );
                   if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
 
                     connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
