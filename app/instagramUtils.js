@@ -3101,8 +3101,16 @@ var crypto                                = require('crypto'),
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
                 // {"meta":{"error_type":"APIError","code":400,"error_message":"This account can't be followed right now."}}
 
-                if ( callback ) {
-                  callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                  timer[ fancrawl_instagram_id ].post_delay_call = true;
+                  timer[ fancrawl_instagram_id ].post_delay = true;
+
+                  setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                    function(){
+                    timer[ arguments[0] ].post_delay = false;
+                    timer[ arguments[0] ].post_delay_call = false;
+                    delete setTimeouts[ arguments[0] ][ arguments[1] ]
+                  }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
+                  processCounter++;
                 }
 
               } else {
