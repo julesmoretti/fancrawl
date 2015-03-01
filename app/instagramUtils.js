@@ -89,7 +89,7 @@ var crypto                                = require('crypto'),
         // console.log( "------------------------------------------------------------" );
         // console.log( "------ UNFOLLOW OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].post_queue.unfollow ) );
 
-        if ( timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_counter_cap ) {
+        if ( timer[ fancrawl_instagram_id ] ) {
           console.log( "------------------------------------------------------------" );
           console.log( "post_couter_cap: ", timer[ fancrawl_instagram_id ].post_counter_cap );
           console.log( "post_counter: ", timer[ fancrawl_instagram_id ].post_counter );
