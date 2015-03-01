@@ -3098,6 +3098,13 @@ var crypto                                = require('crypto'),
                   }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
                   processCounter++;
                 }
+              } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
+                // {"meta":{"error_type":"APIError","code":400,"error_message":"This account can't be followed right now."}}
+
+                if ( callback ) {
+                  callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                }
+
               } else {
                 sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
               }
