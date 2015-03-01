@@ -300,6 +300,7 @@ var crypto                                = require('crypto'),
                   if ( followCount.length ) {
                     if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES + FOLLOWCOUNT ", rows[0].fancrawl_instagram_id, rows[0].state );
                     var last_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
+                    if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES + FOLLOWCOUNT + last_instagram_following_id ", last_instagram_following_id, rows[0].fancrawl_instagram_id, rows[0].state );
 
                     POST_follow( rows[0].fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
                       if ( processCounter && timer[ fancrawl_instagram_id ].post_queue.follow[ processCounter ] ) {
