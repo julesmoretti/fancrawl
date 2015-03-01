@@ -163,21 +163,27 @@ var crypto                                = require('crypto'),
             // CHECK STATE OF USER
             connection.query('SELECT state, fancrawl_instagram_id FROM access_right where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
               if (err) throw err;
-
+              if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT: ", rows[0].fancrawl_instagram_id, rows[0].state );
               // IF STOPPED DELETE QUEUES
               if ( rows[0].state === 'stopped' ) {
+                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STOPPED: ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                 // RESET post_timer & quick_timer as well as any setTimouts
                 STOP( rows[0].fancrawl_instagram_id );
 
               // PROCESS STARTED OR CLEANING SO CARRY ON
               } else if ( rows[0].state === 'started' || rows[0].state === 'cleaning' ) {
+                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                 var followCount         = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.follow );  // pulls out the FanCrawl id that has a follow process
                 var unfollowCount       = Object.keys( timer[ rows[0].fancrawl_instagram_id ].post_queue.unfollow );  // pulls out the FanCrawl id that has a follow process
 
+                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: followCount ", followCount, rows[0].fancrawl_instagram_id, rows[0].state );
+                if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: unfollowCount ", unfollowCount, rows[0].fancrawl_instagram_id, rows[0].state );
+
                 // if follow and unfollow queues are empty
                 if ( followCount.length === 0 && unfollowCount.length === 0 ) {
+
                   // do nothing
                   timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 0;
 
@@ -288,9 +294,11 @@ var crypto                                = require('crypto'),
                 // singles
                 } else {
                   timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 0;
+                  if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES ", rows[0].fancrawl_instagram_id, rows[0].state );
 
                   // go follow
                   if ( followCount.length ) {
+                    if ( rows[0].fancrawl_instagram_id === userWatch ) console.log( "passed SELECT + STARTED OR CLEANING: SINGLES + FOLLOWCOUNT ", rows[0].fancrawl_instagram_id, rows[0].state );
                     var last_instagram_following_id = timer[ rows[0].fancrawl_instagram_id ].post_queue.follow[ followCount[0] ].new_instagram_following_id;
 
                     POST_follow( rows[0].fancrawl_instagram_id, last_instagram_following_id, followCount[0], function( fancrawl_instagram_id, last_instagram_following_id, processCounter ){
