@@ -91,6 +91,7 @@ var crypto                                = require('crypto'),
 
         if ( timer[ fancrawl_instagram_id ] ) {
           console.log( "------------------------------------------------------------" );
+          console.log( "------ quick_counter_cap # : ", timer[ fancrawl_instagram_id ].quick_counter_cap );
           console.log( "------ post_couter_cap: ", timer[ fancrawl_instagram_id ].post_counter_cap );
           console.log( "------ post_counter: ", timer[ fancrawl_instagram_id ].post_counter );
           console.log( "------ post_minute: ", timer[ fancrawl_instagram_id ].post_minute );
@@ -993,7 +994,7 @@ var crypto                                = require('crypto'),
                             var count_follow = [];
                           }
 
-                          if ( count_follow.length < ( queueCap - 2 ) ) {
+                          if ( count_follow.length < ( queueCap / 2 ) ) {
 
                             if ( timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ].last_id ) {
 
@@ -3082,7 +3083,14 @@ var crypto                                = require('crypto'),
             }
           } else if (!error && response.statusCode !== 200) {
 
-            if ( body ) {
+            if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
+
+              // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
+              sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+
+              return;
+
+            } else if ( body ) {
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
@@ -3232,7 +3240,15 @@ var crypto                                = require('crypto'),
                 }
 
               } else if (!error && response.statusCode !== 200 ) {
-                if( body ) {
+
+                if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
+
+                  // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
+                  sendMail( 571377691, 'POST Unfollow HTML error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+
+                  return;
+
+                } else if( body ) {
                   var pbody = JSON.parse( body );
                   if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
 
