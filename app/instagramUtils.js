@@ -3060,7 +3060,8 @@ var crypto                                = require('crypto'),
 
                 clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
 
-              } else if( pbody.data && pbody.data.outgoing_status ){
+              } else if ( pbody.data && pbody.data.outgoing_status ) {
+
                 if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
                   if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                     delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
@@ -3082,9 +3083,12 @@ var crypto                                = require('crypto'),
           } else if (!error && response.statusCode !== 200) {
 
             if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
-
-              // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-              sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+              if ( response.statusCode === 503 || response.statusCode === 502 ) {
+                // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
+                // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
+              } else {
+                sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+              }
 
               return;
 
@@ -3241,8 +3245,12 @@ var crypto                                = require('crypto'),
 
                 if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
 
-                  // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-                  sendMail( 571377691, 'POST Unfollow HTML error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+                  if ( response.statusCode === 503 || response.statusCode === 502 ) {
+                    // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
+                    // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
+                  } else {
+                    sendMail( 571377691, 'POST Unfollow HTML error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+                  }
 
                   return;
 
