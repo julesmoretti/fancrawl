@@ -3254,7 +3254,11 @@ var crypto                                = require('crypto'),
 
                   return;
 
-                } else if( body ) {
+                } else if ( body && typeof body === "string" && body[0] === '<' && body[1] !== 'h' ) {
+
+                  sendMail( 571377691, 'POST Unfollow HTML2 error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+
+                } else if ( body ) {
                   var pbody = JSON.parse( body );
                   if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
 
