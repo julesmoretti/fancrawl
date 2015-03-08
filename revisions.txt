@@ -1,0 +1,482 @@
+Commits on Mar 7, 2015
+added html2 tracker
+added 502 and 503 check for POST follow and unfollow
+added process error handling
+added post follow and unfollow html error track
+
+
+Commits on Mar 6, 2015
+sped up quick timer
+
+
+Commits on Mar 1, 2015
+handle weird new error
+
+
+Commits on Feb 28, 2015
+monitoring post caps
+
+
+Commits on Feb 21, 2015
+cleaned up console.logs
+cleaned up log messages
+added watch for quick_timer code
+handle OAuthRateLimitException for Follow
+
+
+Commits on Feb 20, 2015
+changed log
+raised limit to 500
+raised limit to 100
+added to GET_follows_verify blocked from instagram notification
+added variable for console.logs
+
+
+Commits on Feb 19, 2015
+added GET_follows_verify case check
+
+
+Commits on Feb 18, 2015
+fixed block restart error and reintroduced check
+block bug fix in handleauth
+
+
+Commits on Feb 17, 2015
+shuffled order for blocked user
+added start individual after block
+refined block restart to handle also cleaning as well as stater
+added environmental variables for mysql socket paths
+mysql changes
+added sockets to mysql connection
+
+
+Commits on Feb 16, 2015
+checking other user
+
+
+Commits on Feb 15, 2015
+added auto start from block
+
+
+Commits on Feb 14, 2015
+added z-index to info page
+added function to check if miss match with database
+
+
+Commits on Feb 12, 2015
+extended the quick time speed
+trigger toggle bug fix
+fixed unfollow bug
+
+
+Commits on Feb 11, 2015
+searching error
+some fixes
+
+
+Commits on Feb 9, 2015
+bug fix
+
+
+Commits on Feb 8, 2015
+modified console log
+simplified queries
+slowed down the Get hash tag and new process down
+
+
+Commits on Feb 7, 2015
+major rejactor of clock using a process ID
+
+
+Commits on Feb 6, 2015
+added more descriptions to functions
+
+
+Commits on Feb 4, 2015
+touch up
+
+
+Commits on Feb 3, 2015
+removed auto cap for hash field
+added hashsign insertion error
+added more cleaning functions
+Get relationship error handling
+
+
+Commits on Feb 2, 2015
+narrowed the timer console
+fixed GET_relationship error
+added 400 error handling
+removed throw error
+added error handling for special response cases
+added 500 statusCode error handling
+identifying error
+
+
+Commits on Jan 31, 2015
+fixed administrator priviledges
+
+
+Commits on Jan 30, 2015
+added master fix on dashboard ejs
+removed master priviledge
+
+
+Commits on Jan 29, 2015
+reorganized the functions by group
+introducing hash user targeting
+removed response code from error
+fixed post timer
+fixed hash tag freeze
+
+
+Commits on Jan 28, 2015
+added hash for admin usage only to test it out
+
+
+Commits on Jan 27, 2015
+removing eMail notification for 503 error of Get_relationship
+looking for other errors
+
+
+Commits on Jan 26, 2015
+more bug fix on the clock
+added another email error message
+added error message to GET_relationship max request error
+extended delays
+added console.logs to email error
+added email sending delay
+added max request notification for get_relationship
+some glitches
+fixed post timer
+added string to number conversion
+added email alert for cleaning completion
+fixed the way new users are added
+cleaned button
+cleaned up dashboard''s functionality
+
+
+Commits on Jan 25, 2015
+changed cleaning system
+fixed quick timer counters
+changed the way toggles work on the dash to easily build on it
+
+
+Commits on Jan 23, 2015
+cleaned up triggers and set Timeouts
+simplifying mysql connection
+
+
+Commits on Jan 22, 2015
+verifying setTimouts
+error 503 from instagram line 785
+
+
+
+Commits on Jan 21, 2015
+changed follow to unfollow rate from 4 to 3
+removed restart
+added restart functionality from dashboard
+added notification master switch
+added notification control on main page
+removed timer console.logs
+changed the a check
+
+
+Commits on Jan 18, 2015
+watching on an error
+relationship rearrangements
+changed error checking function for Get_relationship
+
+
+Commits on Jan 17, 2015
+cleaned up stopping and restarting system
+added reorder list
+
+
+Commits on Jan 16, 2015
+fixed time display
+added users creation date
+added scroll functionality to guide people to more information
+added bootstrap information on front page
+
+
+Commits on Jan 4, 2015
+refined styling
+increased timer post cap calculator
+
+
+Commits on Jan 3, 2015
+fixed clock new and unfollow verify queue and increase to 2 for alter… …
+added instagram profile hyperlink
+cleaned up admin info
+cleaned up routing
+longer setInterval
+fixed routing
+push back image overlap of users with a z-index
+added user list for admin
+
+
+Commits on Jan 2, 2015
+fixed timeout on start
+some fix
+tracing error
+
+
+Commits on Jan 2, 2015
+added arguments to setTimeouts
+fixed typo
+added timer check
+added delay to verifyRelationship for loops, to prevent MySql to satu… …
+
+
+Commits on Dec 26, 2014
+increased speed + preping for hash_tag integretion
+
+
+Commits on Dec 22, 2014
+removed some console.logs
+fixed queue lists
+changed timer structure
+added a new versus verify checking system
+added timer post info
+checking on cap size too
+
+
+Commits on Dec 21, 2014
+bug fix
+added tracker for timer...
+
+
+Commits on Dec 20, 2014
+removed metric check
+fixed user width display in menu
+messaging
+checking metrics
+cleaned notification
+added email notification service
+
+
+Commits on Dec 18, 2014
+simplified some code to make things more responsive
+
+
+Commits on Dec 17, 2014
+added an api status check before overloading mysql database on server … …
+
+
+Commits on Dec 16, 2014
+reduced cap size to 20
+added a few traces
+added a state check
+simplified sign in to speed up data gathering and fixed 0 for origina… …
+added a type check for relationship body translation
+
+
+Commits on Dec 15, 2014
+fixed email message and added schema time stamp for database
+added email notification when new user sign up
+
+
+Commits on Dec 14, 2014
+removed email notification for api error on unknow users
+changed verbage
+added fixes for login and log in display change
+fixed a bug for new user addition
+public release + update settings placed lower
+added fancrawl followed by calculator
+
+
+Commits on Nov 3, 2014
+refactored counter locations
+added filter for pbody
+added smart start feature
+fixed reapearing animation
+
+
+Commits on Oct 25, 2014
+added smarter start between follow and unfollow
+
+
+Commits on Oct 24, 2014
+added tracker for < error
+
+
+Commits on Oct 18, 2014
+fixed start error
+removed the warning div if no alerts
+removed the warning div if no errors
+
+
+Commits on Oct 13, 2014
+added cross browser origin
+updated d3 and jquery
+changed subject line of email to start fresh
+removed multiple notification error on same warning
+removed console logs and added account info on notification
+added markers for trouble shooting
+fixed some typo
+moved sensitive information to local variables
+added mail notification
+
+
+Commits on Oct 4, 2014
+fixed j typo on line 1854
+
+
+Commits on Oct 2, 2014
+fixed chart formatting
+
+
+Commits on Oct 1, 2014
+added setTimeout management on server restart or stopping fancrawl
+removed cleaning DB on start trigger switch
+added verify cleaning on server restart
+
+
+Commits on Sep 30, 2014
+corrected cleaning loop when nothing in DB and added pbody check on r… …
+
+
+Commits on Sep 25, 2014
+added orange highight for warnings
+changed the on off description to FanCrawl:
+
+
+Commits on Sep 20, 2014
+adding removal of notifications on successful log in
+added 1 minute check on blocked account
+d3 cleanup
+added shade for D3 and handling for 0 data
+
+
+Commits on Sep 17, 2014
+added D3 menu hide responsiveness on scroll
+
+
+Commits on Sep 16, 2014
+modified some console.logs
+cleaned up some of the console log
+increased random time to reduce spam alerts
+removed token expiry error message on success
+
+
+Commits on Sep 15, 2014
+added case where token expired to still access acount
+
+
+Commits on Sep 13, 2014
+removed a bunch of console logs + on restart cleanup
+cosmetic fixes
+changed the graph apearance
+
+
+Commits on Sep 6, 2014
+fixed z-index of graph and cleaned up some animation
+added some D3 animation to pages
+centered alight the tooltips
+added D3 graph reformatted styling to pop
+added more info to labels
+more fixes
+added D3 graph of past week
+
+
+Commits on Sep 4, 2014
+updated screenshots
+added more screenshots
+moved the sign out functionality to be an ajax call
+added minimal ui meta to ejs
+removed duplicate fetchNewfollowers & added duplicate check function
+typo fix
+console.log for server side
+z-index order fix
+missed a +1 on fetch followers
+
+
+Commits on Sep 3, 2014
+Typo on the intro line
+simplified UI and refined labels
+grammar check
+removed status icons
+moved iFrame to bottom of page to not disrupt other scripts
+removed jquery on login
+cleaned up the menu opacity
+rescaled iPhone version
+added logout back to frontpage
+removed unnecessary passport
+added hide menu functionality to buttons and inputs
+added click out of menu functionality
+fixed select largest value glitch on start
+check duplicate in DB
+modified readme file to point to WIKI Pages
+fixed some styling to work with iOS
+Put in place an API error workaround
+Added error messages for go_unfollow
+fixed callback error
+fixed timer issue
+
+
+Commits on Sep 2, 2014
+sintax changes
+fixed cleaning up function to pass properly the callback
+
+
+Commits on Sep 1, 2014
+refactored cleaning database to use count 5 for clean
+added timer check on trigger starting
+first pass at fixing timers...
+
+
+Commits on Aug 31, 2014
+added current relationship
+fixed percentage
+fixed css glitch for check box
+UI PANEL + Refactored most of the code base
+refactored a lot of code
+fixed people adding sequence
+changed the state to fresh at end
+refactored to store secure data on load
+refactored clock to handle multiple users
+
+
+Commits on Aug 10, 2014
+added #4 count exemption on database check
+moved random time variable inside functions
+
+
+Commits on Aug 9, 2014
+refactored to only use request middleware and nomore instagram-nodes
+added safety timer delay on start
+refactored to handle better the original data, and eliminate the past
+
+
+Commits on Aug 7, 2014
+refactored clock and added more time checks
+migrated most font locally and fixed more bugs
+refactored to have an independent timer system
+fixed token scope reach bug
+checked for existing user or not
+hard setting IP address
+checking response code
+refactored some code and added secure header server check
+
+
+Commits on Aug 5, 2014
+fixed sass generation to only be local mode
+partial views and css updates
+updated schema.sql to include better timestamp
+added mysql password in environment
+modified inst utils to load process if server goes down
+fist shipment of crawler
+
+
+Commits on Jul 26, 2014
+login page stylized and ready for the next steps
+
+
+Commits on Jul 25, 2014
+main structure of app ready
+
+
+Commits on Jul 22, 2014
+first file structure
