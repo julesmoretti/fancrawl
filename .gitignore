@@ -1,5 +1,6 @@
 media_work
 node_modules
 other
+spec
 npm-debug.log
 schema_data.sql

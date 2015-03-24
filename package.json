@@ -16,6 +16,7 @@
     "crypto": "0.0.3",
     "ejs": "^1.0.0",
     "express": "^4.2.0",
+    "jasmine-node": "^1.14.5",
     "jquery": "^2.1.1",
     "morgan": "^1.0.1",
     "mysql": "^2.4.2",
@@ -25,7 +26,12 @@
     "serve-favicon": "^2.0.1",
     "underscore": "^1.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.5"
+  },
   "keywords": [
     "node",
     "express",

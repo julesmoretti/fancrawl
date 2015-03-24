@@ -22,6 +22,15 @@ var crypto                                = require('crypto'),
                                               multipleStatements: true
                                             });
 
+    var del = connection._protocol._delegateError;
+    connection._protocol._delegateError = function(err, sequence){
+      if (err.fatal) {
+        console.trace('fatal error: ' + err.message);
+        sendMail( "571377691", "MYSQL fatal error", err.message );
+      }
+      return del.call(this, err, sequence);
+    };
+
 //  =============================================================================
 //  TIMER OPERATIONS
 //  =============================================================================
@@ -3254,12 +3263,10 @@ var crypto                                = require('crypto'),
 
                   return;
 
-                } else if ( body && typeof body === "string" && body[0] === '<' && body[1] !== 'h' ) {
-
-                  sendMail( 571377691, 'POST Unfollow HTML2 error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-
                 } else if ( body ) {
+
                   var pbody = JSON.parse( body );
+
                   if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
 
                     connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
@@ -4186,7 +4193,6 @@ var crypto                                = require('crypto'),
         res.redirect( "/dashboard?user="+ req_query.user +"&id="+fancrawl_instagram_id );
       }
     };
-
 
 
 //  =============================================================================
