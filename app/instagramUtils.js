@@ -3104,8 +3104,8 @@ var crypto                                = require('crypto'),
             } else if ( body ) {
 
               if ( body && typeof body === "string" && body[0] !== '{' ) {
-                console.log( body );
                 sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+                return;
               }
 
               var pbody = JSON.parse(body);
@@ -3272,8 +3272,8 @@ var crypto                                = require('crypto'),
                 } else if ( body ) {
 
                   if ( body && typeof body === "string" && body[0] !== '{' ) {
-                    console.log( body );
                     sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+                    return;
                   }
 
                   var pbody = JSON.parse( body );
