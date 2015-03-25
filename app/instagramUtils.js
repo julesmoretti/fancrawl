@@ -3102,6 +3102,12 @@ var crypto                                = require('crypto'),
               return;
 
             } else if ( body ) {
+
+              if ( body && typeof body === "string" && body[0] !== '{' ) {
+                console.log( body );
+                sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+              }
+
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
@@ -3264,6 +3270,11 @@ var crypto                                = require('crypto'),
                   return;
 
                 } else if ( body ) {
+
+                  if ( body && typeof body === "string" && body[0] !== '{' ) {
+                    console.log( body );
+                    sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
+                  }
 
                   var pbody = JSON.parse( body );
 

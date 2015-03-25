@@ -1,4 +1,12 @@
 
+>**Commits on Mar 24, 2015**
+* added mysql error handling
+
+<br>
+
+>**Commits on Mar 8, 2015**
+* added revisions txt file
+
 <br>
 
 >**Commits on Mar 7, 2015**
