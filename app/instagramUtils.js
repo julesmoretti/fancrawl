@@ -3023,7 +3023,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_follow                         = function ( fancrawl_instagram_id, new_instagram_following_id, processCounter, callback ) {
 
-      // console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
+      console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
@@ -3072,6 +3072,7 @@ var crypto                                = require('crypto'),
               } else if ( pbody.data && pbody.data.outgoing_status ) {
 
                 if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
+                  console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED");
                   if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                     delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                   }
@@ -3088,18 +3089,26 @@ var crypto                                = require('crypto'),
               } else {
                 console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               }
+            } else {
+                console.log("POST_FOLLOW - 200 - no body found");
             }
           } else if (!error && response.statusCode !== 200) {
 
             if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
               if ( response.statusCode === 503 || response.statusCode === 502 ) {
+                console.log("POST_FOLLOW - 503 / 502 status... doing nothing");
                 // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
                 // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
               } else {
+                console.log("POST_FOLLOW - OTHER STATUS then 200... doing nothing");
                 sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
               }
 
               return;
+
+            } else if ( body && body === 'Oops, an error occurred. ') {
+              console.log("POST_FOLLOW - Oops, an error occurred notification");
+              sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got an Oops, an error occurred. for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
 
             } else if ( body ) {
 
@@ -3111,6 +3120,8 @@ var crypto                                = require('crypto'),
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
+                console.log("POST_FOLLOW - OAuthRateLimitException");
+
                 if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
                   timer[ fancrawl_instagram_id ].post_delay_call = true;
                   timer[ fancrawl_instagram_id ].post_delay = true;
@@ -3124,12 +3135,16 @@ var crypto                                = require('crypto'),
                   processCounter++;
                 }
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
+                console.log("POST_FOLLOW - APIError");
+
                 // {"meta":{"error_type":"APIError","code":400,"error_message":"This account can't be followed right now."}}
 
                 if ( callback ) {
                   callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                 }
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
+                console.log("POST_FOLLOW - APINotAllowedError");
+
                 // {"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
 
                 if ( callback ) {
@@ -3137,6 +3152,7 @@ var crypto                                = require('crypto'),
                 }
 
               } else {
+                console.log("POST_FOLLOW - !200 , no body found");
                 sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
               }
             } else {
