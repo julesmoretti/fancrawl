@@ -1383,7 +1383,16 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var callTimer                           = function ( fancrawl_instagram_id, state) {
 
+      var quick_longRandomTime = function () {
+        return Math.floor( ( Math.random() * 500 ) + 2000 );
+      }
+
+      var post_longRandomTime = function () {
+        return Math.floor( ( Math.random() * 10000 ) + 60000 );
+      }
+
       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
+          console.log( 'CT - access_token' );
           setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
             function(){
                 callTimer( arguments[0], arguments[1] );
@@ -1392,6 +1401,7 @@ var crypto                                = require('crypto'),
       } else {
         // waits half a second and rechecks timer state
         if ( state === "quick_short" ) {
+          console.log( 'CT - quick_short' );
           setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
             function(){
                 timer_quick( arguments[0] );
@@ -1400,6 +1410,7 @@ var crypto                                = require('crypto'),
 
         // waits half a second and rechecks timer state
         } else if ( state === "quick_long" ) {
+          console.log( 'CT - quick_long' );
           setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
             function(){
                 if ( timer[ arguments[0] ] ) {
@@ -1407,10 +1418,10 @@ var crypto                                = require('crypto'),
                   timer_quick( arguments[0] );
                 }
                 // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec
+          }, quick_longRandomTime(), fancrawl_instagram_id ); // 2 ~ 2.5 sec
 
         } else if ( state === "post_short" ) {
-
+          console.log( 'CT - post_short' );
           setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
             function(){
               timer_post( arguments[0] );
@@ -1418,6 +1429,7 @@ var crypto                                = require('crypto'),
           }, 5000, fancrawl_instagram_id ); // 5 sec
 
         } else if ( state === "post_long" ) {
+          console.log( 'CT - post_long' );
           setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
             function(){
               if ( timer[ arguments[0] ] ) {
@@ -1425,7 +1437,7 @@ var crypto                                = require('crypto'),
                 timer_post( arguments[0] );
               }
               // console.log("SETTIMOUT 5 WORKS!!!!", fancrawl_instagram_id);
-          }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
+          }, post_longRandomTime(), fancrawl_instagram_id ); // (1~1.25 minute delay)
         }
       }
     };
@@ -3056,7 +3068,7 @@ var crypto                                = require('crypto'),
               var pbody = JSON.parse(body);
 
               if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-                console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
                 // check for rate limit reach... if so keep on looping
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
                 if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -3072,7 +3084,7 @@ var crypto                                = require('crypto'),
               } else if ( pbody.data && pbody.data.outgoing_status ) {
 
                 if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
-                  console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED");
+                  if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED");
                   if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException ) {
                     delete usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException;
                   }
@@ -3087,27 +3099,27 @@ var crypto                                = require('crypto'),
                   });
                 }
               } else {
-                console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               }
             } else {
-                console.log("POST_FOLLOW - 200 - no body found");
+              if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - 200 - no body found");
             }
           } else if (!error && response.statusCode !== 200) {
 
             if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
               if ( response.statusCode === 503 || response.statusCode === 502 ) {
-                console.log("POST_FOLLOW - 503 / 502 status... doing nothing");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - 503 / 502 status... doing nothing");
                 // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
                 // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
               } else {
-                console.log("POST_FOLLOW - OTHER STATUS then 200... doing nothing");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OTHER STATUS then 200... doing nothing");
                 sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
               }
 
               return;
 
             } else if ( body && body === 'Oops, an error occurred. ') {
-              console.log("POST_FOLLOW - Oops, an error occurred notification");
+              if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - Oops, an error occurred notification");
               sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got an Oops, an error occurred. for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
 
             } else if ( body ) {
@@ -3120,7 +3132,7 @@ var crypto                                = require('crypto'),
               var pbody = JSON.parse(body);
               if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                 // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
-                console.log("POST_FOLLOW - OAuthRateLimitException");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OAuthRateLimitException");
 
                 if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
                   timer[ fancrawl_instagram_id ].post_delay_call = true;
@@ -3135,7 +3147,7 @@ var crypto                                = require('crypto'),
                   processCounter++;
                 }
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
-                console.log("POST_FOLLOW - APIError");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - APIError");
 
                 // {"meta":{"error_type":"APIError","code":400,"error_message":"This account can't be followed right now."}}
 
@@ -3143,7 +3155,7 @@ var crypto                                = require('crypto'),
                   callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                 }
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
-                console.log("POST_FOLLOW - APINotAllowedError");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - APINotAllowedError");
 
                 // {"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
 
@@ -3152,7 +3164,7 @@ var crypto                                = require('crypto'),
                 }
 
               } else {
-                console.log("POST_FOLLOW - !200 , no body found");
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - !200 , no body found");
                 sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
               }
             } else {
@@ -3160,7 +3172,7 @@ var crypto                                = require('crypto'),
             }
           } else if (error) {
 
-            console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
+            if ( fancrawl_instagram_id === userWatch ) console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
             sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
           }
         });
