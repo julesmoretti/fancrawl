@@ -1392,7 +1392,7 @@ var crypto                                = require('crypto'),
       }
 
       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
-          console.log( 'CT - access_token' );
+          // console.log( 'CT - access_token' );
           setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
             function(){
                 callTimer( arguments[0], arguments[1] );
@@ -1401,7 +1401,7 @@ var crypto                                = require('crypto'),
       } else {
         // waits half a second and rechecks timer state
         if ( state === "quick_short" ) {
-          console.log( 'CT - quick_short' );
+          // console.log( 'CT - quick_short' );
           setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
             function(){
                 timer_quick( arguments[0] );
@@ -1410,7 +1410,7 @@ var crypto                                = require('crypto'),
 
         // waits half a second and rechecks timer state
         } else if ( state === "quick_long" ) {
-          console.log( 'CT - quick_long' );
+          // console.log( 'CT - quick_long' );
           setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
             function(){
                 if ( timer[ arguments[0] ] ) {
@@ -1421,7 +1421,7 @@ var crypto                                = require('crypto'),
           }, quick_longRandomTime(), fancrawl_instagram_id ); // 2 ~ 2.5 sec
 
         } else if ( state === "post_short" ) {
-          console.log( 'CT - post_short' );
+          // console.log( 'CT - post_short' );
           setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
             function(){
               timer_post( arguments[0] );
@@ -1429,7 +1429,7 @@ var crypto                                = require('crypto'),
           }, 5000, fancrawl_instagram_id ); // 5 sec
 
         } else if ( state === "post_long" ) {
-          console.log( 'CT - post_long' );
+          // console.log( 'CT - post_long' );
           setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
             function(){
               if ( timer[ arguments[0] ] ) {
