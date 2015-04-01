@@ -218,7 +218,7 @@ var crypto                                = require('crypto'),
 
                           connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                             if (err) throw err;
-                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                            // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                           });
 
                         }
@@ -250,7 +250,7 @@ var crypto                                = require('crypto'),
 
                             connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                               if (err) throw err;
-                              console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                              // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                             });
 
                           }
@@ -274,7 +274,7 @@ var crypto                                = require('crypto'),
 
                             connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                               if (err) throw err;
-                              console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                              // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                             });
                           }
 
@@ -312,7 +312,7 @@ var crypto                                = require('crypto'),
 
                           connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                             if (err) throw err;
-                            console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                            // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                           });
 
                         }
@@ -340,7 +340,7 @@ var crypto                                = require('crypto'),
 
                             connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                               if (err) throw err;
-                              console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                              // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                             });
 
                           }
@@ -361,7 +361,7 @@ var crypto                                = require('crypto'),
 
                             connection.query('UPDATE users_hash_tags SET last_id = "'+ last_id +'" WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND hash_tag = "'+ hash_tag +'"', function(err, rows, fields) {
                               if (err) throw err;
-                              console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
+                              // console.log( "UPDATED LAST_ID AS:" + last_id, hash_tag );
                             });
 
                           }
