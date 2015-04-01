@@ -1313,7 +1313,6 @@ var crypto                                = require('crypto'),
       }
     };
 
-
 //  -----------------------------------------------------------------------------
 //  determines where each timer process should be stored
 //  -----------------------------------------------------------------------------
@@ -1383,61 +1382,64 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var callTimer                           = function ( fancrawl_instagram_id, state) {
 
-      var quick_longRandomTime = function () {
-        return Math.floor( ( Math.random() * 500 ) + 2000 );
-      }
-
-      var post_longRandomTime = function () {
-        return Math.floor( ( Math.random() * 10000 ) + 60000 );
-      }
-
       if ( usersInfo[ fancrawl_instagram_id ] && usersInfo[ fancrawl_instagram_id ].access_token ) {
           // console.log( 'CT - access_token' );
-          setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
-            function(){
-                callTimer( arguments[0], arguments[1] );
-                // console.log("SETTIMOUT 1 WORKS!!!!", fancrawl_instagram_id);
-          }, 1000 * 60 * 1, fancrawl_instagram_id, state ); // 1 min wait
+          (function( fancrawl_instagram_id, state ){
+            setTimeouts[ fancrawl_instagram_id ].access_token = setTimeout(
+              function(){
+                  callTimer( arguments[0], arguments[1] );
+                  // console.log("SETTIMOUT 1 WORKS!!!!", fancrawl_instagram_id);
+            }, 1000 * 60 * 1, fancrawl_instagram_id, state ); // 1 min wait
+          })(fancrawl_instagram_id, state);
+
       } else {
         // waits half a second and rechecks timer state
         if ( state === "quick_short" ) {
           // console.log( 'CT - quick_short' );
-          setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
-            function(){
-                timer_quick( arguments[0] );
-                // console.log("SETTIMOUT 2 WORKS!!!!", fancrawl_instagram_id);
-          }, 500, fancrawl_instagram_id ); // 0.5 sec
+          (function( fancrawl_instagram_id, state ){
+            setTimeouts[ fancrawl_instagram_id ].quick_short = setTimeout(
+              function(){
+                  timer_quick( arguments[0] );
+                  // console.log("SETTIMOUT 2 WORKS!!!!", fancrawl_instagram_id);
+            }, 500, fancrawl_instagram_id ); // 0.5 sec
+          })(fancrawl_instagram_id, state);
 
         // waits half a second and rechecks timer state
         } else if ( state === "quick_long" ) {
           // console.log( 'CT - quick_long' );
-          setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
-            function(){
-                if ( timer[ arguments[0] ] ) {
-                  timer[ arguments[0] ].quick_seconds = false;
-                  timer_quick( arguments[0] );
-                }
-                // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-          }, quick_longRandomTime(), fancrawl_instagram_id ); // 2 ~ 2.5 sec
+          (function( fancrawl_instagram_id, state ){
+            setTimeouts[ fancrawl_instagram_id ].quick_long = setTimeout(
+              function(){
+                  if ( timer[ arguments[0] ] ) {
+                    timer[ arguments[0] ].quick_seconds = false;
+                    timer_quick( arguments[0] );
+                  }
+                  // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
+            }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec
+          })(fancrawl_instagram_id, state);
 
         } else if ( state === "post_short" ) {
           // console.log( 'CT - post_short' );
-          setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
-            function(){
-              timer_post( arguments[0] );
-              // console.log("SETTIMOUT 4 WORKS!!!!", fancrawl_instagram_id);
-          }, 5000, fancrawl_instagram_id ); // 5 sec
+          (function( fancrawl_instagram_id, state ){
+            setTimeouts[ fancrawl_instagram_id ].post_short = setTimeout(
+              function(){
+                timer_post( arguments[0] );
+                // console.log("SETTIMOUT 4 WORKS!!!!", fancrawl_instagram_id);
+            }, 5000, fancrawl_instagram_id ); // 5 sec
+          })(fancrawl_instagram_id, state);
 
         } else if ( state === "post_long" ) {
           // console.log( 'CT - post_long' );
-          setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
-            function(){
-              if ( timer[ arguments[0] ] ) {
-                timer[ arguments[0] ].post_minute = false;
-                timer_post( arguments[0] );
-              }
-              // console.log("SETTIMOUT 5 WORKS!!!!", fancrawl_instagram_id);
-          }, post_longRandomTime(), fancrawl_instagram_id ); // (1~1.25 minute delay)
+          (function( fancrawl_instagram_id, state ){
+            setTimeouts[ fancrawl_instagram_id ].post_long = setTimeout(
+              function(){
+                if ( timer[ arguments[0] ] ) {
+                  timer[ arguments[0] ].post_minute = false;
+                  timer_post( arguments[0] );
+                }
+                // console.log("SETTIMOUT 5 WORKS!!!!", fancrawl_instagram_id);
+            }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
+          })(fancrawl_instagram_id, state);
         }
       }
     };
