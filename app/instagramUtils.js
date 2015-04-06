@@ -194,15 +194,7 @@ var crypto                                = require('crypto'),
                 // if both follow and unfollow queue has something
                 } else if ( followCount.length && unfollowCount.length ) {
 
-                  if ( unfollowCount.length > ( queueCap * 0.5 ) ) {
-
-                    timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 3;
-
-                  } else {
-
-                    timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 2;
-
-                  }
+                  timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 3;
 
                   if ( timer[ rows[0].fancrawl_instagram_id ].post_counter === 0 ) {
 
@@ -3148,6 +3140,11 @@ var crypto                                = require('crypto'),
                   }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
                   processCounter++;
                 }
+
+              } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthParameterException" ) {
+                // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
+                STOP( fancrawl_instagram_id, true );
+
               } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
                 if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - APIError");
 
@@ -3319,6 +3316,11 @@ var crypto                                = require('crypto'),
                         if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
                       }
                     });
+
+                  } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthParameterException" ) {
+                    // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
+                    STOP( fancrawl_instagram_id, true );
+
                   } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
                     // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
                     if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
