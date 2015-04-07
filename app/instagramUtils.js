@@ -2477,7 +2477,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+fancrawl_instagram_id+'/',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers
@@ -2554,7 +2555,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+rows[0].new_instagram_following_id+'/relationship',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+rows[0].new_instagram_following_id+'/relationship',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers
@@ -2760,7 +2762,8 @@ var crypto                                = require('crypto'),
               }
             } else {
               var options = {
-                  uri: 'https://api.instagram.com/v1/tags/'+ hash_tag +'/media/recent',
+                  host: 'https://api.instagram.com',
+                  path: '/v1/tags/'+ hash_tag +'/media/recent',
                   qs: {'access_token': rows[0].token},
                   method: 'GET',
                   headers: headers
@@ -2821,7 +2824,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+fancrawl_instagram_id+'/follows',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers,
@@ -2889,7 +2893,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+fancrawl_instagram_id+'/follows',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers,
@@ -2980,7 +2985,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/followed-by',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+fancrawl_instagram_id+'/followed-by',
             qs: {'access_token': rows[0].token},
             method: 'GET',
             headers: headers,
@@ -3047,7 +3053,8 @@ var crypto                                = require('crypto'),
 
         // Configure the request
         var options = {
-            uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
+            host: 'https://api.instagram.com',
+            path: '/v1/users/'+new_instagram_following_id+'/relationship',
             qs: {'access_token': rows[0].token},
             method: 'POST',
             headers: headers,
@@ -3226,7 +3233,8 @@ var crypto                                = require('crypto'),
 
             // Configure the request
             var options = {
-                uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
+                host: 'https://api.instagram.com',
+                path: '/v1/users/'+new_instagram_following_id+'/relationship',
                 qs: {'access_token': rows[0].token},
                 method: 'POST',
                 headers: headers,
