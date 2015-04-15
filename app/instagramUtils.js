@@ -1488,7 +1488,7 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkAppRateLimit                   = function ( rateLimit, delay ) {
     appRateLimit = rateLimit;
-    if ( rateLimit < 10 ) {
+    if ( rateLimit < 100 ) {
       pauseAllTimers( delay );
     }
     }
