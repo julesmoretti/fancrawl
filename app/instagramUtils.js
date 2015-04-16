@@ -3633,7 +3633,7 @@ var crypto                                = require('crypto'),
           // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n'
           // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n'
 
-          sendMail( 571377691, 'Request error handling 502/503', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' APP MAX REQUESTS PER HOURS REACHED' );
+          sendMail( 571377691, 'Request error handling 502/503', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' APP MAX REQUESTS PER HOURS REACHED: ' + appRateLimit );
 
           // slow down and pause all timers down for a while
 
