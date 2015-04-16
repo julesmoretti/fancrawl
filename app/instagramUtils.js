@@ -3651,6 +3651,10 @@ var crypto                                = require('crypto'),
 
           sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
 
+          if ( !usersInfo[ fancrawl_instagram_id ] ) {
+            usersInfo[ fancrawl_instagram_id ] = {};
+          }
+
           usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
 
           // pause and slow down user timer
