@@ -3637,7 +3637,7 @@ var crypto                                = require('crypto'),
 
           // slow down and pause all timers down for a while
 
-          pauseAllTimers( 10 );
+          pauseAllTimers( 30 );
 
         } else if ( response.statusCode === 429 ) {
           // ENDPOINT                                 UNSIGNED CALLS (PER TOKEN)        SIGNED CALLS (PER TOKEN)
