@@ -3241,14 +3241,15 @@ var crypto                                = require('crypto'),
               // if ( pbody.data && pbody.data.outgoing_status ) {
 
             if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
-              if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED");
+              if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED: ", fancrawl_instagram_id, new_instagram_following_id);
 
               connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
                 if (err) throw err;
-
+                console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
                 verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
 
                 if ( callback ) {
+                  console.log('callback: ', fancrawl_instagram_id, new_instagram_following_id );
                   callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                 }
               });
