@@ -1534,7 +1534,6 @@ var crypto                                = require('crypto'),
           // SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers WHERE fancrawl_instagram_id = 571377691 GROUP BY added_follower_instagram_id HAVING cnt > 1;
 
           connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers WHERE fancrawl_instagram_id = "'+users[i]+'" GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ users[i] +'" AS fancrawl_instagram_id', function(err, results, fields) {
-          // connection.query('SELECT * FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
             if (err) throw err;
               // console.log( results );
             if ( results[0].length ) {
@@ -3301,7 +3300,7 @@ var crypto                                = require('crypto'),
             if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED: ", fancrawl_instagram_id, new_instagram_following_id);
 
-              connection.query('SELECT * FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+              connection.query('SELECT * FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
                 if (err) throw err;
                 if ( !rows.length ) {
                   connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
