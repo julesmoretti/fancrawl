@@ -1509,6 +1509,64 @@ var crypto                                = require('crypto'),
     }
     }
 
+  var selectAllUsers                      = function ( callback ) {
+    connection.query('SELECT fancrawl_instagram_id FROM access_right', function(err, rows, fields) {
+      if (err) throw err;
+        var result = []
+      if ( rows.length ) {
+        for ( var i = 0; i < rows.length; i++ ) {
+          result.push( rows[i].fancrawl_instagram_id );
+        }
+      }
+        if ( callback ) {
+          callback( result );
+        }
+    });
+  }
+
+
+  var deleteDuplicateBetaFollowers        = function () {
+
+    selectAllUsers( function( users ){
+
+      if ( users && users.length ) {
+        for ( var i = 0; i < users.length; i++ ) {
+          // SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers WHERE fancrawl_instagram_id = 571377691 GROUP BY added_follower_instagram_id HAVING cnt > 1;
+
+          connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers WHERE fancrawl_instagram_id = "'+users[i]+'" GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ users[i] +'" AS fancrawl_instagram_id', function(err, results, fields) {
+          // connection.query('SELECT * FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+            if (err) throw err;
+              // console.log( results );
+            if ( results[0].length ) {
+              // results[1][0].fancrawl_instagram_id
+              // console.log( 'Found something in first one', results[0].length );
+              for ( var j = 0; j < results[0].length; j++ ) {
+
+                connection.query('SELECT id, added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+ results[1][0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ results[0][j].added_follower_instagram_id +'"; SELECT "'+ results[1][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
+                  if (err) throw err;
+                  // console.log('within next selection', results );
+                  // console.log('within next selection fancrawl to kill', results[0] );
+                  // console.log('within next selection fancrawl user', results[1][0].fancrawl_instagram_id );
+
+                  for ( var k = 1; k < results[0].length; k++ ) {
+                    connection.query('DELETE FROM beta_followers WHERE id = "'+results[0][k].id+'"; select "'+results[0][k].id+'" AS id', function(err, results, fields) {
+                      if (err) throw err;
+                      console.log('DELETED: ', results[1][0].id );
+                    });
+                  }
+
+                });
+              }
+            }
+          });
+        }
+      }
+
+    });
+
+    }
+    deleteDuplicateBetaFollowers();
+
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
 //  =============================================================================
@@ -3243,16 +3301,24 @@ var crypto                                = require('crypto'),
             if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED: ", fancrawl_instagram_id, new_instagram_following_id);
 
-              connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
+              connection.query('SELECT * FROM beta_followers WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND followed_by_username = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                 if (err) throw err;
-                console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
-                verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
+                if ( !rows.length ) {
+                  connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
+                    if (err) throw err;
+                    console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
+                    verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
 
-                if ( callback ) {
-                  console.log('callback: ', fancrawl_instagram_id, new_instagram_following_id );
-                  callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                    if ( callback ) {
+                      console.log('callback: ', fancrawl_instagram_id, new_instagram_following_id );
+                      callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                    }
+                  });
+                } else {
+                  console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist');
                 }
               });
+
             } else {
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               sendMail( "571377691", "POST_follow - doing nothing at all", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
