@@ -3305,7 +3305,9 @@ var crypto                                = require('crypto'),
                 if ( !rows.length ) {
                   connection.query('INSERT INTO beta_followers SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
                     if (err) throw err;
+                    console.log('X-X-X-X-X-X-X-X-X-X-X-X')
                     console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
+                    console.log('X-X-X-X-X-X-X-X-X-X-X-X')
                     verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
 
                     if ( callback ) {
