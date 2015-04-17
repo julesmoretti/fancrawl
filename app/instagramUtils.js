@@ -1456,7 +1456,7 @@ var crypto                                = require('crypto'),
                   timer_post( arguments[0] );
                 }
                 // console.log("SETTIMOUT 5 WORKS!!!!", fancrawl_instagram_id);
-            }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.25 minute delay)
+            }, Math.floor( ( Math.random() * 10000 ) + 60000 ), fancrawl_instagram_id ); // (1~1.1 minute delay) - MAX 60 per hour
           })(fancrawl_instagram_id, state);
         }
       }
