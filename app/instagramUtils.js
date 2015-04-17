@@ -211,7 +211,7 @@ var crypto                                = require('crypto'),
                   // if both follow and unfollow queue has something
                   } else if ( followCount.length && unfollowCount.length ) {
 
-                    timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 3;
+                    timer[ rows[0].fancrawl_instagram_id ].post_counter_cap = 2;
 
                     if ( timer[ rows[0].fancrawl_instagram_id ].post_counter === 0 ) {
 
