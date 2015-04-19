@@ -62,7 +62,7 @@ CREATE TABLE `settiexitngs` (
 -- Original followed_by list
 -- ---
 
--- DROP TABLE IF EXISTS `s_followed_by`;
+DROP TABLE IF EXISTS `s_followed_by`;
 
 CREATE TABLE `s_followed_by` (
   `id` INT(20) AUTO_INCREMENT,
