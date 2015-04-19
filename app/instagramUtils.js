@@ -479,6 +479,14 @@ var crypto                                = require('crypto'),
 
                     timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
 
+                    // worst case
+                    // Process is either:
+                      // NEW
+                      // VERIFY >
+                      // databaseData
+                      // HASH
+
+
                     if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
                       // get new
@@ -1433,7 +1441,7 @@ var crypto                                = require('crypto'),
                     timer_quick( arguments[0] );
                   }
                   // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-            }, Math.floor( ( Math.random() * 500 ) + 2000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec
+            }, Math.floor( ( Math.random() * 1000 ) + 12000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec Min but going for 12 seconds
           })(fancrawl_instagram_id, state);
 
         } else if ( state === "post_short" ) {
