@@ -412,11 +412,11 @@ var crypto                                = require('crypto'),
   var timer_quick                         = function ( fancrawl_instagram_id ) {
 
       if ( fancrawl_instagram_id === userWatch && timer[ fancrawl_instagram_id ] ) {
-        // console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].quick_queue.new ) );
-        // console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
-        // console.log( "------ QC COU CAP # : " + timer[ fancrawl_instagram_id ].quick_counter_cap );
-        // console.log( "------ QC COUNTER # : " + timer[ fancrawl_instagram_id ].quick_counter );
-        // console.log( "------------------------------------------------------------" );
+        console.log( "------ TIMER OF : " + fancrawl_instagram_id, JSON.stringify( timer[ fancrawl_instagram_id ].quick_queue.new ) );
+        console.log( "------ TIMER OF : " + fancrawl_instagram_id, timer[ fancrawl_instagram_id ] );
+        console.log( "------ QC COU CAP # : " + timer[ fancrawl_instagram_id ].quick_counter_cap );
+        console.log( "------ QC COUNTER # : " + timer[ fancrawl_instagram_id ].quick_counter );
+        console.log( "------------------------------------------------------------" );
       }
 
       // IF POST_MINUTE = FALSE
@@ -478,14 +478,6 @@ var crypto                                = require('crypto'),
                   } else if ( count_databaseData.length !== 0 && count_verify.length !== 0 && count_new.length !== 0 && count_hash.length !== 0 ) {
 
                     timer[ rows[0].fancrawl_instagram_id ].quick_counter_cap = 4;
-
-                    // worst case
-                    // Process is either:
-                      // NEW
-                      // VERIFY >
-                      // databaseData
-                      // HASH
-
 
                     if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter === 0 ) {
 
@@ -1441,7 +1433,7 @@ var crypto                                = require('crypto'),
                     timer_quick( arguments[0] );
                   }
                   // console.log("SETTIMOUT 3 WORKS!!!!", fancrawl_instagram_id);
-            }, Math.floor( ( Math.random() * 2000 ) + 15000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec Min but going for 12 seconds
+            }, Math.floor( ( Math.random() * 2000 ) + 12000 ), fancrawl_instagram_id ); // 2 ~ 2.5 sec Min but going for 12 seconds
           })(fancrawl_instagram_id, state);
 
         } else if ( state === "post_short" ) {
@@ -1532,14 +1524,6 @@ var crypto                                = require('crypto'),
     });
   }
 
-  selectAllUsers( function( results ) {
-    console.log( results );
-    console.log( 'testing inserting into MySQL' );
-    connection.query('INSERT INTO access_right SET fancrawl_instagram_id = "TEMPTEST"; SELECT "TEMPTEST" AS fancrawl_instagram_id', function(err, results, fields) {
-      if (err) throw err;
-      console.log(results);
-    })
-  });
 
   var deleteDuplicateBetaFollowers        = function () {
 
