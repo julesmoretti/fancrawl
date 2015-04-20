@@ -1566,7 +1566,7 @@ var crypto                                = require('crypto'),
     });
 
     }
-    // deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
+    deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
 
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
       connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
@@ -1621,7 +1621,7 @@ selectAllUsers( function( users ){
     //  TO  | startIndividual
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GO_start                            = function ( ) {
-      return;  // HIDE ON DB UPDATE
+      // return;  // HIDE ON DB UPDATE
       console.log("============================================");
       console.log("SERVER RESTARTED - STARTING CLEANING PROCESS");
 
