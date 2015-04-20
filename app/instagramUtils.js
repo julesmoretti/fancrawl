@@ -21,7 +21,7 @@ var crypto                                = require('crypto'),
                                               database: 'fancrawl',
                                               host: 'localhost',
                                               port: 3306,
-                                              socketPath: process.env.SOCKETPATH,
+                                              // socketPath: process.env.SOCKETPATH,
                                               multipleStatements: true
                                             });
 
@@ -1532,6 +1532,9 @@ var crypto                                = require('crypto'),
     });
   }
 
+  selectAllUsers( function( results ) {
+    console.log( results );
+  });
 
   var deleteDuplicateBetaFollowers        = function () {
 
