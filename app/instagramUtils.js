@@ -1932,6 +1932,7 @@ var crypto                                = require('crypto'),
 
           if ( new_count.length < ( queueCap - 2 ) ) {
 
+            // TODO HEAVY LOAD HERE!!!
             connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id, null AS id, null AS instagram_user_id UNION ALL SELECT null, null, null, id, instagram_user_id FROM hash_tags WHERE id > "' + rows[0].last_id + '" AND hash_tag = "' + rows[1].hash_tag + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers WHERE fancrawl_instagram_id = "'+ rows[1].fancrawl_instagram_id +'" ) ORDER BY id LIMIT 2', function(err, rows, fields) {
               if (err) throw err;
 
@@ -2468,18 +2469,20 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var add_hash_data                       = function ( fancrawl_instagram_id, body, hash_tag ) {
-      // console.log("add_hash_data");
+      // console.log("add_hash_data", body );
+
       for ( var i = 0; i < body.data.length; i++ ) {
         if ( body && body.data && body.data[i] && body.data[i].type === 'image' ) {
           if ( body.data[i].id && body.data[i].created_time && body.data[i].user && body.data[i].user.id ) {
             var result = body.data[i];
+            // console.log( "add_hash_data", result.user.id, result.id, result.created_time );
             // checks if it is already in hash_tag database... if not saves it in there
 
               setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
                 function(){
                     insert_hash_data( arguments[2], arguments[3], arguments[4], arguments[5] );
                     delete setTimeouts[ arguments[0] ][ arguments[1] ];
-              }, 1000 * ( 1000 * i ), fancrawl_instagram_id, processCounter, result.user.id, result.id, hash_tag, result.created_time ); // 1 min wait
+              }, 1000 + ( 2000 * i ), fancrawl_instagram_id, processCounter, result.user.id, result.id, hash_tag, result.created_time ); // 1 min wait
               processCounter++;
 
               // insert_hash_data( result.user.id, result.id, hash_tag, result.created_time );
