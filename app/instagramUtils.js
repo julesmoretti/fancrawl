@@ -1534,6 +1534,11 @@ var crypto                                = require('crypto'),
 
   selectAllUsers( function( results ) {
     console.log( results );
+    console.log( 'testing inserting into MySQL' );
+    connection.query('INSERT INTO access_right SET fancrawl_instagram_id = "TEMPTEST"; SELECT "TEMPTEST" AS fancrawl_instagram_id', function(err, results, fields) {
+      if (err) throw err;
+      console.log(results);
+    })
   });
 
   var deleteDuplicateBetaFollowers        = function () {
