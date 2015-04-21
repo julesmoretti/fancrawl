@@ -138,7 +138,7 @@ CREATE TABLE `hash_tags` (
   `id` INT AUTO_INCREMENT,
   `hash_tag` VARCHAR(20),
   `instagram_photo_id` VARCHAR(20),
-  `instagram_user_id` VARCHAR(20),
+  `instagram_user_id` VARCHAR(50),
   `created_time` TIMESTAMP,
   PRIMARY KEY (`id`)
 ) COMMENT 'Hash Tags';

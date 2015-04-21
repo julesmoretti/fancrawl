@@ -948,7 +948,7 @@ var crypto                                = require('crypto'),
 
                           delete timer[ fancrawl_instagram_id ].quick_queue.new[ uniqueProcessCounter ];
 
-                          connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+                          connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
                             if (err) throw err;
                           });
 
@@ -1070,7 +1070,7 @@ var crypto                                = require('crypto'),
                         if ( !usersInfo[ fancrawl_instagram_id ] ) {
                           usersInfo[ fancrawl_instagram_id ] = {};
                         }
-                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                           if (err) throw err;
                           // usersInfo[ fancrawl_instagram_id ].APINotAllowedError = "B There has been a special API Error - Report this issue.";
                           delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
@@ -1097,7 +1097,7 @@ var crypto                                = require('crypto'),
 
                         delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = 0 WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                           if (err) throw err;
                           // console.log("NEITHER FOLLOWING SO SET TO 5 for user: " + new_instagram_following_id );
                         });
@@ -1203,7 +1203,7 @@ var crypto                                = require('crypto'),
                         if ( !usersInfo[ fancrawl_instagram_id ] ) {
                           usersInfo[ fancrawl_instagram_id ] = {};
                         }
-                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                           if (err) throw err;
                           delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
                         });
@@ -1229,7 +1229,7 @@ var crypto                                = require('crypto'),
 
                         delete timer[ fancrawl_instagram_id ].quick_queue.verify[ uniqueProcessCounter ];
 
-                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = 0 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                        connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = 0 WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                           if (err) throw err;
                         });
 
@@ -1528,6 +1528,20 @@ var crypto                                = require('crypto'),
     });
   }
 
+  var selectAllHash_tags                   = function ( callback ) {
+    connection.query('SELECT hash_tag FROM users_hash_tags', function(err, rows, fields) {
+      if (err) throw err;
+        var result = []
+      if ( rows.length ) {
+        for ( var i = 0; i < rows.length; i++ ) {
+          result.push( rows[i].hash_tag );
+        }
+      }
+        if ( callback ) {
+          callback( result );
+        }
+    });
+  }
 
   var deleteDuplicateBetaFollowers        = function () {
 
@@ -1535,7 +1549,7 @@ var crypto                                = require('crypto'),
 
       if ( users && users.length ) {
         for ( var i = 0; i < users.length; i++ ) {
-          connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers_'+users[i]+' WHERE fancrawl_instagram_id = "'+users[i]+'" GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ users[i] +'" AS fancrawl_instagram_id', function(err, results, fields) {
+          connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers_'+users[i]+' GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ users[i] +'" AS fancrawl_instagram_id', function(err, results, fields) {
             if (err) throw err;
               // console.log( results );
             if ( results[0].length ) {
@@ -1543,7 +1557,7 @@ var crypto                                = require('crypto'),
               // console.log( 'Found something in first one', results[0].length );
               for ( var j = 0; j < results[0].length; j++ ) {
 
-                connection.query('SELECT id, added_follower_instagram_id FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+ results[1][0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ results[0][j].added_follower_instagram_id +'"; SELECT "'+ results[1][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
+                connection.query('SELECT id, added_follower_instagram_id FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ results[0][j].added_follower_instagram_id +'"; SELECT "'+ results[1][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
                   if (err) throw err;
                   // console.log('within next selection', results );
                   // console.log('within next selection fancrawl to kill', results[0] );
@@ -1566,7 +1580,7 @@ var crypto                                = require('crypto'),
     });
 
     }
-    deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
+  // deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
 
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
       connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
@@ -1590,24 +1604,65 @@ var crypto                                = require('crypto'),
     });
   }
 
-// createUsersBFT( 571377691 );
-// checkUsersBFTExist( 571377691, function( exist ){
-  // console.log( 'the existance is: ', exist );
-// });
+  var createUsersHTT                      = function ( hash_tag, fancrawl_instagram_id, callback ) {
+      connection.query('CREATE TABLE hash_tags_'+hash_tag+' ( id INT AUTO_INCREMENT, hash_tag VARCHAR(20), instagram_photo_id VARCHAR(50), instagram_user_id VARCHAR(20), created_time TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
+        if (err) throw err;
+        console.log('table created');
+        callback( hash_tag, fancrawl_instagram_id );
+      });
+  }
 
-selectAllUsers( function( users ){
-  for ( var i = 0; i < users.length; i++ ) {
-    checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
-      if ( !exist ) {
-        createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-          connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id, function(err, rows, fields) {
-            if (err) throw err;
-          });
-        });
+  var checkUsersHTTExist                  = function ( hash_tag, fancrawl_instagram_id, callback ) {
+    connection.query('SHOW TABLES', function(err, rows, fields) {
+      if (err) throw err;
+      var exist = false;
+      for ( var i = 0; i < rows.length; i++ ) {
+        if ( rows[i].Tables_in_fancrawl === 'hash_tags_'+hash_tag ) {
+          exist = true;
+        }
       }
+
+      callback( exist, hash_tag, fancrawl_instagram_id );
     });
   }
-});
+
+
+  selectAllHash_tags( function( hash_tags ){
+    // return;
+    for ( var i = 0; i < hash_tags.length; i++ ) {
+      console.log('hash_tags: ', hash_tags[i] );
+      checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
+        if ( !exist ) {
+          console.log( hash_tag, "does not exist" );
+          createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
+            connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
+              if (err) throw err;
+            });
+          });
+        }
+      });
+    }
+  });
+
+  // createUsersBFT( 571377691 );
+  // checkUsersBFTExist( 571377691, function( exist ){
+    // console.log( 'the existance is: ', exist );
+  // });
+
+  selectAllUsers( function( users ){
+    for ( var i = 0; i < users.length; i++ ) {
+      checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
+        if ( !exist ) {
+          createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+            connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id, function(err, rows, fields) {
+              if (err) throw err;
+            });
+          });
+        }
+      });
+    }
+  });
+
 
 //  =============================================================================
 //  UTILITIES CALLED BY MAIN SECTIONS
@@ -1621,7 +1676,7 @@ selectAllUsers( function( users ){
     //  TO  | startIndividual
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GO_start                            = function ( ) {
-      // return;  // HIDE ON DB UPDATE
+      return;  // HIDE ON DB UPDATE
       console.log("============================================");
       console.log("SERVER RESTARTED - STARTING CLEANING PROCESS");
 
@@ -1651,7 +1706,7 @@ selectAllUsers( function( users ){
     //  TO  | timerPostStructure - timerQuickStructure - GET_relationship - timer_post - timer_quick - fetchFromHashInitializer - fetchNewFollowers - cleanDatabase - STOP - sendMail
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var startIndividual                     = function ( fancrawl_instagram_id ) {
-console.log('start individual');
+
       // START USER SPECIFIC CLOCK
       timerPostStructure( fancrawl_instagram_id );
       timerQuickStructure( fancrawl_instagram_id );
@@ -1698,7 +1753,7 @@ console.log('start individual');
                   fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes check current database
-                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count NOT IN (5)', function(err, rows, fields) {
+                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE count NOT IN (5)', function(err, rows, fields) {
                     if (err) throw err;
 
                     if ( rows && rows[0] ) {
@@ -1724,7 +1779,7 @@ console.log('start individual');
                   fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes through current database
-                  connection.query('select fancrawl_instagram_id, added_follower_instagram_id from beta_followers_'+rows[0].fancrawl_instagram_id+' where fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'" AND count not in (5)', function(err, rows, fields) {
+                  connection.query('select fancrawl_instagram_id, added_follower_instagram_id from beta_followers_'+rows[0].fancrawl_instagram_id+' where count not in (5)', function(err, rows, fields) {
                     if (err) throw err;
                     if ( rows && rows[0] ) {
                       setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData = {};
@@ -1766,7 +1821,7 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var fetchNewFollowersInitializer        = function ( fancrawl_instagram_id ) {
 
-      connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, null AS added_follower_instagram_id UNION SELECT null, MAX( CAST( added_follower_instagram_id as UNSIGNED ) ) AS added_follower_instagram_id from beta_followers_'+fancrawl_instagram_id+' where fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
+      connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, null AS added_follower_instagram_id UNION SELECT null, MAX( CAST( added_follower_instagram_id as UNSIGNED ) ) AS added_follower_instagram_id from beta_followers_'+fancrawl_instagram_id , function(err, rows, fields) {
         if (err) throw err;
 
         var currentUser = JSON.parse( rows[0].fancrawl_instagram_id );
@@ -1893,64 +1948,73 @@ console.log('start individual');
 
       connection.query('SELECT fancrawl_instagram_id, hash_tag FROM access_right WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
         if (err) throw err;
+        checkUsersHTTExist( rows[0].hash_tag, rows[0].fancrawl_instagram_id, function( exist, hash_tag, fancrawl_instagram_id ){
+          if ( !exist ) {
+            createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
+              fetchFromHashInitializer( fancrawl_instagram_id, true )
+            });
+          } else {
+            // continue
+            if ( !retry && rows && rows[0] && rows[0].hash_tag ) {
+              // build up hash library
 
-        if ( !retry && rows && rows[0] && rows[0].hash_tag ) {
-          // build up hash library
+              timer[ fancrawl_instagram_id ].quick_queue.hash[ processCounter ] = { 'hash_tag' : rows[0].hash_tag };
+              processCounter++;
+            }
 
-          timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ processCounter ] = { 'hash_tag' : rows[0].hash_tag };
-          processCounter++;
-        }
-
-        connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag, null AS last_id UNION ALL SELECT null, null, last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, rows, fields ) {
-          if (err) throw err;
-
-          // if something and last_id
-          if ( rows && rows[1] && rows[1].last_id !== null ) {
-
-            fetchFromHash( rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, rows[1].last_id );
-            console.log("-- STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
-
-          // if something but no last_id
-          } else if ( rows && rows[1] && rows[1].last_id === null ) {
-
-            connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "' + rows[0].ori_hash_tag + '" AS ori_hash_tag, null AS id UNION ALL SELECT null, null, id FROM hash_tags WHERE hash_tag = "' + rows[0].ori_hash_tag + '" LIMIT 2', function( err, rows, fields ) {
+            connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag, null AS last_id UNION ALL SELECT null, null, last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, rows, fields ) {
               if (err) throw err;
 
-              if ( rows && rows[1] && rows[1].id ) {
+              // if something and last_id
+              if ( rows && rows[1] && rows[1].last_id !== null ) {
 
-                var last_id = JSON.stringify( rows[1].id - 1 );
-
-                fetchFromHash( rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, last_id );
+                fetchFromHash( rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, rows[1].last_id );
                 console.log("-- STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
-              } else {
 
-                var time = 1000 * 10; // 20 seconds
+              // if something but no last_id
+              } else if ( rows && rows[1] && rows[1].last_id === null ) {
 
-                setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
-                  function(){
-                  fetchFromHashInitializer( arguments[0], true );
-                  delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                }, time, rows[0].fancrawl_instagram_id, processCounter );
-                processCounter++;
+                connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "' + rows[0].ori_hash_tag + '" AS ori_hash_tag, null AS id UNION ALL SELECT null, null, id FROM hash_tags_' + rows[0].ori_hash_tag + ' LIMIT 2', function( err, rows, fields ) {
+                  if (err) throw err;
 
+                  if ( rows && rows[1] && rows[1].id ) {
+
+                    var last_id = JSON.stringify( rows[1].id - 1 );
+
+                    fetchFromHash( rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, last_id );
+                    console.log("-- STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
+                  } else {
+
+                    var time = 1000 * 10; // 20 seconds
+
+                    setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                      function(){
+                      fetchFromHashInitializer( arguments[0], true );
+                      delete setTimeouts[ arguments[0] ][ arguments[1] ];
+                    }, time, rows[0].fancrawl_instagram_id, processCounter );
+                    processCounter++;
+
+                  }
+                });
+
+              // if nothing insert it into users_hash_tags table and re-run
+              } else if ( rows && !rows[1] ) {
+
+                connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + rows[0].ori_hash_tag + '", fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '"; SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
+                  if (err) throw err;
+
+                  fetchFromHashInitializer( results[1].fancrawl_instagram_id );
+                  console.log("-- STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
+                });
               }
-            });
-
-          // if nothing insert it into users_hash_tags table and re-run
-          } else if ( rows && !rows[1] ) {
-
-            connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + rows[0].ori_hash_tag + '", fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '"; SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
-              if (err) throw err;
-
-              fetchFromHashInitializer( results[1].fancrawl_instagram_id );
-              console.log("-- STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
-            });
+            })
           }
-        })
+        });
+
+
       });
     };
 
-//  XXXXXXXXXXXXXXX
 //  -----------------------------------------------------------------------------
 //  ZERO = check if in already in beta_followers databases
 //  -----------------------------------------------------------------------------
@@ -1976,8 +2040,7 @@ console.log('start individual');
 
           if ( new_count.length < ( queueCap - 2 ) ) {
 
-            // TODO HEAVY LOAD HERE!!!
-            connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id, null AS id, null AS instagram_user_id UNION ALL SELECT null, null, null, id, instagram_user_id FROM hash_tags WHERE id > "' + rows[0].last_id + '" AND hash_tag = "' + rows[1].hash_tag + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers_'+rows[1].fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+ rows[1].fancrawl_instagram_id +'" ) ORDER BY id LIMIT 2', function(err, rows, fields) {
+            connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id, null AS id, null AS instagram_user_id UNION ALL SELECT null, null, null, id, instagram_user_id FROM hash_tags_' + rows[1].hash_tag + ' WHERE id > "' + rows[0].last_id + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers_'+rows[1].fancrawl_instagram_id+' ) ORDER BY id LIMIT 2', function(err, rows, fields) {
               if (err) throw err;
 
               if ( rows && rows[1] && rows[1].instagram_user_id ) {
@@ -2038,14 +2101,14 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var verifyRelationship                  = function ( fancrawl_instagram_id, new_instagram_following_id ) {
 
-      connection.query( 'SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+      connection.query( 'SELECT fancrawl_instagram_id, added_follower_instagram_id, UNIX_TIMESTAMP(creation_date), UNIX_TIMESTAMP(now()) FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
         if ( rows && rows[0] ) {
           // CHECK TIME DIFFERENCE
           // var diffTimeZone = ( rows[0]['UNIX_TIMESTAMP(now())'] - rows[0]['UNIX_TIMESTAMP(creation_date)'] ) / 60 / 60;
           time_difference( rows[0].fancrawl_instagram_id, new_instagram_following_id, rows[0]['UNIX_TIMESTAMP(creation_date)'], rows[0]['UNIX_TIMESTAMP(now())'], function( fancrawl_instagram_id, new_instagram_following_id, code ){
-            connection.query('UPDATE beta_followers_'+rows[0].fancrawl_instagram_id+' SET count = ' + code + ' WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+            connection.query('UPDATE beta_followers_'+rows[0].fancrawl_instagram_id+' SET count = ' + code + ' WHERE added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
               if (err) throw err;
             });
 
@@ -2173,17 +2236,17 @@ console.log('start individual');
 
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
-          connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count = 5 AND following_status = 1', function(err, rows, fields) {
+          connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE count = 5 AND following_status = 1', function(err, rows, fields) {
             if (err) throw err;
             if ( rows && rows[0] ){
               for ( var i = 0; i < rows.length; i++ ) {
-                connection.query('UPDATE beta_followers_'+rows[i].fancrawl_instagram_id+' SET count = 0 WHERE fancrawl_instagram_id = "'+rows[i].fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
+                connection.query('UPDATE beta_followers_'+rows[i].fancrawl_instagram_id+' SET count = 0 WHERE added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
                 });
               }
             }
           });
-          connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 1', function(err, rows, fields) {
+          connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE count NOT IN (5) AND following_status = 1', function(err, rows, fields) {
             if (err) throw err;
 
             if ( rows && rows[0] ) {
@@ -2215,11 +2278,11 @@ console.log('start individual');
               callback( fancrawl_instagram_id );
             }
           });
-          connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND count NOT IN (5) AND following_status = 0', function(err, rows, fields) {
+          connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE count NOT IN (5) AND following_status = 0', function(err, rows, fields) {
             if (err) throw err;
             if ( rows && rows[0] ){
               for ( var i = 0; i < rows.length; i++ ) {
-                connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
+                connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5 WHERE added_follower_instagram_id = "'+rows[i].added_follower_instagram_id+'"', function(err, rows, fields) {
                   if (err) throw err;
                 });
               }
@@ -2342,7 +2405,7 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkIfInDatabase                   = function ( fancrawl_instagram_id, new_instagram_following_id, callback ) {
 
-      connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id , function(err, rows, fields) {
         if (err) throw err;
         if ( rows && rows[0] ) {
           for ( var i = 0; i < rows.length; i++ ) {
@@ -2406,7 +2469,7 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var checkDuplicate                      = function ( fancrawl_instagram_id, callback ) {
 
-      connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+      connection.query('SELECT added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id , function(err, rows, fields) {
         if (err) throw err;
         // need to check for duplicate
         if ( rows && rows[0] ) {
@@ -2416,7 +2479,7 @@ console.log('start individual');
                 // console.log("Found Duplicate ID #: ", rows[i].added_follower_instagram_id );
                 // console.log("should delete all dups and add it back to DB as a 0 value to be checked again");
                 var new_instagram_following_id = rows[i].added_follower_instagram_id;
-                connection.query('DELETE FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+new_instagram_following_id+'" AND fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+                connection.query('DELETE FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                   if (err) throw err;
                   // console.log("fancrawl_instagram_id", fancrawl_instagram_id);
                   // console.log("new_instagram_following_id", new_instagram_following_id);
@@ -2452,7 +2515,7 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var lastWeek                            = function ( fancrawl_instagram_id, callback ) {
 
-      connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" and followed_by_status = 1 and creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
+      connection.query('SELECT TO_DAYS( NOW() ) AS "now", TO_DAYS( creation_date ) AS "dates", COUNT(*) AS count FROM beta_followers_'+fancrawl_instagram_id+' WHERE followed_by_status = 1 and creation_date BETWEEN SUBDATE(CURDATE(), INTERVAL 6 day) AND NOW() GROUP BY DATE_FORMAT(creation_date, "%d");', function(err, rows, fields) {
         if (err) throw err;
         if ( rows && rows[0] ) {
           var result = [];
@@ -2490,7 +2553,7 @@ console.log('start individual');
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var insert_hash_data                    = function ( instagram_user_id, instagram_photo_id, hash_tag, created_time ) {
 
-      connection.query('SELECT hash_tag, instagram_photo_id, created_time from hash_tags where hash_tag = "' + hash_tag + '" AND instagram_photo_id = "' + instagram_photo_id + '"', function(err, rows, fields) {
+      connection.query('SELECT hash_tag, instagram_photo_id, created_time from hash_tags_' + hash_tag + ' WHERE instagram_photo_id = "' + instagram_photo_id + '"', function(err, rows, fields) {
         if (err) throw err;
 
         // if something exist in the database
@@ -2498,7 +2561,7 @@ console.log('start individual');
 
         // otherwise
         } else {
-          connection.query('INSERT INTO hash_tags set hash_tag = "' + hash_tag + '", instagram_user_id = "' + instagram_user_id + '", instagram_photo_id = "' + instagram_photo_id + '", created_time = FROM_UNIXTIME(' + created_time + ')' , function(err, rows, fields) {
+          connection.query('INSERT INTO hash_tags_' + hash_tag + ' SET hash_tag = "' + hash_tag + '", instagram_user_id = "' + instagram_user_id + '", instagram_photo_id = "' + instagram_photo_id + '", created_time = FROM_UNIXTIME(' + created_time + ')' , function(err, rows, fields) {
             if (err) throw err;
           });
         }
@@ -3145,10 +3208,10 @@ console.log('start individual');
             // if ( pbody.data) {
             for ( var i = 0; i < pbody.data.length; i++ ) {
               console.log( pbody.data[i].id );
-              connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+ pbody.data[i].id +'"', function(err, rows, fields) {
+              connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ pbody.data[i].id +'"', function(err, rows, fields) {
                 if (err) throw err;
                 if ( rows && rows[0] ) {
-                  connection.query('UPDATE beta_followers_'+rows[0].fancrawl_instagram_id+' SET count = 0, following_status = 1 WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
+                  connection.query('UPDATE beta_followers_'+rows[0].fancrawl_instagram_id+' SET count = 0, following_status = 1 WHERE added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
                     if (err) throw err;
                     console.log("UPDATED DB");
                   });
@@ -3347,7 +3410,7 @@ console.log('start individual');
             if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED: ", fancrawl_instagram_id, new_instagram_following_id);
 
-              connection.query('SELECT * FROM beta_followers_'+fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
+              connection.query('SELECT * FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
                 if (err) throw err;
                 if ( !rows.length ) {
                   connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
@@ -3481,7 +3544,7 @@ console.log('start individual');
           // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - check secured found : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
           // found in secure database so do not unfollow
           // on success update database with right values
-          connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+          connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 1, followed_by_status = '+followed_by_status+' WHERE added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
             if (err) throw err;
             callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
           });
@@ -3551,7 +3614,7 @@ console.log('start individual');
                   // if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
 
-                  connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                  connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                     if (err) throw err;
                     // if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
@@ -3573,7 +3636,7 @@ console.log('start individual');
                   var pbody = JSON.parse(body);
                   if ( pbody.meta.error_message === 'this user does not exist' ) {
 
-                    connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
                       if (err) throw err;
                       if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
@@ -4125,19 +4188,19 @@ console.log('start individual');
             metrics.following             = rows[0].or_following ;
 
             // count from MySQL all users attempted so far
-            connection.query('SELECT count(*) from beta_followers_'+req.query.id+' where fancrawl_instagram_id = "'+req.query.id+'"', function(err, rows, fields) {
+            connection.query('SELECT count(*) from beta_followers_'+req.query.id , function(err, rows, fields) {
               if (err) throw err;
               metrics.totalCrawled = JSON.parse(rows[0]['count(*)']);
 
               // count from mysql all users still processing that is not with a 4 value
-              connection.query('SELECT count(*) from beta_followers_'+req.query.id+' where fancrawl_instagram_id = "'+req.query.id+'" AND followed_by_status = 1', function(err, rows, fields) {
+              connection.query('SELECT count(*) from beta_followers_'+req.query.id+' where followed_by_status = 1', function(err, rows, fields) {
                 if (err) throw err;
                 metrics.followingFromFanCrawl = JSON.parse(rows[0]['count(*)']);
                 metrics.latestFollowedBy = metrics.followingFromFanCrawl + metrics.followedBy;
 
 
                 // count from mysql all users still processing that is not with a 4 value
-                connection.query('SELECT count(*) from beta_followers_'+req.query.id+' where fancrawl_instagram_id = "'+req.query.id+'" AND count not in (5) AND following_status = 1', function(err, rows, fields) {
+                connection.query('SELECT count(*) from beta_followers_'+req.query.id+' where count not in (5) AND following_status = 1', function(err, rows, fields) {
                   if (err) throw err;
 
                   if ( setTimeouts && setTimeouts[ req.query.id ] && setTimeouts[ req.query.id ].databaseData ) {
@@ -4634,7 +4697,7 @@ console.log('start individual');
                   fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes very current database
-                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND count not in (5)', function(err, rows, fields) {
+                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE count not in (5)', function(err, rows, fields) {
                     if (err) throw err;
 
                     if ( rows && rows[0] ) {
@@ -4662,7 +4725,7 @@ console.log('start individual');
                   fetchNewFollowersInitializer( rows[0].fancrawl_instagram_id );
 
                   // goes very current database
-                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE fancrawl_instagram_id = "'+ rows[0].fancrawl_instagram_id +'" AND count not in (5)', function(err, rows, fields) {
+                  connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+rows[0].fancrawl_instagram_id+' WHERE count not in (5)', function(err, rows, fields) {
                     if (err) throw err;
 
                     if ( rows && rows[0] ) {
