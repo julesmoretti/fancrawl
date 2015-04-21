@@ -1622,7 +1622,7 @@ var crypto                                = require('crypto'),
           exist = true;
         }
       }
-      console.log( 'checkUsersHTTExist rows', exist, hash_tag );
+      // console.log( 'checkUsersHTTExist rows', exist, hash_tag );
       callback( exist, hash_tag, fancrawl_instagram_id );
     });
   }
@@ -1631,10 +1631,10 @@ var crypto                                = require('crypto'),
   selectAllHash_tags( function( hash_tags ){
     // return;
     for ( var i = 0; i < hash_tags.length; i++ ) {
-      console.log('hash_tags: ', hash_tags[i] );
+      // console.log('hash_tags: ', hash_tags[i] );
       checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
         if ( !exist ) {
-          console.log( hash_tag, "does not exist" );
+          // console.log( hash_tag, "does not exist" );
           createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
             connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
               if (err) throw err;
@@ -1949,18 +1949,18 @@ var crypto                                = require('crypto'),
 
       connection.query('SELECT fancrawl_instagram_id, hash_tag FROM access_right WHERE fancrawl_instagram_id = "'+ fancrawl_instagram_id +'"', function(err, rows, fields) {
         if (err) throw err;
-        console.log('fetchFromHashInitializerA', rows[0].hash_tag, fancrawl_instagram_id);
+        // console.log('fetchFromHashInitializerA', rows[0].hash_tag, fancrawl_instagram_id);
         if ( rows[0].hash_tag !== undefined ) {
           checkUsersHTTExist( rows[0].hash_tag, rows[0].fancrawl_instagram_id, function( exist, hash_tag, fancrawl_instagram_id ){
             if ( !exist ) {
 
-              console.log('fetchFromHashInitializerB', rows[0].hash_tag, fancrawl_instagram_id);
+              // console.log('fetchFromHashInitializerB', rows[0].hash_tag, fancrawl_instagram_id);
               createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
                 fetchFromHashInitializer( fancrawl_instagram_id, true )
               });
             } else {
               // continue
-              console.log('fetchFromHashInitializerC', rows[0].hash_tag, fancrawl_instagram_id);
+              // console.log('fetchFromHashInitializerC', rows[0].hash_tag, fancrawl_instagram_id);
               if ( !retry && rows && rows[0] && rows[0].hash_tag ) {
                 // build up hash library
 
@@ -1970,17 +1970,17 @@ var crypto                                = require('crypto'),
 
               connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag, null AS last_id UNION ALL SELECT null, null, last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, rows, fields ) {
                 if (err) throw err;
-                console.log('PASSED THE SELECT');
+                // console.log('PASSED THE SELECT');
                 // if something and last_id
                 if ( rows && rows[1] && rows[1].last_id !== null ) {
-                  console.log(' A PASSED THE SELECT');
+                  // console.log(' A PASSED THE SELECT');
 
                   fetchFromHash( rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, rows[1].last_id );
                   console.log("-- A STARTING FETCHING FOR USER " + rows[0].fancrawl_instagram_id + ", WITH HASH_TAG: ", rows[0].ori_hash_tag );
 
                 // if something but no last_id
                 } else if ( rows && rows[1] && rows[1].last_id === null ) {
-                  console.log(' B PASSED THE SELECT', rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag );
+                  // console.log(' B PASSED THE SELECT', rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag );
 
                   connection.query('SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "' + rows[0].ori_hash_tag + '" AS ori_hash_tag, null AS id UNION ALL SELECT null, null, id FROM hash_tags_' + rows[0].ori_hash_tag + ' LIMIT 2', function( err, rows, fields ) {
                     if (err) throw err;
@@ -2006,7 +2006,7 @@ var crypto                                = require('crypto'),
 
                 // if nothing insert it into users_hash_tags table and re-run
                 } else if ( rows && !rows[1] ) {
-                  console.log(' C PASSED THE SELECT');
+                  // console.log(' C PASSED THE SELECT');
 
                   connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + rows[0].ori_hash_tag + '", fancrawl_instagram_id = "' + rows[0].fancrawl_instagram_id + '"; SELECT "'+ rows[0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
                     if (err) throw err;
@@ -2018,12 +2018,13 @@ var crypto                                = require('crypto'),
             }
           });
         } else {
-          console.log('fetchFromHashInitializer retrying', rows[0].hash_tag, fancrawl_instagram_id);
+          // console.log('fetchFromHashInitializer retrying', rows[0].hash_tag, fancrawl_instagram_id);
           fetchFromHashInitializer( fancrawl_instagram_id, true );
         }
       });
     };
 
+//  XXXXXXXXXX
 //  -----------------------------------------------------------------------------
 //  ZERO = check if in already in beta_followers databases
 //  -----------------------------------------------------------------------------
@@ -2049,33 +2050,46 @@ var crypto                                = require('crypto'),
 
           if ( new_count.length < ( queueCap - 2 ) ) {
 
-            connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id, null AS id, null AS instagram_user_id UNION ALL SELECT null, null, null, id, instagram_user_id FROM hash_tags_' + rows[1].hash_tag + ' WHERE id > "' + rows[0].last_id + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers_'+rows[1].fancrawl_instagram_id+' ) ORDER BY id LIMIT 2', function(err, rows, fields) {
+            // TODO STILL TOO SLOW OF A REQUEST NEED SIMPLER STRATEGY
+            // connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id, null AS id, null AS instagram_user_id UNION ALL SELECT null, null, null, id, instagram_user_id FROM hash_tags_' + rows[1].hash_tag + ' WHERE id > "' + rows[0].last_id + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers_'+rows[1].fancrawl_instagram_id+' ) ORDER BY id LIMIT 2', function(err, rows, fields) {
+            connection.query('SELECT "'+ rows[1].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[1].hash_tag +'" AS ori_hash_tag, "'+ rows[0].last_id +'" AS last_id; SELECT id, instagram_user_id FROM hash_tags_' + rows[1].hash_tag + ' WHERE id > "' + rows[0].last_id + '" AND instagram_user_id NOT IN ( SELECT added_follower_instagram_id FROM beta_followers_'+rows[1].fancrawl_instagram_id+' ) ORDER BY id LIMIT 1', function(err, results, fields) {
               if (err) throw err;
+              // console.log('+++++++++++++++++++++++++++++++');
+              // console.log('+++++++++++++++++++++++++++++++');
+              // console.log('fetchFromHash', results)
 
-              if ( rows && rows[1] && rows[1].instagram_user_id ) {
+              fetchFromHash [ [ { fancrawl_instagram_id: '571377691',
+                              ori_hash_tag: 'red',
+                              last_id: '0' } ],
+                          [ { id: 1, instagram_user_id: '1550264209' },
+                            { id: 2, instagram_user_id: '1801065225' } ] ]
+              // console.log('+++++++++++++++++++++++++++++++');
+              // console.log('+++++++++++++++++++++++++++++++');
+              // return;
+              if ( results && results[1] && results[1][0] && results[1][0].instagram_user_id ) {
 
-                timer[ rows[0].fancrawl_instagram_id ].quick_queue.new[ processCounter ] = { 'new_instagram_following_id' : rows[1].instagram_user_id, 'last_id' : rows[1].id, 'hash_tag' : rows[0].ori_hash_tag };
+                timer[ results[0][0].fancrawl_instagram_id ].quick_queue.new[ processCounter ] = { 'new_instagram_following_id' : results[1][0].instagram_user_id, 'last_id' : results[1][0].id, 'hash_tag' : results[0][0].ori_hash_tag };
                 processCounter++;
 
                 // launch fetchNew again after 5 sec
                 var time = 1000 * 5; // 5 seconds
 
-                setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                setTimeouts[ results[0][0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
                   function(){
                   fetchFromHash( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[3] ];
-                }, time, rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, rows[1].id, processCounter );
+                }, time, results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[1][0].id, processCounter );
                 processCounter++;
 
               } else {
                 // wait longer
                 var time = 1000 * 5; // 5 seconds
 
-                setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                setTimeouts[ results[0][0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
                   function(){
                   fetchFromHash( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[3] ];
-                }, time, rows[0].fancrawl_instagram_id, rows[0].ori_hash_tag, rows[0].last_id, processCounter );
+                }, time, results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[0][0].last_id, processCounter );
                 processCounter++;
               }
             });
