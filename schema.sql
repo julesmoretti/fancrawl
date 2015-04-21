@@ -92,26 +92,6 @@ CREATE TABLE `s_following` (
 
 
 -- ---
--- Table 'beta_followers'
--- Attempted followers
--- ---
-
-DROP TABLE IF EXISTS `beta_followers`;
-
-CREATE TABLE `beta_followers` (
-  `id` INT  AUTO_INCREMENT,
-  `fancrawl_instagram_id` VARCHAR(20),
-  `added_follower_instagram_id` VARCHAR(20),
-  `count` INT(9) DEFAULT 0,
-  `following_status` INT(1) DEFAULT 1,
-  `followed_by_status` INT(1) DEFAULT 0,
-  `creation_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `refresh_date` TIMESTAMP,
-  PRIMARY KEY (`id`)
-) COMMENT 'Attempted followers';
-
-
--- ---
 -- Table 'users_hash_tags'
 -- Original users_hash_tags list
 -- ---
@@ -125,20 +105,3 @@ CREATE TABLE `users_hash_tags` (
   `last_id` VARCHAR(20),
   PRIMARY KEY (`id`)
 ) COMMENT 'Original users_hash_tags list';
-
-
--- ---
--- Table 'hash_tags'
--- Attempted followers
--- ---
-
-DROP TABLE IF EXISTS `hash_tags`;
-
-CREATE TABLE `hash_tags` (
-  `id` INT AUTO_INCREMENT,
-  `hash_tag` VARCHAR(20),
-  `instagram_photo_id` VARCHAR(20),
-  `instagram_user_id` VARCHAR(50),
-  `created_time` TIMESTAMP,
-  PRIMARY KEY (`id`)
-) COMMENT 'Hash Tags';
