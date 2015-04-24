@@ -2740,10 +2740,11 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
           if (!error && response.statusCode == 200) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
+
             var pbody = JSON.parse(body);
             // if( pbody ) {
               // if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
@@ -2823,15 +2824,16 @@ var crypto                                = require('crypto'),
 
         request( options, function ( error, response, body ) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
           // if ( fancrawl_instagram_id === '571377691' ) {
           //   console.log("relationship "+new_instagram_following_id+" : ", body);
           // }
 
           // CHECK FOR BODY
           if ( !error && response.statusCode === 200 ) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
+
             // if ( typeof body === "string" ) {
               var pbody = JSON.parse( body );
               clearNotifications( fancrawl_instagram_id );
@@ -3060,12 +3062,14 @@ var crypto                                = require('crypto'),
 
             request(options, function (error, response, body) {
 
-              // checks the App rate limit and pauses all timers if needs be
-              checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
               if ( !error && response.statusCode == 200 ) {
-              var pbody = JSON.parse( body );
-              clearNotifications( fancrawl_instagram_id );
+
+                // checks the App rate limit and pauses all timers if needs be
+                checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
+
+                var pbody = JSON.parse( body );
+                clearNotifications( fancrawl_instagram_id );
+
                 if ( pbody.data && pbody.data[0] ) {
 
                   if ( pbody.pagination && pbody.pagination.next_url ) {
@@ -3132,11 +3136,10 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
-
           if ( !error && response.statusCode == 200 ) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             var pbody = JSON.parse(body);
             clearNotifications( fancrawl_instagram_id );
@@ -3214,10 +3217,10 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
           if ( !error && response.statusCode === 200 ) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             var pbody = JSON.parse(body);
             clearNotifications( fancrawl_instagram_id );
@@ -3320,11 +3323,10 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
-
           if ( !error && response.statusCode == 200 ) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             var pbody = JSON.parse(body);
             clearNotifications( fancrawl_instagram_id );
@@ -3398,10 +3400,10 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          // checks the App rate limit and pauses all timers if needs be
-          checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
           if (!error && response.statusCode === 200) {
+
+            // checks the App rate limit and pauses all timers if needs be
+            checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             // if( body ) {
             var pbody = JSON.parse(body);
@@ -3596,12 +3598,13 @@ var crypto                                = require('crypto'),
 
             request(options, function (error, response, body) {
 
-              // checks the App rate limit and pauses all timers if needs be
-              checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
-
             // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
             // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
               if (!error && response.statusCode === 200) {
+
+                // checks the App rate limit and pauses all timers if needs be
+                checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
+
                 var pbody = JSON.parse(body);
                 clearNotifications( fancrawl_instagram_id );
 
