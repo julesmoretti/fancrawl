@@ -3823,7 +3823,7 @@ var crypto                                = require('crypto'),
 
           // pause and slow down user timer
 
-          if ( timer && timer[ fancrawl_instagram_id ] timer[ fancrawl_instagram_id ].post_delay_call === false ) {
+          if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
             timer[ fancrawl_instagram_id ].post_delay_call = true;
             timer[ fancrawl_instagram_id ].post_delay = true;
 
