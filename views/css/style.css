@@ -445,7 +445,7 @@ html {
           color: white;
           font-family: "access", sans-serif;
           font-style: normal;
-          font-weight: 900;
+          /*font-weight: 500;*/
           opacity: 0.5; }
           html body #box .lens span.page_not_found {
             top: calc( 50% - 42px);
