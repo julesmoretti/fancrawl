@@ -2156,7 +2156,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("+++++ SETTIMOUT CODE = 3");
+                  if ( arguments[0] === userWatch ) console.log("+++++ SETTIMOUT CODE = 3");
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 1 day
@@ -2168,7 +2168,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("+++++ SETTIMOUT CODE = 2");
+                  if ( arguments[0] === userWatch ) console.log("+++++ SETTIMOUT CODE = 2");
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 1 hour
@@ -2180,7 +2180,7 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("+++++ SETTIMOUT CODE = 1", arguments[0] );
+                  if ( arguments[0] === userWatch ) console.log("+++++ SETTIMOUT CODE = 1", arguments[0] );
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             // less then 5 min
@@ -2192,15 +2192,15 @@ var crypto                                = require('crypto'),
                 function(){
                   clockManager( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[1] ];
-                  console.log("+++++ SETTIMOUT CODE = 0", arguments[0] );
+                  if ( arguments[0] === userWatch ) console.log("+++++ SETTIMOUT CODE = 0", arguments[0] );
               }, delay, fancrawl_instagram_id, new_instagram_following_id, code ); // time between adding new followers (1 min wait)
 
             } else {
-              console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
+              if ( fancrawl_instagram_id === userWatch ) console.log("VERIFY RELATIONSHIP -  DID NOT FIND CODE: ", code);
             }
           });
         } else {
-          console.log("VERIFY RELATIONSHIP - DID NOT FOUND IN DATABASE! ", new_instagram_following_id );
+          if ( fancrawl_instagram_id === userWatch ) console.log("VERIFY RELATIONSHIP - DID NOT FOUND IN DATABASE! ", new_instagram_following_id );
         }
       });
     };
@@ -2237,7 +2237,7 @@ var crypto                                = require('crypto'),
       timerPostStructure( fancrawl_instagram_id );
       timerQuickStructure( fancrawl_instagram_id );
 
-      console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id );
+      if ( fancrawl_instagram_id === userWatch ) console.log("EMPTY TIMER QUEUES FROM SWITCH: ", fancrawl_instagram_id );
 
       if ( blockNotification ) {
         sendMail( fancrawl_instagram_id, "IG blocked account", "Go on Instagram and try liking a photo from your stream, if a captcha comes up then follow procedure, then log out of Instagram.com then sign back into http://fancrawl.io to re-register with FanCrawl. To reduce this try to post photos more frequently. Thank you." );
@@ -2256,7 +2256,7 @@ var crypto                                = require('crypto'),
     //  TO  | checkDuplicate - verifyCleaning
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
-      console.log("CLEAN DATABASE CALLED");
+      if ( fancrawl_instagram_id === userWatch ) console.log("CLEAN DATABASE CALLED");
       // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
 
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
@@ -2345,7 +2345,7 @@ var crypto                                = require('crypto'),
                 setTimeout(
                   function(){
                   verifyCleaning( arguments[0], arguments[1] );
-                  console.log("SETTIMOUT 15 WORKS!!!!");
+                  if ( arguments[0] === userWatch )console.log("SETTIMOUT 15 WORKS!!!!");
                 }, totalCountTime, fancrawl_instagram_id, callback );
 
               } else {
@@ -2365,7 +2365,7 @@ var crypto                                = require('crypto'),
             }
           }
         } else {
-          console.log("VERIFY CLEANING WAS INTERUPTED PRIOR TO COMPLETING: ", fancrawl_instagram_id );
+          if ( fancrawl_instagram_id === userWatch ) console.log("VERIFY CLEANING WAS INTERUPTED PRIOR TO COMPLETING: ", fancrawl_instagram_id );
         }
 
       });
@@ -2672,11 +2672,11 @@ var crypto                                = require('crypto'),
                       //    code: 'EAUTH',
                       //    response: '454 4.7.0 Too many login attempts, please try again later. ca2sm424696pbc.68 - gsmtp',
                       //    responseCode: 454 }
-                    console.log( "eMail error 454 - Too many login attempts - waiting "+errorLimitDelay+" min and trying again.");
+                    if ( fancrawl_instagram_id === userWatch ) console.log( "eMail error 454 - Too many login attempts - waiting "+errorLimitDelay+" min and trying again.");
                     setTimeouts[ fancrawl_instagram_id ].sendEmail = setTimeout(
                       function(){
                           callTimer( arguments[0], arguments[1] );
-                          console.log( "eMail error 454 - Too many login attempts - waited "+ arguments[3] +" min and attempted again.");
+                          if ( arguments[0] === userWatch ) console.log( "eMail error 454 - Too many login attempts - waited "+ arguments[3] +" min and attempted again.");
                           sendMail( arguments[0], arguments[1], arguments[2] );
                     }, 1000 * 60 * errorLimitDelay, fancrawl_instagram_id, subject, error, errorLimitDelay ); // 1 min wait
 
@@ -2685,21 +2685,21 @@ var crypto                                = require('crypto'),
                       //    code: 'EENVELOPE',
                       //    response: '421 4.7.0 Temporary System Problem.  Try again later (WS). i4sm571837pdl.11 - gsmtp',
                       //    responseCode: 421 }
-                    console.log( "eMail error 421 - Temporary System Problem - waiting "+errorLimitDelay+" min and trying again.");
+                    if ( fancrawl_instagram_id === userWatch ) console.log( "eMail error 421 - Temporary System Problem - waiting "+errorLimitDelay+" min and trying again.");
                     setTimeouts[ fancrawl_instagram_id ].sendEmail = setTimeout(
                       function(){
                           callTimer( arguments[0], arguments[1] );
-                          console.log( "eMail error 421 - Temporary System Problem - waited "+ arguments[3] +" min and attempted again.");
+                          if ( arguments[0] === userWatch ) console.log( "eMail error 421 - Temporary System Problem - waited "+ arguments[3] +" min and attempted again.");
                           sendMail( arguments[0], arguments[1], arguments[2] );
                     }, 1000 * 60 * errorLimitDelay, fancrawl_instagram_id, subject, error, errorLimitDelay ); // 1 min wait
 
                   } else {
-                    console.log( "email error -", error );
+                    if ( fancrawl_instagram_id === userWatch ) console.log( "email error -", error );
                     sendMail( 571377691, 'mail error', 'The function sendMail got the following error: ' + error );
                   }
 
                 } else {
-                  console.log( 'Message sent: ' + info.response );
+                  if ( fancrawl_instagram_id === userWatch ) console.log( 'Message sent: ' + info.response );
                 };
               });
             }
@@ -2886,86 +2886,6 @@ var crypto                                = require('crypto'),
 
 
           }
-
-
-
-          //  else if ( !error && response.statusCode !== 200 ) {
-          //   // body: '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}' }
-
-          //   if ( response && ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 || response.statusCode === 400 || response.statusCode === 429 ) ) {
-          //   } else if ( response && response.statusCode ) {
-          //     console.log( response.statusCode );
-          //   }
-
-          //   if ( response.statusCode === 503 || response.statusCode === 502 || response.statusCode === 500 ) {
-
-          //     setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
-          //       function(){
-          //       GET_relationship( arguments[0], arguments[1], arguments[2] ,arguments[3] );
-          //       delete setTimeouts[ arguments[0] ][ arguments[4] ];
-          //     }, 1000 * 20, rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, rows[0].uniqueProcessCounter, callback, processCounter );
-          //     processCounter++;
-
-          //     return;
-          //   } else if ( response.statusCode === 400 || response.statusCode === 429 ) {
-          //     var pbody = JSON.parse( body );
-          //   } else if ( typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
-          //     // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-          //     sendMail( 571377691, 'get relationship unknown error', 'The function GET_relationship got the following body: ' + body + ' for trying to check relashionship of: ' + rows[0].new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-
-          //     setTimeouts[ rows[0].fancrawl_instagram_id ][ processCounter ] = setTimeout(
-          //       function(){
-          //       GET_relationship( arguments[0], arguments[1], arguments[2], arguments[3] );
-          //       delete setTimeouts[ arguments[0] ][ arguments[4] ];
-          //     }, 1000 * 20, rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, rows[0].uniqueProcessCounter, callback, processCounter );
-          //     processCounter++;
-
-          //     return;
-          //   } else if ( typeof body === "string" ) {
-          //     var pbody = JSON.parse( body );
-          //   } else if ( typeof body === "object" ) {
-          //     var pbody = body;
-          //   } else {
-          //     console.log( "NOT A STRING NOR OBJECT: ", body );
-          //     var pbody = body;
-          //   }
-
-          //   // DOES NOT EXIST - POST_FOLLOW THE NEXT USER
-          //   if ( pbody && !pbody.meta ) {
-          //     sendMail( 571377691, 'get relationship no meta', 'The function GET_relationship did not have meta: ' + pbody );
-
-          //   } else if ( pbody && pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "this user does not exist" ) {
-          //     // {"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}
-          //     // console.log("RELATIONSHIP: "+new_instagram_following_id+" does not exist");
-          //     callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "not_exist", rows[0].uniqueProcessCounter );
-
-          //   } else if ( pbody && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
-          //     // {"meta":{"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
-          //     // sendMail( "571377691", "API Error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id + "of relationships trying to follow: " + new_instagram_following_id );
-          //     callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "APINotAllowedError", rows[0].uniqueProcessCounter );
-
-          //   // OAUTH TOKEN EXPIRED
-          //   } else if( pbody && pbody.meta && pbody.meta.error_message && pbody.meta.error_message === "The access_token provided is invalid." ) {
-          //     // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-          //     console.log( "RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" MUST LOG IN AGAIN - NEED NEW TOKEN - OR VALIDATE ACCOUNT AGAIN");
-          //     callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "access_token", rows[0].uniqueProcessCounter );
-
-          //   // OAUTH TIME LIMIT REACHED LET TIMER KNOW AND TRIES AGAIN
-          //   } else if( pbody && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
-          //     // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-          //     console.log("RELATIONSHIP: LIMIT REACH FOR: "+rows[0].fancrawl_instagram_id+" - ", pbody);
-          //     callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "oauth_limit", rows[0].uniqueProcessCounter );
-          //   } else {
-          //     console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got a weird statusCode "+rows[0].new_instagram_following_id+" - ", pbody);
-          //     sendMail( 571377691, 'get relationship weird statusCode', 'The function GET_relationship got the following body: ' + pbody );
-          //     callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
-          //   }
-
-          // } else {
-          //   console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got an error "+rows[0].new_instagram_following_id+" - ", error);
-          //   sendMail( 571377691, 'get relationship error', 'The function GET_relationship got the following error: ' + error );
-          //   callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
-          // }
         });
       });
     };
@@ -3131,7 +3051,7 @@ var crypto                                = require('crypto'),
     //  TO  |
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var GET_follows_verify                  = function ( fancrawl_instagram_id, pagination, callback ) {
-    console.log("IN GET_follows_verify");
+    if ( fancrawl_instagram_id === userWatch ) console.log("IN GET_follows_verify");
 
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
@@ -3171,13 +3091,13 @@ var crypto                                = require('crypto'),
 
             // if ( pbody.data) {
             for ( var i = 0; i < pbody.data.length; i++ ) {
-              console.log( pbody.data[i].id );
+              if ( fancrawl_instagram_id === userWatch ) console.log( pbody.data[i].id );
               connection.query('SELECT fancrawl_instagram_id, added_follower_instagram_id FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ pbody.data[i].id +'"', function(err, rows, fields) {
                 if (err) throw err;
                 if ( rows && rows[0] ) {
                   connection.query('UPDATE beta_followers_'+rows[0].fancrawl_instagram_id+' SET count = 0, following_status = 1 WHERE added_follower_instagram_id = "'+ rows[0].added_follower_instagram_id +'"', function(err, rows, fields) {
                     if (err) throw err;
-                    console.log("UPDATED DB");
+                    if ( fancrawl_instagram_id === userWatch ) console.log("UPDATED DB");
                   });
                 }
               });
@@ -3186,14 +3106,14 @@ var crypto                                = require('crypto'),
             if ( pbody.pagination && pbody.pagination.next_cursor ) {
               setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
                 function(){
-                  console.log("GET_follows_verify - PAGINATION");
+                  if ( arguments[0] === userWatch ) console.log("GET_follows_verify - PAGINATION");
                   GET_follows_verify( arguments[0], arguments[1], arguments[2] );
                   delete setTimeouts[ arguments[0] ][ arguments[3] ]
               }, 1000 * 2, fancrawl_instagram_id, pbody.pagination.next_cursor, callback, processCounter ); // 3 sec wait
               processCounter++;
             } else {
               if ( callback ) {
-                console.log("GET_follows_verify - CALLBACK");
+                if ( fancrawl_instagram_id === userWatch ) console.log("GET_follows_verify - CALLBACK");
                 callback( fancrawl_instagram_id );
               }
             }
@@ -3285,7 +3205,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var POST_follow                         = function ( fancrawl_instagram_id, new_instagram_following_id, processCounter, callback ) {
 
-      console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
+      if ( fancrawl_instagram_id === userWatch ) console.log("IN GO FOLLOW FOR: "+fancrawl_instagram_id+" & "+new_instagram_following_id);
+
       connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
         if (err) throw err;
 
@@ -3329,18 +3250,18 @@ var crypto                                = require('crypto'),
                 if ( !rows.length ) {
                   connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
                     if (err) throw err;
-                    console.log('X-X-X-X-X-X-X-X-X-X-X-X')
-                    console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
-                    console.log('X-X-X-X-X-X-X-X-X-X-X-X')
+                    if ( fancrawl_instagram_id === userWatch ) console.log('X-X-X-X-X-X-X-X-X-X-X-X')
+                    if ( fancrawl_instagram_id === userWatch ) console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
+                    if ( fancrawl_instagram_id === userWatch ) console.log('X-X-X-X-X-X-X-X-X-X-X-X')
                     verifyRelationship( fancrawl_instagram_id, new_instagram_following_id );
 
                     if ( callback ) {
-                      console.log('callback: ', fancrawl_instagram_id, new_instagram_following_id );
+                      if ( fancrawl_instagram_id === userWatch ) console.log('callback: ', fancrawl_instagram_id, new_instagram_following_id );
                       callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                     }
                   });
                 } else {
-                  console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist');
+                  if ( fancrawl_instagram_id === userWatch ) console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist');
                 }
               });
 
@@ -3490,7 +3411,7 @@ var crypto                                = require('crypto'),
           // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n'
           // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n'
           if ( fancrawl_instagram_id ) {
-            console.log("REQUEST_ERROR_HANDLING 502/503 FOR: ", fancrawl_instagram_id );
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 502/503 FOR: ", fancrawl_instagram_id );
           } else {
             console.log("REQUEST_ERROR_HANDLING 502/503" );
           }
@@ -3512,7 +3433,7 @@ var crypto                                = require('crypto'),
           // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
 
           if ( fancrawl_instagram_id ) {
-            console.log("REQUEST_ERROR_HANDLING 429 FOR: ", fancrawl_instagram_id );
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 429 FOR: ", fancrawl_instagram_id );
             sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
 
             if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -3537,6 +3458,7 @@ var crypto                                = require('crypto'),
               processCounter++;
             }
           } else {
+            console.log("REQUEST_ERROR_HANDLING 429");
             sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR SOME USER.');
           }
 
@@ -3547,7 +3469,7 @@ var crypto                                = require('crypto'),
           // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
 
           if ( fancrawl_instagram_id ) {
-            console.log("REQUEST_ERROR_HANDLING 400 FOR: ", fancrawl_instagram_id );
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 400 FOR: ", fancrawl_instagram_id );
 
             sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
 
@@ -3575,12 +3497,13 @@ var crypto                                = require('crypto'),
             }
 
           } else {
+            console.log("REQUEST_ERROR_HANDLING 400");
             sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SSPAMMY BEHAVIOR DETECTION FROM IG FOR SOME USER.');
           }
 
         } else {
           if ( fancrawl_instagram_id ) {
-            console.log("REQUEST_ERROR_HANDLING ??? FOR: ", fancrawl_instagram_id );
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? FOR: ", fancrawl_instagram_id );
             sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
           } else {
             console.log("REQUEST_ERROR_HANDLING ???");
@@ -3621,9 +3544,10 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
           if (!error && response.statusCode == 200) {
-            console.log('TEST_HEADERS: ', body); // should get: TEST_HEADERS:  {"meta":{"code":200},"data":null}
+            if ( fancrawl_instagram_id === userWatch ) console.log('TEST_HEADERS: ', body); // should get: TEST_HEADERS:  {"meta":{"code":200},"data":null}
           } else {
-            console.log('TEST_HEADERS ERROR: ', error, body); // otherwise there is a problem
+            if ( fancrawl_instagram_id === userWatch ) console.log('TEST_HEADERS ERROR: ', error, body); // otherwise there is a problem
+            // {"meta":{"error_type":"APIError","code":400,"error_message":"This client ID is not permitted to POST likes. For more info, please refer to our developer site at http:\/\/instagram.com\/developer\/endpoints\/likes."}}
           }
         });
       });
