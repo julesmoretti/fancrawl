@@ -3506,29 +3506,34 @@ var crypto                                = require('crypto'),
           // error_message The maximum number of requests per hour has been exceeded.
           // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
 
-          sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
+          if ( fancrawl_instagram_id ) {
+            sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
 
-          if ( !usersInfo[ fancrawl_instagram_id ] ) {
-            usersInfo[ fancrawl_instagram_id ] = {};
+            if ( !usersInfo[ fancrawl_instagram_id ] ) {
+              usersInfo[ fancrawl_instagram_id ] = {};
+            }
+
+            usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
+
+            // pause and slow down user timer
+
+
+            if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
+              timer[ fancrawl_instagram_id ].post_delay_call = true;
+              timer[ fancrawl_instagram_id ].post_delay = true;
+
+              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                function(){
+                timer[ arguments[0] ].post_delay = false;
+                timer[ arguments[0] ].post_delay_call = false;
+                delete setTimeouts[ arguments[0] ][ arguments[1] ]
+              }, 1000 * 60 * 10, fancrawl_instagram_id, processCounter );
+              processCounter++;
+            }
+          } else {
+            sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR SOME USER.');
           }
 
-          usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-
-          // pause and slow down user timer
-
-
-          if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-            timer[ fancrawl_instagram_id ].post_delay_call = true;
-            timer[ fancrawl_instagram_id ].post_delay = true;
-
-            setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-              function(){
-              timer[ arguments[0] ].post_delay = false;
-              timer[ arguments[0] ].post_delay_call = false;
-              delete setTimeouts[ arguments[0] ][ arguments[1] ]
-            }, 1000 * 60 * 10, fancrawl_instagram_id, processCounter );
-            processCounter++;
-          }
 
         } else if ( response.statusCode === 400 ) {
 
@@ -3536,33 +3541,43 @@ var crypto                                = require('crypto'),
           // You may also receive responses with an HTTP response code of 400 (Bad Request) if we detect spammy behavior by a person using your app. These errors are unrelated to rate limiting.
           // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
 
-          sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
+          if ( fancrawl_instagram_id ) {
+
+            sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
 
 
-          if ( !usersInfo[ fancrawl_instagram_id ] ) {
-            usersInfo[ fancrawl_instagram_id ] = {};
-          }
+            if ( !usersInfo[ fancrawl_instagram_id ] ) {
+              usersInfo[ fancrawl_instagram_id ] = {};
+            }
 
-          // usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "OAuthAccessTokenException";
-          usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
+            // usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "OAuthAccessTokenException";
+            usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-          // pause and slow down user timer
+            // pause and slow down user timer
 
-          if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-            timer[ fancrawl_instagram_id ].post_delay_call = true;
-            timer[ fancrawl_instagram_id ].post_delay = true;
+            if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
+              timer[ fancrawl_instagram_id ].post_delay_call = true;
+              timer[ fancrawl_instagram_id ].post_delay = true;
 
-            setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-              function(){
-              timer[ arguments[0] ].post_delay = false;
-              timer[ arguments[0] ].post_delay_call = false;
-              delete setTimeouts[ arguments[0] ][ arguments[1] ]
-            }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
-            processCounter++;
+              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                function(){
+                timer[ arguments[0] ].post_delay = false;
+                timer[ arguments[0] ].post_delay_call = false;
+                delete setTimeouts[ arguments[0] ][ arguments[1] ]
+              }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
+              processCounter++;
+            }
+
+          } else {
+            sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SSPAMMY BEHAVIOR DETECTION FROM IG FOR SOME USER.');
           }
 
         } else {
-          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
+          if ( fancrawl_instagram_id ) {
+            sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
+          } else {
+            sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
+          }
         }
       }
 
@@ -3787,7 +3802,7 @@ var crypto                                = require('crypto'),
             }
           });
         } else {
-          requestErrorHandling( pbody.user.id, options.method, error, response, body, 'handleauth' );
+          requestErrorHandling( undefined, options.method, error, response, body, 'handleauth' );
         }
         // }
       });
