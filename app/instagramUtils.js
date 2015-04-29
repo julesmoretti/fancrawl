@@ -3233,7 +3233,7 @@ var crypto                                = require('crypto'),
 
         request(options, function (error, response, body) {
 
-          if (!error && response.statusCode === 200) {
+          if ( !error && response.statusCode === 200 ) {
 
             // checks the App rate limit and pauses all timers if needs be
             checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
@@ -3337,7 +3337,7 @@ var crypto                                = require('crypto'),
             // if ( fancrawl_instagram_id === userWatch ) console.log( "INSIDE POST_unfollow - PAST request : ", fancrawl_instagram_id, new_instagram_following_id, followed_by, processCounter );
             // console.log("G0_UNFOLLOW: "+new_instagram_following_id+" & "+body);
               if (!error && response.statusCode === 200) {
-
+                if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW through: ", body );
                 // checks the App rate limit and pauses all timers if needs be
                 checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
