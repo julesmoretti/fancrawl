@@ -3489,6 +3489,11 @@ var crypto                                = require('crypto'),
 
           // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n'
           // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n'
+          if ( fancrawl_instagram_id ) {
+            console.log("REQUEST_ERROR_HANDLING 502/503 FOR: ", fancrawl_instagram_id );
+          } else {
+            console.log("REQUEST_ERROR_HANDLING 502/503" );
+          }
 
           sendMail( 571377691, 'Request error handling 502/503', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' APP MAX REQUESTS PER HOURS REACHED: ' + appRateLimit );
 
@@ -3507,6 +3512,7 @@ var crypto                                = require('crypto'),
           // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
 
           if ( fancrawl_instagram_id ) {
+            console.log("REQUEST_ERROR_HANDLING 429 FOR: ", fancrawl_instagram_id );
             sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
 
             if ( !usersInfo[ fancrawl_instagram_id ] ) {
@@ -3536,12 +3542,12 @@ var crypto                                = require('crypto'),
 
 
         } else if ( response.statusCode === 400 ) {
-
           // 400 = spammy behavior
           // You may also receive responses with an HTTP response code of 400 (Bad Request) if we detect spammy behavior by a person using your app. These errors are unrelated to rate limiting.
           // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
 
           if ( fancrawl_instagram_id ) {
+            console.log("REQUEST_ERROR_HANDLING 400 FOR: ", fancrawl_instagram_id );
 
             sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
 
@@ -3574,8 +3580,10 @@ var crypto                                = require('crypto'),
 
         } else {
           if ( fancrawl_instagram_id ) {
+            console.log("REQUEST_ERROR_HANDLING ??? FOR: ", fancrawl_instagram_id );
             sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
           } else {
+            console.log("REQUEST_ERROR_HANDLING ???");
             sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
           }
         }
@@ -3586,42 +3594,42 @@ var crypto                                = require('crypto'),
 //  test header signature for secured request
 //  -----------------------------------------------------------------------------
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // var TEST_HEADERS                        = function ( fancrawl_instagram_id ) {
-  //     connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
-  //       if (err) throw err;
-  //       // instagram header secret system
+  var TEST_HEADERS                        = function ( fancrawl_instagram_id ) {
+      connection.query('SELECT token from access_right where fancrawl_instagram_id = "'+fancrawl_instagram_id+'"', function(err, rows, fields) {
+        if (err) throw err;
+        // instagram header secret system
 
-  //       var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
-  //           hmac.setEncoding('hex');
-  //           hmac.write(process.env.LOCALIP);
-  //           hmac.end();
-  //       var hash = hmac.read();
+        var hmac = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET);
+            hmac.setEncoding('hex');
+            hmac.write(process.env.LOCALIP);
+            hmac.end();
+        var hash = hmac.read();
 
-  //       // Set the headers
-  //       var headers = {
-  //           'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
-  //       }
+        // Set the headers
+        var headers = {
+            'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
+        }
 
-  //       // Configure the request
-  //       var options = {
-  //           uri: 'https://api.instagram.com/v1/media/657988443280050001_25025320/likes',
-  //           // uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
-  //           qs: {'access_token': rows[0].token},
-  //           method: 'POST',
-  //           headers: headers
-  //       }
+        // Configure the request
+        var options = {
+            uri: 'https://api.instagram.com/v1/media/657988443280050001_25025320/likes',
+            // uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
+            qs: {'access_token': rows[0].token},
+            method: 'POST',
+            headers: headers
+        }
 
-  //       request(options, function (error, response, body) {
-  //         if (!error && response.statusCode == 200) {
-  //           console.log('TEST_HEADERS: ', body); // should get: TEST_HEADERS:  {"meta":{"code":200},"data":null}
-  //         } else {
-  //           console.log('TEST_HEADERS ERROR: ', error, body); // otherwise there is a problem
-  //         }
-  //       });
-  //     });
-  //   }
+        request(options, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            console.log('TEST_HEADERS: ', body); // should get: TEST_HEADERS:  {"meta":{"code":200},"data":null}
+          } else {
+            console.log('TEST_HEADERS ERROR: ', error, body); // otherwise there is a problem
+          }
+        });
+      });
+    }
 
-    // TEST_HEADERS( 571377691 );
+    TEST_HEADERS( 571377691 );
 
 //  =============================================================================
 //  REQUEST HANDLERS
