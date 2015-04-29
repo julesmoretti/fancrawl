@@ -2,6 +2,11 @@
 //  SET UP AND GLOBAL VARIABLES
 //  =============================================================================
 
+// TODO Authentication error
+// { code: 400,
+//   error_type: 'OAuthException',
+//   error_message: 'No matching code found.' }
+
 var crypto                                = require('crypto'),
     request                               = require('request'),
     mysql                                 = require('mysql'),
@@ -20,7 +25,8 @@ var crypto                                = require('crypto'),
                                               password: process.env.MYSQLPASSWORD,
                                               database: 'fancrawl',
                                               host: 'localhost',
-                                              port: 3306,
+                                              // port: 3306,
+                                              port: process.env.SOCKETPATH,
                                               // socketPath: process.env.SOCKETPATH,
                                               multipleStatements: true
                                             });
@@ -2746,46 +2752,15 @@ var crypto                                = require('crypto'),
             checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             var pbody = JSON.parse(body);
-            // if( pbody ) {
-              // if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-              //   console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
-              //   // check for rate limit reach... if so keep on looping
-              //   // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-              //   if ( !usersInfo[ fancrawl_instagram_id ] ) {
-              //     usersInfo[ fancrawl_instagram_id ] = {};
-              //   }
-              //   usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-              //   callback("N/A", "N/A" );
 
-              // } else if( pbody.data ){
-                // if ( pbody.data.counts ) {
-                  // if ( pbody.data.counts.follows || pbody.data.counts.follows === 0 ) {
-                    clearNotifications( fancrawl_instagram_id );
-                    callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
-                  // }
-                // }
-              // } else {
-              //   console.log("POST_follow - did not complete properly...");
-              // }
-            // }
+            clearNotifications( fancrawl_instagram_id );
+            callback( pbody.data.counts.follows, pbody.data.counts.followed_by );
+
           } else {
             callback( "N/A" , "N/A" );
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'GET_stats' );
           }
 
-
-
-          // else if (error) {
-          //   console.log('POST_follow error: ', error);
-          //   sendMail( 571377691, 'get stats error', 'The function GET_stats got the following error: ' + error );
-          //   callback( "N/A" , "N/A" );
-          // } else {
-          //   if ( !usersInfo[ fancrawl_instagram_id ] ) {
-          //     usersInfo[ fancrawl_instagram_id ] = {};
-          //   }
-          //   usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "Refresh token by signing out and back in";
-          //   callback( "N/A" , "N/A" );
-          // }
         });
       });
     }
@@ -2835,81 +2810,60 @@ var crypto                                = require('crypto'),
             checkAppRateLimit( response.headers[ 'x-ratelimit-remaining' ], 5 );
 
             // if ( typeof body === "string" ) {
-              var pbody = JSON.parse( body );
-              clearNotifications( fancrawl_instagram_id );
-            // } else if ( typeof body === "object" ) {
-              // var pbody = body;
-            // } else {
-              // console.log( "NOT A STRING NOR OBJECT: ", body );
-              // var pbody = body;
-            // }
+            var pbody = JSON.parse( body );
+            clearNotifications( fancrawl_instagram_id );
 
-            // if ( pbody && pbody.data ) {
+            // NOT FOLLOWED NOR BEING FOLLOWED
+            if( pbody.data.incoming_status === "none" ) {
 
-              // FOLLOWED_BY BACK
-              // if ( pbody.data.outgoing_status && pbody.data.incoming_status ) {
+              // NEITHER YOU OR THEY ARE FOLLOWING ONE ANOTHER
+              if( pbody.data.outgoing_status === "none" ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"none"}}
+                // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" and user "+new_instagram_following_id+" are not following one another" );
+                // console.log( JSON.stringify( callback ) );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "neither", rows[0].uniqueProcessCounter );
 
-                // NOT FOLLOWED NOR BEING FOLLOWED
-                if( pbody.data.incoming_status === "none" ) {
-
-                  // NEITHER YOU OR THEY ARE FOLLOWING ONE ANOTHER
-                  if( pbody.data.outgoing_status === "none" ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"none"}}
-                    // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" and user "+new_instagram_following_id+" are not following one another" );
-                    // console.log( JSON.stringify( callback ) );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "neither", rows[0].uniqueProcessCounter );
-
-                  // ONLY FOLLOWS NEW USER
-                  } else if( pbody.data.outgoing_status === "requested"  ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"none"}}
-                    // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow this user: "+new_instagram_following_id );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "requested", rows[0].uniqueProcessCounter );
+              // ONLY FOLLOWS NEW USER
+              } else if( pbody.data.outgoing_status === "requested"  ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"none"}}
+                // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow this user: "+new_instagram_following_id );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "requested", rows[0].uniqueProcessCounter );
 
 
-                  // ONLY FOLLOWS NEW USER
-                  } else if( pbody.data.outgoing_status === "follows"  ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"none"}}
-                    // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are only following user: "+new_instagram_following_id );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "follows", rows[0].uniqueProcessCounter );
-                  }
+              // ONLY FOLLOWS NEW USER
+              } else if( pbody.data.outgoing_status === "follows"  ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"none"}}
+                // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are only following user: "+new_instagram_following_id );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "follows", rows[0].uniqueProcessCounter );
+              }
 
-                } else if( pbody.data.incoming_status === "followed_by" ) {
+            } else if( pbody.data.incoming_status === "followed_by" ) {
 
-                  // ONLY FOLLOWED_BY BACK
-                  if( pbody.data.outgoing_status === "none" ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    // console.log( "RELATIONSHIP: "+new_instagram_following_id+" is following you "+fancrawl_instagram_id+" back" );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by", rows[0].uniqueProcessCounter );
+              // ONLY FOLLOWED_BY BACK
+              if( pbody.data.outgoing_status === "none" ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"none","target_user_is_private":true,"incoming_status":"followed_by"}}
+                // console.log( "RELATIONSHIP: "+new_instagram_following_id+" is following you "+fancrawl_instagram_id+" back" );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by", rows[0].uniqueProcessCounter );
 
-                  // BOTH FOLLOW AND FOLLOWED_BY BACK
-                  } else if( pbody.data.outgoing_status === "requested" ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow user "+new_instagram_following_id+" and he is following you back" );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by_and_requested", rows[0].uniqueProcessCounter );
+              // BOTH FOLLOW AND FOLLOWED_BY BACK
+              } else if( pbody.data.outgoing_status === "requested" ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"requested","target_user_is_private":true,"incoming_status":"followed_by"}}
+                // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" have requested to follow user "+new_instagram_following_id+" and he is following you back" );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "followed_by_and_requested", rows[0].uniqueProcessCounter );
 
-                  // BOTH FOLLOW AND FOLLOWED_BY BACK
-                  } else if( pbody.data.outgoing_status === "follows" ) {
-                    // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
-                    // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are following user "+new_instagram_following_id+" and he is following you back" );
-                    callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "both", rows[0].uniqueProcessCounter );
-                  }
+              // BOTH FOLLOW AND FOLLOWED_BY BACK
+              } else if( pbody.data.outgoing_status === "follows" ) {
+                // {"meta":{"code":200},"data":{"outgoing_status":"follows","target_user_is_private":true,"incoming_status":"followed_by"}}
+                // console.log( "RELATIONSHIP: you "+fancrawl_instagram_id+" are following user "+new_instagram_following_id+" and he is following you back" );
+                callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "both", rows[0].uniqueProcessCounter );
+              }
 
-                }
-
-              // } else {
-              //   console.log("RELATIONSHIP: you "+fancrawl_instagram_id+"did not pick up on body of user "+rows[0].new_instagram_following_id+" - ", body);
-              //   callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
-              // }
-
-            // } else {
-            //   console.log("RELATIONSHIP: "+rows[0].fancrawl_instagram_id+" got an error from pbody "+rows[0].new_instagram_following_id+" - ", pbody );
-            //   callback( rows[0].fancrawl_instagram_id, rows[0].new_instagram_following_id, "error", rows[0].uniqueProcessCounter );
-            // }
+            }
 
           } else {
 
             // UNIQUE CHECK CASE FOR INSTGRAM USERS THAT DELETED THEIR ACCOUNTS SINCE ADD
-            if ( response.statusCode === 400 && body[0] !== '<' && body[1] !== 'h' ) {
+            if ( response && response.statusCode === 400 && body[0] !== '<' && body[1] !== 'h' ) {
               // '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}'
               var pbody = JSON.parse(body);
               if ( pbody.meta.error_message === 'this user does not exist' ) {
@@ -3088,11 +3042,6 @@ var crypto                                = require('crypto'),
                 requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'GET_hash_tag_media' );
               }
 
-              // else if ( error ) {
-              //   console.log('GET_hash_tag_media error ('+fancrawl_instagram_id+'): ', error);
-              //   sendMail( 571377691, 'get hash tag media error', 'The function GET_hash_tag_media got the following error: ' + error );
-              // }
-
             });
           }
         }
@@ -3167,13 +3116,6 @@ var crypto                                = require('crypto'),
           } else {
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'GET_follows' );
           }
-
-
-          // else if (error) {
-          //   console.log('GET_follows error ('+fancrawl_instagram_id+'): ', error);
-          //   sendMail( 571377691, 'get follows error', 'The function GET_follows got the following error: ' + error );
-          // }
-
 
         });
       });
@@ -3256,32 +3198,6 @@ var crypto                                = require('crypto'),
           } else {
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'GET_follows_verify' );
           }
-
-
-
-
-
-          //  else if ( !error && response.statusCode !== 200 ) {
-          //   if ( body ) {
-          //     var pbody = JSON.parse(body);
-          //     if ( pbody.error_type && pbody.error_type === "OAuthAccessTokenException" ) {
-          //       // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
-          //       usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "Refresh token by signing out and back in";
-          //       STOP( fancrawl_instagram_id, true );
-
-          //     } else {
-          //       sendMail( 571377691, 'post GET_follows_verify status with body', 'The function GET_follows_verify got a new case: ' + body );
-          //     }
-          //   } else {
-          //       sendMail( 571377691, 'post GET_follows_verify status without body', 'The function GET_follows_verify got a new case: ' + body );
-          //   }
-
-
-          // } else if (error) {
-          //   console.log('GET_follows_verify error ('+fancrawl_instagram_id+'): ', error);
-          //   sendMail( 571377691, 'GET_follows_verify error', 'The function GET_follows_verify got the following error: ' + error );
-          // }
-
         });
       });
     };
@@ -3354,12 +3270,6 @@ var crypto                                = require('crypto'),
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'GET_followed_by' );
           }
 
-          // else if (error) {
-          //   console.log('GET_followed_by error ('+fancrawl_instagram_id+'): ', error);
-          //   sendMail( 571377691, 'get followed by', 'The function GET_followed_by got the following error: ' + error );
-          // }
-
-
         });
       });
     };
@@ -3409,23 +3319,6 @@ var crypto                                = require('crypto'),
             var pbody = JSON.parse(body);
             clearNotifications( fancrawl_instagram_id );
 
-            // if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-              //   if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OAUTH RATE LIMIT EXCEPTION");
-              //   // check for rate limit reach... if so keep on looping
-              //   // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-              //   if ( !usersInfo[ fancrawl_instagram_id ] ) {
-              //     usersInfo[ fancrawl_instagram_id ] = {};
-              //   }
-
-              //   sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
-
-              //   usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "The maximum number of IG requests per hour has been exceeded.";
-
-              //   clockManager( fancrawl_instagram_id, new_instagram_following_id, "follow" );
-
-              // } else
-              // if ( pbody.data && pbody.data.outgoing_status ) {
-
             if ( pbody.data.outgoing_status === "follows" || pbody.data.outgoing_status === "requested" ) {
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - ALREADY FOLLOWING OR REQUESTED: ", fancrawl_instagram_id, new_instagram_following_id);
 
@@ -3459,84 +3352,6 @@ var crypto                                = require('crypto'),
           } else {
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'POST_follow' );
           }
-
-
-          //   if (!error && response.statusCode !== 200) {
-
-          //   if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
-          //     if ( response.statusCode === 503 || response.statusCode === 502 ) {
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - 503 / 502 status... doing nothing");
-          //       // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-          //       // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
-          //     } else {
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OTHER STATUS then 200... doing nothing");
-          //       sendMail( 571377691, 'POST Follow HTML error', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-          //     }
-
-          //     return;
-
-          //   } else if ( body && body === 'Oops, an error occurred. ') {
-          //     if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - Oops, an error occurred notification");
-          //     sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got an Oops, an error occurred. for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-
-          //   } else if ( body ) {
-
-          //     if ( body && typeof body === "string" && body[0] !== '{' ) {
-          //       sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-          //       return;
-          //     }
-
-          //     var pbody = JSON.parse(body);
-          //     if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
-          //       // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - OAuthRateLimitException");
-
-          //       if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-          //         timer[ fancrawl_instagram_id ].post_delay_call = true;
-          //         timer[ fancrawl_instagram_id ].post_delay = true;
-
-          //         setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-          //           function(){
-          //           timer[ arguments[0] ].post_delay = false;
-          //           timer[ arguments[0] ].post_delay_call = false;
-          //           delete setTimeouts[ arguments[0] ][ arguments[1] ]
-          //         }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
-          //         processCounter++;
-          //       }
-
-          //     } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthParameterException" ) {
-          //       // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-          //       STOP( fancrawl_instagram_id, true );
-
-          //     } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APIError" ) {
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - APIError");
-
-          //       // {"meta":{"error_type":"APIError","code":400,"error_message":"This account can't be followed right now."}}
-
-          //       if ( callback ) {
-          //         callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-          //       }
-          //     } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotAllowedError" ) {
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - APINotAllowedError");
-
-          //       // {"error_type":"APINotAllowedError","code":400,"error_message":"you cannot view this resource"}}
-
-          //       if ( callback ) {
-          //         callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-          //       }
-
-          //     } else {
-          //       if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - !200 , no body found");
-          //       sendMail( 571377691, 'post follow status with body', 'The function POST_follow got a new case: ' + body );
-          //     }
-          //   } else {
-          //     sendMail( 571377691, 'post follow status no body', 'The function POST_follow got a new case: ' + body );
-          //   }
-          // } else if (error) {
-
-          //   if ( fancrawl_instagram_id === userWatch ) console.log('POST_follow error ('+new_instagram_following_id+'): ', error);
-          //   sendMail( 571377691, 'go follow error', 'The function POST_follow got the following error: ' + error );
-          // }
         });
       });
     }
@@ -3648,97 +3463,28 @@ var crypto                                = require('crypto'),
                   sendMail( "571377691", "POST_unfollow - doing nothing at all", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
                 }
 
-              } else {
+              // UNIQUE CHECK CASE FOR INSTGRAM USERS THAT DELETED THEIR ACCOUNTS SINCE ADD
+              } else if ( response && response.statusCode === 400 && body[0] !== '<' && body[1] !== 'h' ) {
 
-                // UNIQUE CHECK CASE FOR INSTGRAM USERS THAT DELETED THEIR ACCOUNTS SINCE ADD
-                if ( response.statusCode === 400 && body[0] !== '<' && body[1] !== 'h' ) {
-                  // '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}'
-                  var pbody = JSON.parse(body);
-                  if ( pbody.meta.error_message === 'this user does not exist' ) {
+                // '{"meta":{"error_type":"APINotFoundError","code":400,"error_message":"this user does not exist"}}'
+                var pbody = JSON.parse(body);
+                if ( pbody.meta.error_message === 'this user does not exist' ) {
 
-                    connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-                      if (err) throw err;
-                      if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                  connection.query('UPDATE beta_followers_'+fancrawl_instagram_id+' SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                    if (err) throw err;
+                    if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
 
-                      if ( callback ) {
-                        callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                        if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-                      }
-                    });
-                  } else {
-                    requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'POST_unfollow' );
-                  }
+                    if ( callback ) {
+                      callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                      if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
+                    }
+                  });
 
                 } else {
                   requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'POST_unfollow' );
                 }
 
               }
-
-              // if (!error && response.statusCode !== 200 ) {
-
-              //   if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
-
-              //     if ( response.statusCode === 503 || response.statusCode === 502 ) {
-              //       // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-              //       // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
-              //     } else {
-              //       sendMail( 571377691, 'POST Unfollow HTML error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-              //     }
-
-              //     return;
-
-              //   } else if ( body ) {
-
-              //     if ( body && typeof body === "string" && body[0] !== '{' ) {
-              //       sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-              //       return;
-              //     }
-
-              //     var pbody = JSON.parse( body );
-
-              //     if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
-
-              //       connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-              //         if (err) throw err;
-              //         if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-
-              //         if ( callback ) {
-              //           callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-              //           if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-              //         }
-              //       });
-
-              //     } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthParameterException" ) {
-              //       // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-              //       STOP( fancrawl_instagram_id, true );
-
-              //     } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
-              //       // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
-              //       if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-              //         timer[ fancrawl_instagram_id ].post_delay_call = true;
-              //         timer[ fancrawl_instagram_id ].post_delay = true;
-
-              //         setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-              //           function(){
-              //           timer[ arguments[0] ].post_delay = false;
-              //           timer[ arguments[0] ].post_delay_call = false;
-              //           delete setTimeouts[ arguments[0] ][ arguments[1] ]
-              //         }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
-              //         processCounter++;
-              //       }
-              //     } else {
-              //       sendMail( 571377691, 'post unfollow status with body', 'The function POST_unfollow got a new case: ' + body );
-              //     }
-              //   } else {
-              //     sendMail( 571377691, 'post unfollow status without body', 'The function POST_unfollow got a new case: ' + body );
-              //   }
-              // } else if (error) {
-
-              //   console.log('POST_unfollow error ('+new_instagram_following_id+'): ', error);
-              //   sendMail( 571377691, 'post unfollow error', 'The function POST_unfollow got the following error: ' + error );
-
-              // }
             });
           });
         }
