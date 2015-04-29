@@ -31,6 +31,8 @@ var crypto                                = require('crypto'),
                                               multipleStatements: true
                                             });
 
+    console.log('port', process.env.SOCKETPATH);
+
     var del = connection._protocol._delegateError;
     connection._protocol._delegateError = function(err, sequence){
       if (err.fatal) {
@@ -3346,9 +3348,7 @@ var crypto                                = require('crypto'),
               if ( fancrawl_instagram_id === userWatch ) console.log("POST_follow - did not complete properly... for: "+fancrawl_instagram_id+" on user: "+new_instagram_following_id);
               sendMail( "571377691", "POST_follow - doing nothing at all", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
             }
-            // } else {
-                // if ( fancrawl_instagram_id === userWatch ) console.log("POST_FOLLOW - 200 - no body found");
-              // }
+
           } else {
             requestErrorHandling( fancrawl_instagram_id, options.method, error, response, body, 'POST_follow' );
           }
@@ -3423,27 +3423,6 @@ var crypto                                = require('crypto'),
                 var pbody = JSON.parse(body);
                 clearNotifications( fancrawl_instagram_id );
 
-                // if( pbody.data.meta && pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ){
-                  //   // check for rate limit reach... if so keep on looping
-                  //   // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-
-                  //   if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                  //     usersInfo[ fancrawl_instagram_id ] = {};
-                  //   }
-                  //   CONSOLE.LOG("POST_UNFOLLOW: OAUTH LIMIT RATE FOR: ", fancrawl_instagram_id );
-
-                  //   sendMail( "571377691", "OAUTH Limit error", JSON.stringify(pbody) + " from user: " + fancrawl_instagram_id );
-
-                  //   usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-
-                  //   if ( followed_by ) {
-                  //     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow_followedby" );
-                  //   } else {
-                  //     clockManager( fancrawl_instagram_id, new_instagram_following_id, "unfollow" );
-                  //   }
-
-                  //   console.log("POST_UNFOLLOW - OAuthRateLimitException : ", fancrawl_instagram_id, new_instagram_following_id );
-                  // } else
                 if ( pbody.data && pbody.data.outgoing_status && pbody.data.outgoing_status === 'none' ) {
 
                   // if ( fancrawl_instagram_id === userWatch ) console.log("POST_UNFOLLOW - none : ", fancrawl_instagram_id, new_instagram_following_id, processCounter );
@@ -3585,71 +3564,6 @@ var crypto                                = require('crypto'),
         } else {
           sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
         }
-
-
-
-        // if ( body && typeof body === "string" && body[0] === '<' && body[1] === 'h' ) {
-
-        //   if ( response.statusCode === 503 || response.statusCode === 502 ) {
-        //     // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n' // possibly
-        //     // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n' // possibly
-        //   } else {
-        //     sendMail( 571377691, 'POST Unfollow HTML error', 'The function POST_UNFOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-        //   }
-
-        //   return;
-
-        // } else if ( body ) {
-
-        //   if ( body && typeof body === "string" && body[0] !== '{' ) {
-        //     sendMail( 571377691, 'POST Follow body to trace', 'The function POST_FOLLOW got the following body: ' + body + ' for trying to follow: ' + new_instagram_following_id + ' and with statusCode: ' + response.statusCode );
-        //     return;
-        //   }
-
-        //   var pbody = JSON.parse( body );
-
-        //   if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "APINotFoundError" ) {
-
-        //     connection.query('UPDATE beta_followers SET count = 5, following_status = 0, followed_by_status = '+followed_by_status+' where fancrawl_instagram_id = "'+fancrawl_instagram_id+'" AND added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
-        //       if (err) throw err;
-        //       if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - updating to SET count 5 : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-
-        //       if ( callback ) {
-        //         callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
-        //         if ( fancrawl_instagram_id === userWatch ) console.log('POST_UNFOLLOW - callback ran : ', fancrawl_instagram_id, new_instagram_following_id, processCounter );
-        //       }
-        //     });
-
-        //   } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthParameterException" ) {
-        //     // {"meta":{"error_type":"OAuthParameterException","code":400,"error_message":"The access_token provided is invalid."}}
-        //     STOP( fancrawl_instagram_id, true );
-
-        //   } else if ( pbody.meta && pbody.meta.error_type && pbody.meta.error_type === "OAuthRateLimitException" ) {
-        //     // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 96 requests of the 60 allowed in the last hour."}}
-        //     if ( timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-        //       timer[ fancrawl_instagram_id ].post_delay_call = true;
-        //       timer[ fancrawl_instagram_id ].post_delay = true;
-
-        //       setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-        //         function(){
-        //         timer[ arguments[0] ].post_delay = false;
-        //         timer[ arguments[0] ].post_delay_call = false;
-        //         delete setTimeouts[ arguments[0] ][ arguments[1] ]
-        //       }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
-        //       processCounter++;
-        //     }
-        //   } else {
-        //     sendMail( 571377691, 'post unfollow status with body', 'The function POST_unfollow got a new case: ' + body );
-        //   }
-        // } else {
-        //   sendMail( 571377691, 'post unfollow status without body', 'The function POST_unfollow got a new case: ' + body );
-        // }
-      // } else if (error) {
-
-        // console.log('POST_unfollow error ('+new_instagram_following_id+'): ', error);
-        // sendMail( 571377691, 'post unfollow error', 'The function POST_unfollow got the following error: ' + error );
-
-      // }
       }
 
 
@@ -3753,28 +3667,13 @@ var crypto                                = require('crypto'),
       // request for the token and data back
       request( options, function (error, response, body) {
 
-        if ( typeof body === "string" ) {
-          var pbody = JSON.parse( body );
-          console.log("HANDLEN AUTH - it was a string");
-          console.log( pbody );
-        } else {
-          var pbody = body;
-          console.log( "Body of Handleauth is neither a string or object: ", body );
-        }
+        var pbody = JSON.parse( body );
 
+        // { code: 400,
+        //   error_type: 'OAuthException',
+        //   error_message: 'No matching code found.' }
 
-        if ( error || !pbody || !pbody.user || !pbody.user.id || !pbody.user.username ) {
-          if ( error ) {
-            console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + error);
-          } else if ( pbody ) {
-            console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + pbody);
-          } else {
-            console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. ");
-          }
-          res.redirect('/404/');
-          return;
-        } else {
-
+        if (!error && response.statusCode === 200) {
           connection.query('SELECT state, previous_state, fancrawl_username, block FROM access_right where fancrawl_instagram_id = '+ pbody.user.id, function(err, rows, fields) {
             if (err) throw err;
 
@@ -3782,11 +3681,23 @@ var crypto                                = require('crypto'),
             if ( rows && rows[0] && rows[0].fancrawl_username && rows[0].fancrawl_username === pbody.user.username){
               console.log("User "+pbody.user.id+" already existed and so granted");
 
-              clearNotifications( pbody.user.id );
+              if ( error || !pbody || !pbody.user || !pbody.user.id || !pbody.user.username ) {
+                if ( error ) {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + error);
+                } else if ( pbody ) {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + pbody);
+                } else {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. ");
+                }
 
-              if ( rows[0].block ) {
-                rows[0].state = rows[0].previous_state;
+              } else {
+                clearNotifications( pbody.user.id );
+
+                if ( rows[0].block ) {
+                  rows[0].state = rows[0].previous_state;
+                }
               }
+
 
               connection.query('SELECT "'+rows[0].block+'" AS block, "'+ pbody.user.id +'" AS fancrawl_instagram_id; UPDATE access_right set state = "'+ rows[0].state +'", fancrawl_full_name = "'+pbody.user.full_name+'", block = 0, code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'" where fancrawl_instagram_id = '+ pbody.user.id, function(err, results) {
                 if (err) throw err;
@@ -3799,74 +3710,86 @@ var crypto                                = require('crypto'),
 
               });
 
-              return;
-
             // first time logging in
             } else {
 
-              connection.query('INSERT INTO access_right set fancrawl_full_name = "'+pbody.user.full_name+'", fancrawl_username = "'+pbody.user.username+'", fancrawl_instagram_id = "'+pbody.user.id+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'"', function(err, rows, fields) {
-                if (err) throw err;
-
-                console.log("User "+pbody.user.id+" creation");
-                sendMail( 571377691, 'NEW USER', pbody.user.full_name+' signed as '+pbody.user.username+' ('+pbody.user.id+'), just signed on to FanCrawl for the first time! WOOP WOOP!' );
-
-                // CREATES A CUSTOM BETA_FOLLOWERS DATABASE FOR USER
-                checkUsersBFTExist( pbody.user.id, function( exist, fancrawl_instagram_id ){
-                  if ( !exist ) {
-                    createUsersBFT( fancrawl_instagram_id );
-                  }
-                });
-
-                // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
-                if ( !setTimeouts[ pbody.user.id ] ) {
-                  // START CLOCK TRACKERS
-                  setTimeouts[ pbody.user.id ] = {};
+              if ( error || !pbody || !pbody.user || !pbody.user.id || !pbody.user.username ) {
+                if ( error ) {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + error);
+                } else if ( pbody ) {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. " + pbody);
+                } else {
+                  console.log("Didn't work - most likely the Instagram secret key has been changed... For developer: Try rebooting the server. ");
                 }
+                res.redirect('/404/');
+              } else {
 
-                if ( !timer[ pbody.user.id ] ) {
-                  // START USER SPECIFIC CLOCK
-                  timerPostStructure( pbody.user.id );
-                  timerQuickStructure( pbody.user.id );
+                connection.query('INSERT INTO access_right set fancrawl_full_name = "'+pbody.user.full_name+'", fancrawl_username = "'+pbody.user.username+'", fancrawl_instagram_id = "'+pbody.user.id+'", code = "'+req.query.code+'", token = "'+pbody.access_token+'", fancrawl_profile_picture = "'+pbody.user.profile_picture+'"', function(err, rows, fields) {
+                  if (err) throw err;
 
-                  // START CLOCKS ONLY ONCE! (RIGHT AWAY)
-                  timer_post( pbody.user.id );
-                  timer_quick( pbody.user.id );
+                  console.log("User "+pbody.user.id+" creation");
+                  sendMail( 571377691, 'NEW USER', pbody.user.full_name+' signed as '+pbody.user.username+' ('+pbody.user.id+'), just signed on to FanCrawl for the first time! WOOP WOOP!' );
 
-                  // START CLOCKS ONLY ONCE! (WITH DELAY)
-                  // callTimer( pbody.user.id, "quick_long" );
-                  // callTimer( pbody.user.id, "post_long" );
-                }
+                  // CREATES A CUSTOM BETA_FOLLOWERS DATABASE FOR USER
+                  checkUsersBFTExist( pbody.user.id, function( exist, fancrawl_instagram_id ){
+                    if ( !exist ) {
+                      createUsersBFT( fancrawl_instagram_id );
+                    }
+                  });
 
-                GET_stats( pbody.user.id, function( follows, followed_by ){
-
-                  if ( follows === "N/A" ) {
-                    console.log( "Error when first signing in from GET_STATS, follows" );
-                    if (err) throw err;
+                  // IF FIRST TIME AUTHENTICATION THEN START USER SPECIFIC CLOCK
+                  if ( !setTimeouts[ pbody.user.id ] ) {
+                    // START CLOCK TRACKERS
+                    setTimeouts[ pbody.user.id ] = {};
                   }
 
-                  if ( followed_by === "N/A" ) {
-                    console.log( "Error when first signing in from GET_STATS, followed_by" );
-                    if (err) throw err;
+                  if ( !timer[ pbody.user.id ] ) {
+                    // START USER SPECIFIC CLOCK
+                    timerPostStructure( pbody.user.id );
+                    timerQuickStructure( pbody.user.id );
+
+                    // START CLOCKS ONLY ONCE! (RIGHT AWAY)
+                    timer_post( pbody.user.id );
+                    timer_quick( pbody.user.id );
+
+                    // START CLOCKS ONLY ONCE! (WITH DELAY)
+                    // callTimer( pbody.user.id, "quick_long" );
+                    // callTimer( pbody.user.id, "post_long" );
                   }
 
-                  connection.query('UPDATE access_right set or_followed_by = '+followed_by+', or_following = '+follows+' where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
-                    if (err) throw err;
-                    // redirect to the dashboard
-                    res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                  GET_stats( pbody.user.id, function( follows, followed_by ){
+
+                    if ( follows === "N/A" ) {
+                      console.log( "Error when first signing in from GET_STATS, follows" );
+                      if (err) throw err;
+                    }
+
+                    if ( followed_by === "N/A" ) {
+                      console.log( "Error when first signing in from GET_STATS, followed_by" );
+                      if (err) throw err;
+                    }
+
+                    connection.query('UPDATE access_right set or_followed_by = '+followed_by+', or_following = '+follows+' where fancrawl_instagram_id = "'+pbody.user.id+'"', function(err, rows, fields) {
+                      if (err) throw err;
+                      // redirect to the dashboard
+                      res.redirect('/dashboard?user='+pbody.user.username+'&id='+pbody.user.id);
+                    });
+                  });
+
+                  // goes to get followed_by instagram and inserts them into the s_followed_by table
+                  GET_followed_by( pbody.user.id, "" , true, function(users){
+                    // goes to get following instagram and inserts them into the s_following table
+                    GET_follows( pbody.user.id, "" , true );
                   });
                 });
+              }
 
-                // goes to get followed_by instagram and inserts them into the s_followed_by table
-                GET_followed_by( pbody.user.id, "" , true, function(users){
-                  // goes to get following instagram and inserts them into the s_following table
-                  GET_follows( pbody.user.id, "" , true );
-                });
-              });
-
-              return;
             }
           });
+        } else {
+          requestErrorHandling( pbody.user.id, options.method, error, response, body, 'handleauth' );
         }
+        // }
       });
     };
 
