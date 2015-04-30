@@ -3626,6 +3626,13 @@ var crypto                                = require('crypto'),
 
       // request for the token and data back
       request( options, function (error, response, body) {
+        console.log( 'X-X-X-X-X-X-X-X-X-X-X-X' );
+        console.log( 'body', body );
+        console.log( 'X-X-X-X-X-X-X-X-X-X-X-X' );
+        console.log( 'response.statusCode', response.statusCode );
+        console.log( 'X-X-X-X-X-X-X-X-X-X-X-X' );
+        console.log( 'response', response );
+        console.log( 'X-X-X-X-X-X-X-X-X-X-X-X' );
 
         var pbody = JSON.parse( body );
 
