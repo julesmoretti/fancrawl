@@ -3592,6 +3592,7 @@ var crypto                                = require('crypto'),
 
       console.log("authorizing");
       // var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
+              // https://api.instagram.com/oauth/authorize/?client_id=CLIENT-ID                       &redirect_uri=REDIRECT-URI                  &response_type=code
       var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&scope=likes+comments+relationships';
       res.redirect(url);
     };
@@ -3604,6 +3605,8 @@ var crypto                                = require('crypto'),
     //  TO  | timerPostStructure - timerQuickStructure - callTimer - dashboard
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.handleauth                      = function ( req, res ) {
+
+    console.log( 'handleauth', req.query );  //handleauth { code: '987fsd7f6sd76f8sa6dd987sdg2' }
 
       // queryCode           = req.query.code;
       // form data
