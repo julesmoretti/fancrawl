@@ -32,6 +32,9 @@ var crypto                                = require('crypto'),
                                             });
 
     console.log('port', process.env.SOCKETPATH);
+    console.log( 'FANCRAWLCLIENTID', process.env.FANCRAWLCLIENTID);
+    console.log( 'FANCRAWLCLIENTSECRET', process.env.FANCRAWLCLIENTSECRET);
+
 
     var del = connection._protocol._delegateError;
     connection._protocol._delegateError = function(err, sequence){
@@ -3403,123 +3406,123 @@ var crypto                                = require('crypto'),
       // You are limited to 5000 requests per hour per access_token or client_id overall. Practically, this means you should (when possible) authenticate users so that limits are well outside the reach of a given user.
 
       // if (!error && response.statusCode !== 200 ) {
-        if ( response ) {
+      if ( response ) {
 
-          if ( response.statusCode === 502 || response.statusCode === 503 ) {
-            // 503 error Limits
-            // Be nice. If you're sending too many requests too quickly, we'll send back a 503 error code (server unavailable).
+        if ( response.statusCode === 502 || response.statusCode === 503 ) {
+          // 503 error Limits
+          // Be nice. If you're sending too many requests too quickly, we'll send back a 503 error code (server unavailable).
 
-            // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n'
-            // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n'
-            if ( fancrawl_instagram_id ) {
-              if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 502/503 FOR: ", fancrawl_instagram_id );
-            } else {
-              console.log("REQUEST_ERROR_HANDLING 502/503" );
+          // '<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n'
+          // '<html><body><h1>502 Bad Gateway</h1>\nThe server returned an invalid or incomplete response.\n</body></html>\n'
+          if ( fancrawl_instagram_id ) {
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 502/503 FOR: ", fancrawl_instagram_id );
+          } else {
+            console.log("REQUEST_ERROR_HANDLING 502/503" );
+          }
+
+          sendMail( 571377691, 'Request error handling 502/503', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' APP MAX REQUESTS PER HOURS REACHED: ' + appRateLimit );
+
+          // slow down and pause all timers down for a while
+
+          pauseAllTimers( 30 );
+
+        } else if ( response.statusCode === 429 ) {
+          // ENDPOINT                                 UNSIGNED CALLS (PER TOKEN)        SIGNED CALLS (PER TOKEN)
+          // POST /media/media-id/likes               30 / hour                         100 / hour
+          // POST /media/media-id/comments            15 / hour                         60 / hour
+          // POST /users/user-id/relationships        20 / hour                         60 / hour
+
+          // 429 = OAuthRateLimitException
+          // error_message The maximum number of requests per hour has been exceeded.
+          // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
+
+          if ( fancrawl_instagram_id ) {
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 429 FOR: ", fancrawl_instagram_id );
+            sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
+
+            if ( !usersInfo[ fancrawl_instagram_id ] ) {
+              usersInfo[ fancrawl_instagram_id ] = {};
             }
 
-            sendMail( 571377691, 'Request error handling 502/503', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' APP MAX REQUESTS PER HOURS REACHED: ' + appRateLimit );
+            usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
 
-            // slow down and pause all timers down for a while
-
-            pauseAllTimers( 30 );
-
-          } else if ( response.statusCode === 429 ) {
-            // ENDPOINT                                 UNSIGNED CALLS (PER TOKEN)        SIGNED CALLS (PER TOKEN)
-            // POST /media/media-id/likes               30 / hour                         100 / hour
-            // POST /media/media-id/comments            15 / hour                         60 / hour
-            // POST /users/user-id/relationships        20 / hour                         60 / hour
-
-            // 429 = OAuthRateLimitException
-            // error_message The maximum number of requests per hour has been exceeded.
-            // {"meta":{"error_type":"OAuthRateLimitException","code":429,"error_message":"The maximum number of requests per hour has been exceeded. You have made 91 requests of the 60 allowed in the last hour."}}
-
-            if ( fancrawl_instagram_id ) {
-              if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 429 FOR: ", fancrawl_instagram_id );
-              sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR: ' + fancrawl_instagram_id );
-
-              if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                usersInfo[ fancrawl_instagram_id ] = {};
-              }
-
-              usersInfo[ fancrawl_instagram_id ].OAuthRateLimitException = "OAuthRateLimitException";
-
-              // pause and slow down user timer
+            // pause and slow down user timer
 
 
-              if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-                timer[ fancrawl_instagram_id ].post_delay_call = true;
-                timer[ fancrawl_instagram_id ].post_delay = true;
+            if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
+              timer[ fancrawl_instagram_id ].post_delay_call = true;
+              timer[ fancrawl_instagram_id ].post_delay = true;
 
-                setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-                  function(){
-                  timer[ arguments[0] ].post_delay = false;
-                  timer[ arguments[0] ].post_delay_call = false;
-                  delete setTimeouts[ arguments[0] ][ arguments[1] ]
-                }, 1000 * 60 * 10, fancrawl_instagram_id, processCounter );
-                processCounter++;
-              }
-            } else {
-              console.log("REQUEST_ERROR_HANDLING 429");
-              sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR SOME USER.');
+              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                function(){
+                timer[ arguments[0] ].post_delay = false;
+                timer[ arguments[0] ].post_delay_call = false;
+                delete setTimeouts[ arguments[0] ][ arguments[1] ]
+              }, 1000 * 60 * 10, fancrawl_instagram_id, processCounter );
+              processCounter++;
+            }
+          } else {
+            console.log("REQUEST_ERROR_HANDLING 429");
+            sendMail( 571377691, 'Request error handling 429', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPECIFIC USER MAX REQUESTS PER HOURS REACHED FOR SOME USER.');
+          }
+
+        } else if ( response.statusCode === 400 ) {
+          // 400 = spammy behavior
+          // You may also receive responses with an HTTP response code of 400 (Bad Request) if we detect spammy behavior by a person using your app. These errors are unrelated to rate limiting.
+          // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
+
+          if ( fancrawl_instagram_id ) {
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 400 FOR: ", fancrawl_instagram_id );
+
+            sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
+
+
+            if ( !usersInfo[ fancrawl_instagram_id ] ) {
+              usersInfo[ fancrawl_instagram_id ] = {};
             }
 
-          } else if ( response.statusCode === 400 ) {
-            // 400 = spammy behavior
-            // You may also receive responses with an HTTP response code of 400 (Bad Request) if we detect spammy behavior by a person using your app. These errors are unrelated to rate limiting.
-            // {"meta":{"error_type":"OAuthAccessTokenException","code":400,"error_message":"The access_token provided is invalid."}}
+            // usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "OAuthAccessTokenException";
+            usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
 
-            if ( fancrawl_instagram_id ) {
-              if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING 400 FOR: ", fancrawl_instagram_id );
+            // pause and slow down user timer
 
-              sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SPAMMY BEHAVIOR DETECTION FROM IG FOR: ' + fancrawl_instagram_id );
+            if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
+              timer[ fancrawl_instagram_id ].post_delay_call = true;
+              timer[ fancrawl_instagram_id ].post_delay = true;
 
-
-              if ( !usersInfo[ fancrawl_instagram_id ] ) {
-                usersInfo[ fancrawl_instagram_id ] = {};
-              }
-
-              // usersInfo[ fancrawl_instagram_id ].OAuthAccessTokenException = "OAuthAccessTokenException";
-              usersInfo[ fancrawl_instagram_id ].access_token = "FanCrawl blocked from IG - Go to your IG app to unblock.";
-
-              // pause and slow down user timer
-
-              if ( timer && timer[ fancrawl_instagram_id ] && timer[ fancrawl_instagram_id ].post_delay_call === false ) {
-                timer[ fancrawl_instagram_id ].post_delay_call = true;
-                timer[ fancrawl_instagram_id ].post_delay = true;
-
-                setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
-                  function(){
-                  timer[ arguments[0] ].post_delay = false;
-                  timer[ arguments[0] ].post_delay_call = false;
-                  delete setTimeouts[ arguments[0] ][ arguments[1] ]
-                }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
-                processCounter++;
-              }
-
-            } else {
-              console.log("REQUEST_ERROR_HANDLING 400");
-              sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SSPAMMY BEHAVIOR DETECTION FROM IG FOR SOME USER.');
+              setTimeouts[ fancrawl_instagram_id ][ processCounter ] = setTimeout(
+                function(){
+                timer[ arguments[0] ].post_delay = false;
+                timer[ arguments[0] ].post_delay_call = false;
+                delete setTimeouts[ arguments[0] ][ arguments[1] ]
+              }, 1000 * 60 * 30, fancrawl_instagram_id, processCounter );
+              processCounter++;
             }
 
           } else {
-            if ( fancrawl_instagram_id ) {
-              if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? FOR: ", fancrawl_instagram_id );
-              sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
-            } else {
-              console.log("REQUEST_ERROR_HANDLING ???");
-              sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
-            }
+            console.log("REQUEST_ERROR_HANDLING 400");
+            sendMail( 571377691, 'Request error handling 400', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' SSPAMMY BEHAVIOR DETECTION FROM IG FOR SOME USER.');
           }
+
         } else {
           if ( fancrawl_instagram_id ) {
-            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? no response FOR: ", fancrawl_instagram_id );
+            if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? FOR: ", fancrawl_instagram_id );
             sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
           } else {
-            console.log("REQUEST_ERROR_HANDLING ??? no response");
+            console.log("REQUEST_ERROR_HANDLING ???");
             sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
           }
         }
+      } else {
+        if ( fancrawl_instagram_id ) {
+          if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? no response FOR: ", fancrawl_instagram_id );
+          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
+        } else {
+          console.log("REQUEST_ERROR_HANDLING ??? no response");
+          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
         }
+      }
+      }
 
 
 //  -----------------------------------------------------------------------------
