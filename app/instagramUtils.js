@@ -3511,10 +3511,10 @@ var crypto                                = require('crypto'),
       } else {
         if ( fancrawl_instagram_id ) {
           if ( fancrawl_instagram_id === userWatch ) console.log("REQUEST_ERROR_HANDLING ??? no response FOR: ", fancrawl_instagram_id );
-          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR: ' + fancrawl_instagram_id );
+          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + ' FOR: ' + fancrawl_instagram_id );
         } else {
           console.log("REQUEST_ERROR_HANDLING ??? no response");
-          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + 'with statusCode: ' + response.statusCode + ' FOR SOME USER.');
+          sendMail( 571377691, 'Request error handling ???', 'The function ' + functionName + ' requestErrorHandling got the following body: ' + body + ' FOR SOME USER.');
         }
       }
       }
