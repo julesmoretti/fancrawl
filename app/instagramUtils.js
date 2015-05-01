@@ -31,11 +31,6 @@ var crypto                                = require('crypto'),
                                               multipleStatements: true
                                             });
 
-    console.log('port', process.env.SOCKETPATH);
-    console.log( 'FANCRAWLCLIENTID', process.env.FANCRAWLCLIENTID);
-    console.log( 'FANCRAWLCLIENTSECRET', process.env.FANCRAWLCLIENTSECRET);
-
-
     var del = connection._protocol._delegateError;
     connection._protocol._delegateError = function(err, sequence){
       if (err.fatal) {
@@ -3594,9 +3589,7 @@ var crypto                                = require('crypto'),
   exports.authorize_user                  = function ( req, res ) {
 
       console.log("authorizing");
-      // var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&state=a%20state&scope=likes+comments+relationships';
-              // https://api.instagram.com/oauth/authorize/?client_id=CLIENT-ID                       &redirect_uri=REDIRECT-URI                  &response_type=code
-      var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&scope=likes+comments+relationships';
+      var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&scope=likes+relationships';
       res.redirect(url);
     };
 
