@@ -519,7 +519,7 @@ var crypto                                = require('crypto'),
 
                     } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 3 ) {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get new from hash library
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -597,7 +597,7 @@ var crypto                                = require('crypto'),
 
                     } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -638,7 +638,7 @@ var crypto                                = require('crypto'),
 
                     } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -677,7 +677,7 @@ var crypto                                = require('crypto'),
 
                     } else if ( timer[ rows[0].fancrawl_instagram_id ].quick_counter >= 2 ) {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -764,7 +764,7 @@ var crypto                                = require('crypto'),
 
                     } else {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -819,7 +819,7 @@ var crypto                                = require('crypto'),
 
                     } else {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
 
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
@@ -850,7 +850,7 @@ var crypto                                = require('crypto'),
 
                     } else {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
 
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
@@ -902,7 +902,7 @@ var crypto                                = require('crypto'),
 
                     } else if ( count_hash.length !== 0 ) {
 
-                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 5 === 0 ) {
+                      if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
@@ -1592,7 +1592,7 @@ var crypto                                = require('crypto'),
       connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
-        callback( fancrawl_instagram_id );
+        if ( callback ) { callback( fancrawl_instagram_id ); }
       });
   }
 
@@ -1614,7 +1614,7 @@ var crypto                                = require('crypto'),
       connection.query('CREATE TABLE hash_tags_'+hash_tag+' ( id INT AUTO_INCREMENT, hash_tag VARCHAR(20), instagram_photo_id VARCHAR(50), instagram_user_id VARCHAR(20), created_time TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
-        callback( hash_tag, fancrawl_instagram_id );
+        if ( callback ) { callback( hash_tag, fancrawl_instagram_id ) };
       });
   }
 
@@ -2612,7 +2612,7 @@ var crypto                                = require('crypto'),
                 function(){
                     insert_hash_data( arguments[2], arguments[3], arguments[4], arguments[5] );
                     delete setTimeouts[ arguments[0] ][ arguments[1] ];
-              }, 1000 + ( 2000 * i ), fancrawl_instagram_id, processCounter, result.user.id, result.id, hash_tag, result.created_time ); // 1 min wait
+              }, 1000 + ( 3000 * i ), fancrawl_instagram_id, processCounter, result.user.id, result.id, hash_tag, result.created_time ); // 1 min wait
               processCounter++;
 
               // insert_hash_data( result.user.id, result.id, hash_tag, result.created_time );
