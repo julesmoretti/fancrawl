@@ -4,8 +4,8 @@
 var bodyParser      = require('body-parser'),
     morgan          = require('morgan');
 
-  if( process.env.LOCAL ){
-    sass            = require('node-sass');
+  if( process.env.LOCAL ) {
+    var sass            = require('node-sass');
   }
 
   module.exports    = function(app){
@@ -13,7 +13,7 @@ var bodyParser      = require('body-parser'),
 //  sass css generator ==========================================================
     if( process.env.LOCAL ){
 
-      sass.renderFile({
+      sass.render({
         file: './views/css/login.scss',
         success: function(css) {
           // console.log(css);
@@ -28,7 +28,7 @@ var bodyParser      = require('body-parser'),
         outFile: './views/css/login.css'
       });
 
-      sass.renderFile({
+      sass.render({
         file: './views/css/style.scss',
         success: function(css) {
           // console.log(css);
@@ -43,7 +43,7 @@ var bodyParser      = require('body-parser'),
         outFile: './views/css/style.css'
       });
 
-      sass.renderFile({
+      sass.render({
         file: './views/css/users.scss',
         success: function(css) {
           // console.log(css);
@@ -58,7 +58,7 @@ var bodyParser      = require('body-parser'),
         outFile: './views/css/users.css'
       });
 
-      sass.renderFile({
+      sass.render({
         file: './views/css/dashboard.scss',
         success: function(css) {
           // console.log(css);
