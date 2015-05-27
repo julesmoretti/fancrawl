@@ -3246,7 +3246,10 @@ var crypto                                = require('crypto'),
 
               connection.query('SELECT * FROM beta_followers_'+fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ new_instagram_following_id +'"', function(err, rows, fields) {
                 if (err) throw err;
-                if ( !rows.length ) {
+                if ( fancrawl_instagram_id === userWatch ) console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist rows:', rows);
+                if ( rows.length ) {
+                  if ( fancrawl_instagram_id === userWatch ) console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist');
+                } else {
                   connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
                     if (err) throw err;
                     if ( fancrawl_instagram_id === userWatch ) console.log('X-X-X-X-X-X-X-X-X-X-X-X')
@@ -3259,8 +3262,6 @@ var crypto                                = require('crypto'),
                       callback( fancrawl_instagram_id, new_instagram_following_id, processCounter );
                     }
                   });
-                } else {
-                  if ( fancrawl_instagram_id === userWatch ) console.log(fancrawl_instagram_id, new_instagram_following_id, 'already exist');
                 }
               });
 
