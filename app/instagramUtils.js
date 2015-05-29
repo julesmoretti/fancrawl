@@ -1531,6 +1531,7 @@ var crypto                                = require('crypto'),
     }
 
     // returns an array of users
+
   var selectAllUsers                      = function ( callback ) {
     connection.query('SELECT fancrawl_instagram_id FROM access_right', function(err, rows, fields) {
       if (err) throw err;
@@ -1560,6 +1561,7 @@ var crypto                                = require('crypto'),
         }
     });
   }
+
 
   var deleteDuplicateBetaFollowers        = function () {
 
@@ -1600,6 +1602,7 @@ var crypto                                = require('crypto'),
     }
   deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
 
+  // create a beta followers table for a fancrawl_instagram_id user
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
       connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
@@ -1608,6 +1611,7 @@ var crypto                                = require('crypto'),
       });
   }
 
+  // check if there is a beta followers table for fancrawl_instagram_id user
   var checkUsersBFTExist                  = function ( fancrawl_instagram_id, callback ) {
     connection.query('SHOW TABLES', function(err, rows, fields) {
       if (err) throw err;
@@ -1622,6 +1626,7 @@ var crypto                                = require('crypto'),
     });
   }
 
+  // create a hash tag table for a specific hash tag
   var createUsersHTT                      = function ( hash_tag, fancrawl_instagram_id, callback ) {
       connection.query('CREATE TABLE hash_tags_'+hash_tag+' ( id INT AUTO_INCREMENT, hash_tag VARCHAR(20), instagram_photo_id VARCHAR(50), instagram_user_id VARCHAR(20), created_time TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
@@ -1630,6 +1635,7 @@ var crypto                                = require('crypto'),
       });
   }
 
+  // check if there is a hash tag table for a specific hash tag
   var checkUsersHTTExist                  = function ( hash_tag, fancrawl_instagram_id, callback ) {
     connection.query('SHOW TABLES', function(err, rows, fields) {
       if (err) throw err;
@@ -1646,41 +1652,44 @@ var crypto                                = require('crypto'),
   }
 
 
-  selectAllHash_tags( function( hash_tags ){
-    // return;
-    for ( var i = 0; i < hash_tags.length; i++ ) {
-      // console.log('hash_tags: ', hash_tags[i] );
-      checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
-        if ( !exist ) {
-          // console.log( hash_tag, "does not exist" );
-          createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
-            connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
-              if (err) throw err;
-            });
-          });
-        }
-      });
-    }
-  });
+  // CHECK IF CERTAIN HASH TAG TABLES DOES NOT EXIT AND IF NOT CREATES ONE ON START UP...
+  // selectAllHash_tags( function( hash_tags ){
+  //   // return;
+  //   for ( var i = 0; i < hash_tags.length; i++ ) {
+  //     // console.log('hash_tags: ', hash_tags[i] );
+  //     checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
+  //       if ( !exist ) {
+  //         // console.log( hash_tag, "does not exist" );
+  //         createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
+  //           connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
+  //             if (err) throw err;
+  //           });
+  //         });
+  //       }
+  //     });
+  //   }
+  // });
 
   // createUsersBFT( 571377691 );
   // checkUsersBFTExist( 571377691, function( exist ){
     // console.log( 'the existance is: ', exist );
   // });
 
-  selectAllUsers( function( users ){
-    for ( var i = 0; i < users.length; i++ ) {
-      checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
-        if ( !exist ) {
-          createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-            connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id+', refresh_date = now()', function(err, rows, fields) {
-              if (err) throw err;
-            });
-          });
-        }
-      });
-    }
-  });
+
+  // check NEW BETA_FOLLOWERS_XXX Table and propagate it... ERROR WITH THE refresh_date = now() part!
+  // selectAllUsers( function( users ){
+  //   for ( var i = 0; i < users.length; i++ ) {
+  //     checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
+  //       if ( !exist ) {
+  //         createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+  //           connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id+', refresh_date = now()', function(err, rows, fields) {
+  //             if (err) throw err;
+  //           });
+  //         });
+  //       }
+  //     });
+  //   }
+  // });
 
 
 //  =============================================================================
@@ -2288,7 +2297,9 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var cleanDatabase                       = function ( fancrawl_instagram_id, callback ) {
       if ( fancrawl_instagram_id === userWatch ) console.log("CLEAN DATABASE CALLED");
-      // GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
+
+      // reset previous database settings to following to make sure to unfollow properly
+      GET_follows_verify ( fancrawl_instagram_id, false, function ( fancrawl_instagram_id ) {
 
         checkDuplicate ( fancrawl_instagram_id, function ( fancrawl_instagram_id ) {
 
@@ -2345,7 +2356,7 @@ var crypto                                = require('crypto'),
             }
           });
         });
-      // });
+      });
     };
 
 //  -----------------------------------------------------------------------------
@@ -3600,7 +3611,7 @@ var crypto                                = require('crypto'),
       });
     }
 
-    TEST_HEADERS( 571377691 );
+    // TEST_HEADERS( 571377691 );
 
 //  =============================================================================
 //  REQUEST HANDLERS
