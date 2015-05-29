@@ -1768,7 +1768,7 @@ var crypto                                = require('crypto'),
                 // start fetching process from hash users
                 if ( rows[0].sHash && rows[0].hash_tag ) {
 
-                  if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual past sHash: ', rows[0].fancrawl_instagram_id );
+                  // if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual past sHash: ', rows[0].fancrawl_instagram_id );
 
                   // fetch new user from hash
                   fetchFromHashInitializer( rows[0].fancrawl_instagram_id );
@@ -1786,7 +1786,7 @@ var crypto                                = require('crypto'),
                         processCounter++;
                       }
 
-                      if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual past sHash and databaseData: ', i );
+                      // if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual past sHash and databaseData: ', i );
 
                     }
                   });
@@ -1794,7 +1794,7 @@ var crypto                                = require('crypto'),
                 // start fetching process for new one
                 } else {
 
-                  if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual no sHash or hash_tag: ', rows[0].fancrawl_instagram_id );
+                  // if ( fancrawl_instagram_id === userWatch ) console.log('startIndividual no sHash or hash_tag: ', rows[0].fancrawl_instagram_id );
 
                   if ( rows[0].sHash && !rows[0].hash_tag ) {
                     connection.query('UPDATE access_right SET sHash = 0 WHERE fancrawl_instagram_id = "'+rows[0].fancrawl_instagram_id+'"', function(err, rows, fields) {
@@ -1979,7 +1979,7 @@ var crypto                                = require('crypto'),
         if (err) throw err;
         // console.log('fetchFromHashInitializerA', rows[0].hash_tag, fancrawl_instagram_id);
         if ( rows[0].hash_tag !== undefined ) {
-          if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer found hash_tag', fancrawl_instagram_id );
+          // if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer found hash_tag', fancrawl_instagram_id );
           checkUsersHTTExist( rows[0].hash_tag, rows[0].fancrawl_instagram_id, function( exist, hash_tag, fancrawl_instagram_id ){
             if ( !exist ) {
 
@@ -1988,7 +1988,7 @@ var crypto                                = require('crypto'),
                 fetchFromHashInitializer( fancrawl_instagram_id, true )
               });
             } else {
-              if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer user exist', fancrawl_instagram_id );
+              // if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer user exist', fancrawl_instagram_id );
               // continue
               // console.log('fetchFromHashInitializerC', rows[0].hash_tag, fancrawl_instagram_id);
               if ( !retry && rows && rows[0] && rows[0].hash_tag ) {
@@ -2001,7 +2001,7 @@ var crypto                                = require('crypto'),
               connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag; SELECT last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, results, fields ) {
                 if (err) throw err;
 
-                if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id', results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[1] );
+                // if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id', results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[1] );
 
                 // console.log('PASSED THE SELECT', results);
                 // [ [ { fancrawl_instagram_id: '571377691', ori_hash_tag: 'yellow' } ],
@@ -2047,7 +2047,7 @@ var crypto                                = require('crypto'),
                 } else if ( results && results[1].length === 0 ) {
                   // console.log(' C PASSED THE SELECT');
 
-                  if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did not find anything',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id );
+                  // if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did not find anything',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id );
 
                   connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + results[0][0].ori_hash_tag + '", fancrawl_instagram_id = "' + results[0][0].fancrawl_instagram_id + '"; SELECT "'+ results[0][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
                     if (err) throw err;
