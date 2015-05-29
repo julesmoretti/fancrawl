@@ -2007,7 +2007,7 @@ var crypto                                = require('crypto'),
                 // [ [ { fancrawl_instagram_id: '571377691', ori_hash_tag: 'yellow' } ],
                 // [ { last_id: null } ] ]
                 // if something and last_id
-                if ( results && results[1] && results[1][0] && results[1][0].last_id !== null ) {
+                if ( results && results[1].length && results[1][0] && results[1][0].last_id !== null ) {
                   // console.log(' A PASSED THE SELECT');
 
                   if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id WAS found',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id, results[1][0].last_id );
@@ -2016,7 +2016,7 @@ var crypto                                = require('crypto'),
                   console.log("-- A STARTING FETCHING FOR USER " + results[0][0].fancrawl_instagram_id + ", WITH HASH_TAG: ", results[0][0].ori_hash_tag );
 
                 // if something but no last_id
-                } else if ( results && results[1] && results[1][0] && results[1][0].last_id === null ) {
+                } else if ( results && results[1].length && results[1][0] && results[1][0].last_id === null ) {
                   // console.log(' B PASSED THE SELECT', results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag );
 
                   if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did find something but no last_id',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id, results[1][0] );
@@ -2044,7 +2044,7 @@ var crypto                                = require('crypto'),
                   });
 
                 // if nothing insert it into users_hash_tags table and re-run
-                } else if ( results && !results[1] ) {
+                } else if ( results && results[1].length === 0 ) {
                   // console.log(' C PASSED THE SELECT');
 
                   if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did not find anything',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id );
