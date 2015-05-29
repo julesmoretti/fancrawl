@@ -2000,6 +2000,9 @@ var crypto                                = require('crypto'),
 
               connection.query('SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id, "'+ rows[0].hash_tag +'" AS ori_hash_tag; SELECT last_id FROM users_hash_tags WHERE fancrawl_instagram_id = "' + fancrawl_instagram_id + '" AND hash_tag = "'+rows[0].hash_tag+'"', function( err, results, fields ) {
                 if (err) throw err;
+
+                if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id', results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[1] );
+
                 // console.log('PASSED THE SELECT', results);
                 // [ [ { fancrawl_instagram_id: '571377691', ori_hash_tag: 'yellow' } ],
                 // [ { last_id: null } ] ]
