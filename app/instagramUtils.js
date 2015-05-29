@@ -875,6 +875,9 @@ var crypto                                = require('crypto'),
 
                     if ( count_databaseData.length !== 0 ) {
 
+                      if ( fancrawl_instagram_id === userWatch ) console.log("TQ - databaseData : ", fancrawl_instagram_id, count_databaseData.length, count_verify.length, queueCap );
+                      if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
+
                       // get databaseData
                       if ( count_verify.length < ( queueCap - 2 ) ) {
                         verifyRelationship( rows[0].fancrawl_instagram_id, setTimeouts[ rows[0].fancrawl_instagram_id ].databaseData[ count_databaseData[0] ].added_follower_instagram_id );
@@ -891,6 +894,9 @@ var crypto                                = require('crypto'),
                       var process = timer[ rows[0].fancrawl_instagram_id ].quick_queue.verify[ count_verify[0] ].process;
                       var uniqueProcessCounter = count_verify[0];
 
+                      if ( fancrawl_instagram_id === userWatch ) console.log("TQ - verify : ", fancrawl_instagram_id, count_verify.length, new_instagram_following_id, uniqueProcessCounter );
+                      if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
+
                       timer[ rows[0].fancrawl_instagram_id ].quick_counter = 0;
 
                     } else if ( count_new.length !== 0 ) {
@@ -905,6 +911,10 @@ var crypto                                = require('crypto'),
                     } else if ( count_hash.length !== 0 ) {
 
                       if ( timer[ fancrawl_instagram_id ].quick_counter_hash % 10 === 0 ) {
+
+                        if ( fancrawl_instagram_id === userWatch ) console.log("TQ - hash : ", count_hash.length, fancrawl_instagram_id );
+                        if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
+
                         // get hash
                         if ( timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination ) {
                           GET_hash_tag_media( rows[0].fancrawl_instagram_id, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].hash_tag, timer[ rows[0].fancrawl_instagram_id ].quick_queue.hash[ count_hash[0] ].pagination );
