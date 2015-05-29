@@ -2010,12 +2010,16 @@ var crypto                                = require('crypto'),
                 if ( results && results[1] && results[1][0] && results[1][0].last_id !== null ) {
                   // console.log(' A PASSED THE SELECT');
 
+                  if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id WAS found',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id, results[1][0].last_id );
+
                   fetchFromHash( results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag, results[1][0].last_id );
                   console.log("-- A STARTING FETCHING FOR USER " + results[0][0].fancrawl_instagram_id + ", WITH HASH_TAG: ", results[0][0].ori_hash_tag );
 
                 // if something but no last_id
                 } else if ( results && results[1] && results[1][0] && results[1][0].last_id === null ) {
                   // console.log(' B PASSED THE SELECT', results[0][0].fancrawl_instagram_id, results[0][0].ori_hash_tag );
+
+                  if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did find something but no last_id',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id, results[1][0] );
 
                   connection.query('SELECT "'+ results[0][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id, "' + results[0][0].ori_hash_tag + '" AS ori_hash_tag; SELECT id FROM hash_tags_' + results[0][0].ori_hash_tag + ' LIMIT 2', function( err, results, fields ) {
                     if (err) throw err;
@@ -2042,6 +2046,8 @@ var crypto                                = require('crypto'),
                 // if nothing insert it into users_hash_tags table and re-run
                 } else if ( results && !results[1] ) {
                   // console.log(' C PASSED THE SELECT');
+
+                  if ( fancrawl_instagram_id === userWatch ) console.log('fetchFromHashInitializer select last_id did not find anything',results[0][0].ori_hash_tag, results[0][0].fancrawl_instagram_id );
 
                   connection.query('INSERT INTO users_hash_tags SET hash_tag = "' + results[0][0].ori_hash_tag + '", fancrawl_instagram_id = "' + results[0][0].fancrawl_instagram_id + '"; SELECT "'+ results[0][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function( err, results ) {
                     if (err) throw err;
