@@ -1601,7 +1601,7 @@ var crypto                                = require('crypto'),
   deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
 
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
-      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
+      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
         if ( callback ) { callback( fancrawl_instagram_id ); }
@@ -1673,7 +1673,7 @@ var crypto                                = require('crypto'),
       checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
         if ( !exist ) {
           createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-            connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id, function(err, rows, fields) {
+            connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id+', refresh_date = now()', function(err, rows, fields) {
               if (err) throw err;
             });
           });
@@ -2519,7 +2519,7 @@ var crypto                                = require('crypto'),
                   // console.log("fancrawl_instagram_id", fancrawl_instagram_id);
                   // console.log("new_instagram_following_id", new_instagram_following_id);
                                     // insert into beta_followers set fancrawl_instagram_id = 571377691, added_follower_instagram_id = 871
-                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = "'+fancrawl_instagram_id+'", added_follower_instagram_id = "'+new_instagram_following_id+'"', function(err, rows, fields) {
+                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = "'+fancrawl_instagram_id+'", added_follower_instagram_id = "'+new_instagram_following_id+'", refresh_date = now()', function(err, rows, fields) {
                     if (err) throw err;
                     // console.log("should restart the check duplicate with same callback");
                     checkDuplicate( fancrawl_instagram_id, callback );
@@ -3267,7 +3267,7 @@ var crypto                                = require('crypto'),
                   }
 
                 } else {
-                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id, function(err, rows, fields) {
+                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id+', refresh_date = now()', function(err, rows, fields) {
                     if (err) throw err;
                     if ( fancrawl_instagram_id === userWatch ) console.log('X-X-X-X-X-X-X-X-X-X-X-X')
                     if ( fancrawl_instagram_id === userWatch ) console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
