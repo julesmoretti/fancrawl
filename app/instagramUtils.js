@@ -1601,7 +1601,7 @@ var crypto                                = require('crypto'),
   deleteDuplicateBetaFollowers();  // HIDE ON DB UPDATE
 
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
-      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
+      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
         if ( callback ) { callback( fancrawl_instagram_id ); }
@@ -1725,7 +1725,7 @@ var crypto                                = require('crypto'),
     //  TO  | timerPostStructure - timerQuickStructure - GET_relationship - timer_post - timer_quick - fetchFromHashInitializer - fetchNewFollowers - cleanDatabase - STOP - sendMail
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var startIndividual                     = function ( fancrawl_instagram_id ) {
-    console.log('startIndividual', fancrawl_instagram_id );
+
       // START USER SPECIFIC CLOCK
       timerPostStructure( fancrawl_instagram_id );
       timerQuickStructure( fancrawl_instagram_id );
