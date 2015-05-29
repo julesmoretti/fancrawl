@@ -875,7 +875,7 @@ var crypto                                = require('crypto'),
 
                     if ( count_databaseData.length !== 0 ) {
 
-                      if ( fancrawl_instagram_id === userWatch ) console.log("TQ - databaseData : ", fancrawl_instagram_id, count_databaseData.length, count_verify.length, queueCap );
+                      if ( fancrawl_instagram_id === userWatch ) console.log("TQ - databaseData : ", fancrawl_instagram_id, count_databaseData.length, count_verify.length, typeof queueCap, queueCap );
                       if ( fancrawl_instagram_id === userWatch ) console.log( "============================================================" );
 
                       // get databaseData
@@ -1604,7 +1604,7 @@ var crypto                                = require('crypto'),
 
   // create a beta followers table for a fancrawl_instagram_id user
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
-      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, refresh_date TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
+      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP, refresh_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
         if ( callback ) { callback( fancrawl_instagram_id ); }
@@ -2551,7 +2551,7 @@ var crypto                                = require('crypto'),
                   // console.log("fancrawl_instagram_id", fancrawl_instagram_id);
                   // console.log("new_instagram_following_id", new_instagram_following_id);
                                     // insert into beta_followers set fancrawl_instagram_id = 571377691, added_follower_instagram_id = 871
-                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = "'+fancrawl_instagram_id+'", added_follower_instagram_id = "'+new_instagram_following_id+'", refresh_date = now()', function(err, rows, fields) {
+                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = "'+fancrawl_instagram_id+'", added_follower_instagram_id = "'+new_instagram_following_id+'", creation_date = now()', function(err, rows, fields) {
                     if (err) throw err;
                     // console.log("should restart the check duplicate with same callback");
                     checkDuplicate( fancrawl_instagram_id, callback );
@@ -3299,7 +3299,7 @@ var crypto                                = require('crypto'),
                   }
 
                 } else {
-                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id+', refresh_date = now()', function(err, rows, fields) {
+                  connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SET fancrawl_instagram_id = '+fancrawl_instagram_id+', added_follower_instagram_id = '+new_instagram_following_id+', creation_date = now()', function(err, rows, fields) {
                     if (err) throw err;
                     if ( fancrawl_instagram_id === userWatch ) console.log('X-X-X-X-X-X-X-X-X-X-X-X')
                     if ( fancrawl_instagram_id === userWatch ) console.log('INSERTED INTO DATABASE: ', fancrawl_instagram_id, new_instagram_following_id );
