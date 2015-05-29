@@ -1725,7 +1725,7 @@ var crypto                                = require('crypto'),
     //  TO  | timerPostStructure - timerQuickStructure - GET_relationship - timer_post - timer_quick - fetchFromHashInitializer - fetchNewFollowers - cleanDatabase - STOP - sendMail
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   var startIndividual                     = function ( fancrawl_instagram_id ) {
-
+    console.log('startIndividual', fancrawl_instagram_id );
       // START USER SPECIFIC CLOCK
       timerPostStructure( fancrawl_instagram_id );
       timerQuickStructure( fancrawl_instagram_id );
