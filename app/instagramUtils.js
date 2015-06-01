@@ -1611,7 +1611,7 @@ var crypto                                = require('crypto'),
 
   // create a beta followers table for a fancrawl_instagram_id user
   var createUsersBFT                      = function ( fancrawl_instagram_id, callback ) {
-      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP, refresh_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
+      connection.query('CREATE TABLE beta_followers_'+fancrawl_instagram_id+' (id INT AUTO_INCREMENT, fancrawl_instagram_id VARCHAR(20), added_follower_instagram_id VARCHAR(20), count INT(9) DEFAULT 0, following_status INT(1) DEFAULT 1, followed_by_status INT(1) DEFAULT 0, creation_date TIMESTAMP DEFAULT 0, refresh_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))', function(err, rows, fields) {
         if (err) throw err;
         console.log('table created');
         if ( callback ) { callback( fancrawl_instagram_id ); }
