@@ -1569,29 +1569,36 @@ var crypto                                = require('crypto'),
 
       if ( users && users.length ) {
         for ( var i = 0; i < users.length; i++ ) {
-          connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers_'+users[i]+' GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ users[i] +'" AS fancrawl_instagram_id', function(err, results, fields) {
-            if (err) throw err;
-              // console.log( results );
-            if ( results[0].length ) {
-              // results[1][0].fancrawl_instagram_id
-              // console.log( 'Found something in first one', results[0].length );
-              for ( var j = 0; j < results[0].length; j++ ) {
+          checkUsersBFTExist( users[i] , function( exist, fancrawl_instagram_id ){
 
-                connection.query('SELECT id, added_follower_instagram_id FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ results[0][j].added_follower_instagram_id +'"; SELECT "'+ results[1][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
-                  if (err) throw err;
-                  // console.log('within next selection', results );
-                  // console.log('within next selection fancrawl to kill', results[0] );
-                  // console.log('within next selection fancrawl user', results[1][0].fancrawl_instagram_id );
+            if ( exist ) {
+              connection.query('SELECT added_follower_instagram_id, count(id) as cnt FROM beta_followers_'+fancrawl_instagram_id+' GROUP BY added_follower_instagram_id HAVING cnt > 1; SELECT "'+ fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
+                if (err) throw err;
+                  // console.log( results );
+                if ( results[0].length ) {
+                  // results[1][0].fancrawl_instagram_id
+                  // console.log( 'Found something in first one', results[0].length );
+                  for ( var j = 0; j < results[0].length; j++ ) {
 
-                  for ( var k = 1; k < results[0].length; k++ ) {
-                    connection.query('DELETE FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE id = "'+results[0][k].id+'"; select "'+results[0][k].id+'" AS id', function(err, results, fields) {
+                    connection.query('SELECT id, added_follower_instagram_id FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE added_follower_instagram_id = "'+ results[0][j].added_follower_instagram_id +'"; SELECT "'+ results[1][0].fancrawl_instagram_id +'" AS fancrawl_instagram_id', function(err, results, fields) {
                       if (err) throw err;
-                      console.log('DELETED: ', results[1][0].id );
+                      // console.log('within next selection', results );
+                      // console.log('within next selection fancrawl to kill', results[0] );
+                      // console.log('within next selection fancrawl user', results[1][0].fancrawl_instagram_id );
+
+                      for ( var k = 1; k < results[0].length; k++ ) {
+                        connection.query('DELETE FROM beta_followers_'+results[1][0].fancrawl_instagram_id+' WHERE id = "'+results[0][k].id+'"; select "'+results[0][k].id+'" AS id', function(err, results, fields) {
+                          if (err) throw err;
+                          console.log('DELETED: ', results[1][0].id );
+                        });
+                      }
+
                     });
                   }
-
-                });
-              }
+                }
+              });
+            } else {
+              createUsersBFT( fancrawl_instagram_id );
             }
           });
         }
