@@ -29,7 +29,7 @@ var instagramUtils = require('./instagramUtils.js');
     app.get('/authorize_user', instagramUtils.authorize_user);
 
     // reads from instagram authentication data and records it
-    app.get('/auth/instagram', instagramUtils.handleauth);
+    app.get('/auth/instagram/callback', instagramUtils.handleauth);
 
     // main dashboard page
     app.get('/dashboard', instagramUtils.dashboard);
