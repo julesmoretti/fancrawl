@@ -11,8 +11,8 @@ var crypto                                = require('crypto'),
     request                               = require('request'),
     mysql                                 = require('mysql'),
     nodemailer                            = require('nodemailer'),
-    // userWatch                             = "1783677462", // THREADS
-    userWatch                             = "254237816", // WET
+    userWatch                             = "1783677462", // THREADS
+    // userWatch                             = "254237816", // WET
     // userWatch                             = "571377691", // JM
     usersInfo                             = {},
     timer                                 = {},
@@ -3618,7 +3618,7 @@ var crypto                                = require('crypto'),
       });
     }
 
-    // TEST_HEADERS( 571377691 );
+    TEST_HEADERS( "571377691" );
 
 //  =============================================================================
 //  REQUEST HANDLERS
@@ -3646,7 +3646,8 @@ var crypto                                = require('crypto'),
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   exports.authorize_user                  = function ( req, res ) {
 
-      console.log("authorizing");
+      console.log("authorizing", process.env.FANCRAWLCLIENTID, process.env.INSURIREDIRECT );
+      // var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code';
       var url = 'https://api.instagram.com/oauth/authorize/?client_id='+process.env.FANCRAWLCLIENTID+'&redirect_uri='+process.env.INSURIREDIRECT+'&response_type=code&scope=likes+relationships';
       res.redirect(url);
     };
