@@ -1660,22 +1660,22 @@ var crypto                                = require('crypto'),
 
 
   // CHECK IF CERTAIN HASH TAG TABLES DOES NOT EXIT AND IF NOT CREATES ONE ON START UP...
-  // selectAllHash_tags( function( hash_tags ){
-  //   // return;
-  //   for ( var i = 0; i < hash_tags.length; i++ ) {
-  //     // console.log('hash_tags: ', hash_tags[i] );
-  //     checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
-  //       if ( !exist ) {
-  //         // console.log( hash_tag, "does not exist" );
-  //         createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
-  //           connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
-  //             if (err) throw err;
-  //           });
-  //         });
-  //       }
-  //     });
-  //   }
-  // });
+    // selectAllHash_tags( function( hash_tags ){
+    //   // return;
+    //   for ( var i = 0; i < hash_tags.length; i++ ) {
+    //     // console.log('hash_tags: ', hash_tags[i] );
+    //     checkUsersHTTExist( hash_tags[i], null, function( exist, hash_tag, fancrawl_instagram_id ){
+    //       if ( !exist ) {
+    //         // console.log( hash_tag, "does not exist" );
+    //         createUsersHTT( hash_tag, fancrawl_instagram_id, function( hash_tag, fancrawl_instagram_id ){
+    //           connection.query('INSERT INTO hash_tags_'+hash_tag+' SELECT b.* FROM hash_tags b WHERE hash_tag = "'+hash_tag+'"', function(err, rows, fields) {
+    //             if (err) throw err;
+    //           });
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
 
   // createUsersBFT( 571377691 );
   // checkUsersBFTExist( 571377691, function( exist ){
@@ -1684,19 +1684,19 @@ var crypto                                = require('crypto'),
 
 
   // check NEW BETA_FOLLOWERS_XXX Table and propagate it... ERROR WITH THE refresh_date = now() part!
-  // selectAllUsers( function( users ){
-  //   for ( var i = 0; i < users.length; i++ ) {
-  //     checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
-  //       if ( !exist ) {
-  //         createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
-  //           connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id+', refresh_date = now()', function(err, rows, fields) {
-  //             if (err) throw err;
-  //           });
-  //         });
-  //       }
-  //     });
-  //   }
-  // });
+    // selectAllUsers( function( users ){
+    //   for ( var i = 0; i < users.length; i++ ) {
+    //     checkUsersBFTExist( users[i], function( exist, fancrawl_instagram_id ){
+    //       if ( !exist ) {
+    //         createUsersBFT( fancrawl_instagram_id, function( fancrawl_instagram_id ){
+    //           connection.query('INSERT INTO beta_followers_'+fancrawl_instagram_id+' SELECT b.* FROM beta_followers b WHERE fancrawl_instagram_id = '+fancrawl_instagram_id+', refresh_date = now()', function(err, rows, fields) {
+    //             if (err) throw err;
+    //           });
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
 
 
 //  =============================================================================
@@ -2787,10 +2787,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+fancrawl_instagram_id+'|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'GET',
             headers: headers
         }
@@ -2840,10 +2844,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
             }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+rows[0].new_instagram_following_id+'/relationship|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+rows[0].new_instagram_following_id+'/relationship',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'GET',
             headers: headers
             }
@@ -2969,6 +2977,10 @@ var crypto                                = require('crypto'),
                 'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
             }
 
+            var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+                .update( '/v1/tags/'+ hash_tag +'/media/recent|access_token='+rows[0].token )
+                .digest('hex');
+
             if ( pagination && pagination !== "start" ) {
               // Configure the request
               var options = {
@@ -2979,7 +2991,7 @@ var crypto                                = require('crypto'),
             } else {
               var options = {
                   uri: 'https://api.instagram.com/v1/tags/'+ hash_tag +'/media/recent',
-                  qs: {'access_token': rows[0].token},
+                  qs: {'access_token': rows[0].token, 'sig': sig },
                   method: 'GET',
                   headers: headers
               }
@@ -3042,10 +3054,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+fancrawl_instagram_id+'/follows|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'GET',
             headers: headers,
         }
@@ -3116,10 +3132,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+fancrawl_instagram_id+'/follows|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/follows',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'GET',
             headers: headers,
         }
@@ -3196,10 +3216,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+fancrawl_instagram_id+'/followed|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/followed-by',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'GET',
             headers: headers,
         }
@@ -3271,10 +3295,14 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/users/'+new_instagram_following_id+'/relationship|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'POST',
             headers: headers,
             form:{action:'follow'}
@@ -3379,10 +3407,14 @@ var crypto                                = require('crypto'),
                 'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
             }
 
+            var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+                .update( '/v1/users/'+new_instagram_following_id+'/relationship|access_token='+rows[0].token )
+                .digest('hex');
+
             // Configure the request
             var options = {
                 uri: 'https://api.instagram.com/v1/users/'+new_instagram_following_id+'/relationship',
-                qs: {'access_token': rows[0].token},
+                qs: {'access_token': rows[0].token, 'sig': sig },
                 method: 'POST',
                 headers: headers,
                 form:{action:'unfollow'}
@@ -3598,11 +3630,15 @@ var crypto                                = require('crypto'),
             'X-Insta-Forwarded-For': process.env.LOCALIP+'|'+hash
         }
 
+        var sig = crypto.createHmac('SHA256', process.env.FANCRAWLCLIENTSECRET )
+            .update( '/v1/media/657988443280050001_25025320/likes|access_token='+rows[0].token )
+            .digest('hex');
+
         // Configure the request
         var options = {
             uri: 'https://api.instagram.com/v1/media/657988443280050001_25025320/likes',
             // uri: 'https://api.instagram.com/v1/users/'+fancrawl_instagram_id+'/',
-            qs: {'access_token': rows[0].token},
+            qs: {'access_token': rows[0].token, 'sig': sig },
             method: 'POST',
             headers: headers
         }
