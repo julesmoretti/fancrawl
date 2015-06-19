@@ -43,7 +43,6 @@ var crypto                                = require('crypto'),
     };
 
 
-
 // OVERALL INSTAGRAM INFORMATION
 // HTTP Header
 // Information regarding the global rate limits is included in the HTTP header on the response to each of your calls, which enables your app to determine its current status with respect to these rate limits. The following fields are provided in the header of each response and their values are related to the type of call that was made (authenticated or unauthenticated):
@@ -3654,7 +3653,7 @@ var crypto                                = require('crypto'),
       });
     }
 
-    TEST_HEADERS( "571377691" );
+    // TEST_HEADERS( "571377691" );
 
 //  =============================================================================
 //  REQUEST HANDLERS
@@ -4317,10 +4316,21 @@ var crypto                                = require('crypto'),
 
       // TOGGLES
         // UPDATING HASH
-        if ( req.body.hash_tag && req.body.hash_tag !== '' ) {
+        if ( req.body.hash_tag && req.body.hash_tag.length ) {
+
           // handles inserted # character by removing it
           if ( req.body.hash_tag[0] && req.body.hash_tag[0] === "#" ){
-            req.body.hash_tag = req.body.hash_tag.slice(1).split(" ")[0];
+            req.body.hash_tag = req.body.hash_tag.slice(1);
+          }
+
+          // handles ',' by only selecting the first one
+          if ( req.body.hash_tag.length ) {
+            req.body.hash_tag = req.body.hash_tag.split(",")[0];
+          }
+
+          // handles ' ' by only keeping the first one
+          if ( req.body.hash_tag.length ) {
+            req.body.hash_tag = req.body.hash_tag.split(" ")[0];
           }
 
           connection.query('UPDATE access_right set hash_tag = "' + req.body.hash_tag + '" where fancrawl_instagram_id = "' + fancrawl_instagram_id + '"', function( err, rows, fields ) {
